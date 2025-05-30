@@ -1,6 +1,5 @@
 // src/lib/db.ts
-import pkg from '@prisma/client';
-const { PrismaClient } = pkg;
+import { PrismaClient } from '@prisma/client';
 
 // モジュールが初回インポートされたときだけ新規生成
 const prisma = new PrismaClient();
