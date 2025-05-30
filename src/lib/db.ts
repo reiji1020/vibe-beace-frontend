@@ -1,20 +1,8 @@
 // src/lib/db.ts
-import { PrismaClient } from '@prisma/client';
+import pkg from '@prisma/client';
+const { PrismaClient } = pkg;
 
-declare global {
-    // Node とブラウザ両方で安全に使えるグローバルオブジェクト
-    // prisma が存在しない場合にのみ新規作成
-    var prisma: PrismaClient;
-}
+// モジュールが初回インポートされたときだけ新規生成
+const prisma = new PrismaClient();
 
-export const prisma: PrismaClient =
-    globalThis.prisma ||
-    new PrismaClient({
-        // 必要に応じて設定を追加
-        // log: ['query', 'error', 'warn']
-    });
-
-// 開発環境ではグローバルキャッシュに保持
-if (process.env.NODE_ENV !== 'production') {
-    globalThis.prisma = prisma;
-}
+export { prisma };
