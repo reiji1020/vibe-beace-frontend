@@ -1,5 +1,5 @@
 [build]
-  command   = "pnpm run build && npx prisma migrate deploy"
+  command   = "npx prisma migrate deploy && pnpm run build"
   publish   = ".svelte-kit/output/client"    # SvelteKit のクライアント出力
   functions = ".svelte-kit/output/server"    # サーバー（API）エンドポイント出力
 
