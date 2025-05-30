@@ -26,7 +26,7 @@ devDependencies:
     specifier: ^9.18.0
     version: 9.27.0
   '@sveltejs/adapter-netlify':
-    specifier: ^5.0.0
+    specifier: ^5.0.2
     version: 5.0.2(@sveltejs/kit@2.21.1)
   '@sveltejs/kit':
     specifier: ^2.16.0
