@@ -3,4 +3,9 @@
   publish   = ".svelte-kit/output/client"    # SvelteKit のクライアント出力
   functions = ".svelte-kit/output/server"    # サーバー（API）エンドポイント出力
 
-# 環境変数は Netlify UI で設定するのでここには書きません
+[functions]
+  # ここで node_modules/.prisma/client フォルダを確実に含める
+  included_files = [
+    "node_modules/.prisma/client/**",
+    "prisma/schema.prisma"
+  ]
