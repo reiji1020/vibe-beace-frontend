@@ -1,0 +1,56 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Thread {
+  id           Int     @id @default(autoincrement())
+  brand        String
+  colorNumber  String
+  colorName    String?
+  quantity     Int
+  status       String?  // unused, used, low
+  wishlist     Boolean
+}
+
+model Bead {
+  id         Int     @id @default(autoincrement())
+  brand      String
+  itemCode   String
+  size       String
+  colorName  String?
+  quantity   Int
+  status     String?  // unused, used, low
+  wishlist   Boolean
+}
+
+model CutCloth {
+  id          Int     @id @default(autoincrement())
+  fabricType  String
+  pattern     String
+  size        String
+  quantity    Int
+  status      String?  // unused, used
+  wishlist    Boolean
+}
+
+model XStitchCloth {
+  id        Int     @id @default(autoincrement())
+  count     String
+  color     String
+  size      String
+  quantity  Int
+  status    String?  // unused, used
+  wishlist  Boolean
+}
