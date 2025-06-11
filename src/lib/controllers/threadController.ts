@@ -6,8 +6,8 @@ import { prisma } from '$lib/db';
  * すべての刺繍糸を取得
  */
 export async function getAllThreads(): Promise<Thread[]> {
-    return await prisma.thread.findMany({
-        orderBy: { colorNumber: 'asc' }
+    return prisma.thread.findMany({
+        orderBy: {colorNumber: 'asc'}
     });
 }
 
@@ -15,7 +15,7 @@ export async function getAllThreads(): Promise<Thread[]> {
  * 新しい刺繍糸を追加
  */
 export async function addThread(data: Thread): Promise<Thread> {
-    return await prisma.thread.create({
+    return prisma.thread.create({
         data: data
     });
 }
@@ -27,8 +27,8 @@ export async function updateThread(
     id: number,
     data: Partial<Thread>
 ): Promise<Thread> {
-    return await prisma.thread.update({
-        where: { id },
+    return prisma.thread.update({
+        where: {id},
         data: data
     });
 }
@@ -40,9 +40,9 @@ export async function setWishlistThread(
     id: number,
     wishlist: boolean
 ): Promise<Thread> {
-    return await prisma.thread.update({
-        where: { id },
-        data: { wishlist }
+    return prisma.thread.update({
+        where: {id},
+        data: {wishlist}
     });
 }
 
@@ -50,7 +50,7 @@ export async function setWishlistThread(
  * 刺繍糸を削除
  */
 export async function deleteThread(id: number): Promise<Thread> {
-    return await prisma.thread.delete({
-        where: { id }
+    return prisma.thread.delete({
+        where: {id}
     });
 }
