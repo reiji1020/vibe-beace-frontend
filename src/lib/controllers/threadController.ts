@@ -6,9 +6,11 @@ import { prisma } from '$lib/db';
  * すべての刺繍糸を取得
  */
 export async function getAllThreads(): Promise<Thread[]> {
-    return prisma.thread.findMany({
+    const threads = await prisma.thread.findMany({
         orderBy: {colorNumber: 'asc'}
     });
+    console.log('Fetched threads:', threads);
+    return threads;
 }
 
 /**

@@ -28,7 +28,9 @@
 </section>
 <section class="enter">
     <div class="enterWrapper">
-        <Button bgColor={CCLVividColor.PINEAPPLE_YELLOW} label="早速使ってみる！" />
+        <a href="/inventory">
+            <Button bgColor={CCLVividColor.PINEAPPLE_YELLOW} label="早速使ってみる！" />
+        </a>
     </div>
 </section>
 <Footer bgColor={CCLVividColor.PINEAPPLE_YELLOW} />

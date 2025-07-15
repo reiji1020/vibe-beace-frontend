@@ -5,7 +5,7 @@ import { prisma } from '$lib/db';
 /** 全カットクロスを取得（ソート付き） */
 export async function getAllCutCloth(): Promise<CutCloth[]> {
     return prisma.cutCloth.findMany({
-        orderBy: {itemCode: 'asc'}
+        orderBy: {id: 'asc'}
     });
 }
 
