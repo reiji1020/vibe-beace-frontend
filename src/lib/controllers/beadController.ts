@@ -25,8 +25,12 @@ export async function addBead(data: Bead): Promise<Bead> {
 }
 
 /** ビーズを更新（全上書き） */
-export async function updateBead(id: number, data: Partial<Bead>): Promise<Bead> {
-    return prisma.bead.update({where: {id}, data});
+export async function updateBead(data: Partial<Bead> & { id: number }): Promise<Bead> {
+    const { id, ...updateData } = data;
+    if (typeof id !== 'number') {
+        throw new Error('Invalid ID provided for updating bead.');
+    }
+    return prisma.bead.update({ where: { id }, data: updateData });
 }
 
 /** wishlist フラグのみ更新 */

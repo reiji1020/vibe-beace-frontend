@@ -20,13 +20,17 @@ export async function getWishlistCutCloth(): Promise<CutCloth[]> {
 }
 
 /** 新しいカットクロスを追加 */
-export async function addCutCloth(data: Bead): Promise<CutCloth> {
+export async function addCutCloth(data: CutCloth): Promise<CutCloth> {
     return prisma.cutCloth.create({data});
 }
 
 /** カットクロスを更新（全上書き） */
-export async function updateCutCloth(id: number, data: Partial<CutCloth>): Promise<CutCloth> {
-    return prisma.cutCloth.update({where: {id}, data});
+export async function updateCutCloth(data: Partial<CutCloth> & { id: number }): Promise<CutCloth> {
+    const { id, ...updateData } = data;
+    if (typeof id !== 'number') {
+        throw new Error('Invalid ID provided for updating cut cloth.');
+    }
+    return prisma.cutCloth.update({ where: { id }, data: updateData });
 }
 
 /** wishlist フラグのみ更新 */

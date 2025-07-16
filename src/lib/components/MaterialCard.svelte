@@ -1,12 +1,11 @@
 <script lang="ts">
-    import { createEventDispatcher } from 'svelte';
+    import Pencil from 'svelte-material-icons/Pencil.svelte';
 
     export let material: any; // thread, bead, or cutCloth object
+    export let onDelete: (id: number, type: string) => void;
 
     let title: string;
     let details: string;
-
-    const dispatch = createEventDispatcher();
 
     // Helper function to translate status
     function getStatusLabel(status: string | null | undefined): string {
@@ -22,33 +21,29 @@
     $: {
         if (material.brand && material.colorNumber) { // Thread
             title = `${material.brand} ${material.colorNumber}`;
-            details = `色名: ${material.colorName || 'N/A'}
-数量: ${material.quantity}
-状態: ${getStatusLabel(material.status)}
-欲しいもの: ${material.wishlist ? 'はい' : 'いいえ'}`;
+            details = `色名: ${material.colorName || 'N/A'}\n数量: ${material.quantity}\n状態: ${getStatusLabel(material.status)}\n欲しいもの: ${material.wishlist ? 'はい' : 'いいえ'}`;
         } else if (material.itemCode && material.size) { // Bead
             title = `${material.brand} ${material.itemCode}`;
-            details = `サイズ: ${material.size}
-色名: ${material.colorName || 'N/A'}
-数量: ${material.quantity}
-状態: ${getStatusLabel(material.status)}
-欲しいもの: ${material.wishlist ? 'はい' : 'いいえ'}`;
+            details = `サイズ: ${material.size}\n色名: ${material.colorName || 'N/A'}\n数量: ${material.quantity}\n状態: ${getStatusLabel(material.status)}\n欲しいもの: ${material.wishlist ? 'はい' : 'いいえ'}`;
         } else if (material.fabricType && material.pattern) { // CutCloth
             title = `${material.fabricType} ${material.pattern}`;
-            details = `サイズ: ${material.size}
-数量: ${material.quantity}
-状態: ${getStatusLabel(material.status)}
-欲しいもの: ${material.wishlist ? 'はい' : 'いいえ'}`;
+            details = `サイズ: ${material.size}\n数量: ${material.quantity}\n状態: ${getStatusLabel(material.status)}\n欲しいもの: ${material.wishlist ? 'はい' : 'いいえ'}`;
         }
     }
 
     function handleDelete() {
-        dispatch('delete', { id: material.id, type: material.brand ? 'thread' : (material.itemCode ? 'bead' : 'cutCloth') });
+        const type = material.brand ? 'thread' : (material.itemCode ? 'bead' : 'cutCloth');
+        onDelete(material.id, type);
     }
 </script>
 
 <div class="material-card">
-    <button class="delete-button" on:click={handleDelete}>&times;</button>
+    <div class="card-actions">
+        <a href={`/inventory/edit-${material.brand ? 'thread' : (material.itemCode ? 'bead' : 'cutCloth')}/${material.id}`} class="edit-button" title="編集">
+            <Pencil size="1.2em" />
+        </a>
+        <button class="delete-button" on:click={handleDelete} title="削除">&times;</button>
+    </div>
     <div class="card-header">
         <img src="/beace.svg" alt="material icon" class="card-icon" />
         <h2>{title}</h2>
@@ -71,17 +66,30 @@
         position: relative; /* For positioning the delete button */
     }
 
-    .delete-button {
+    .card-actions {
         position: absolute;
         top: 5px;
         right: 5px;
+        display: flex;
+        gap: 4px;
+    }
+
+    .edit-button,
+    .delete-button {
         background: none;
         border: none;
-        font-size: 1.5rem;
+        font-size: 1.2rem; /* Adjusted for consistency */
         color: #aaa;
         cursor: pointer;
         line-height: 1;
         padding: 0 5px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .edit-button:hover {
+        color: #70af0a; /* Melon Green */
     }
 
     .delete-button:hover {

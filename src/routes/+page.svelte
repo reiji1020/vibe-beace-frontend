@@ -1,6 +1,7 @@
 <script>
     import { Carousel, Button, Footer, CommonHeader } from "cclkit4svelte";
     import { CCLVividColor } from "cclkit4svelte";
+    import ShoppingIcon from 'svelte-material-icons/shopping.svelte';
 
     const carouselItem = [
         {src: 'frame1.png', alt: 'frame1'},
@@ -15,9 +16,7 @@
 </section>
 <section class="description">
     <div class="informationWrapper">
-        <div class="informationImgWrapper">
-            <img class="informationImg" src="bag.png" alt="bag visual" />
-        </div>
+        <ShoppingIcon class="informationImg" size="48" color="#ed9126" />
         <div class="informationTextWrapper">
             <p class="informationText">Beaceは、ついつい同じビーズをたくさん買ってしまうあなたのための整理ボックスツールです。</p>
         </div>
@@ -46,23 +45,12 @@
 
     .informationWrapper {
         display: flex;
+        margin-bottom: 20px;
         justify-content: center;
         align-items: center;
         flex-direction: column;
-    }
-
-    .informationImgWrapper {
-        display: flex;
-        justify-content: center;
-        width: 256px;
-        margin-bottom: 40px;
-        border-bottom: solid 2px var(--melon-green);
-    }
-
-    .informationImg {
-        width: 80px;
-        height: 80px;
-        margin-bottom: 40px;
+        text-align: center;
+        word-break: auto-phrase;
     }
 
     .informationText {

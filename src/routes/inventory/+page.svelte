@@ -17,8 +17,7 @@
     let alertMessage = '';
     let alertType: 'success' | 'error' | 'warning' | 'info' = 'info';
 
-    async function handleDelete(event: CustomEvent) {
-        const { id, type } = event.detail;
+    async function handleDelete(id: number, type: string) {
         let apiEndpoint = '';
 
         switch (type) {
@@ -103,7 +102,7 @@
         {#if selectedMaterial === 'threads'}
             {#if data.threads.length > 0}
                 {#each data.threads as thread}
-                    <MaterialCard material={thread} on:delete={handleDelete} />
+                    <MaterialCard material={thread} onDelete={handleDelete} />
                 {/each}
             {:else}
                 <div class="no-data">
@@ -114,7 +113,7 @@
         {#if selectedMaterial === 'beads'}
             {#if data.beads.length > 0}
                 {#each data.beads as bead}
-                    <MaterialCard material={bead} on:delete={handleDelete} />
+                    <MaterialCard material={bead} onDelete={handleDelete} />
                 {/each}
             {:else}
                 <div class="no-data">
@@ -125,7 +124,7 @@
         {#if selectedMaterial === 'cutCloths'}
             {#if data.cutCloths.length > 0}
                 {#each data.cutCloths as cutCloth}
-                    <MaterialCard material={cutCloth} on:delete={handleDelete} />
+                    <MaterialCard material={cutCloth} onDelete={handleDelete} />
                 {/each}
             {:else}
                 <div class="no-data">

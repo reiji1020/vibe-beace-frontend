@@ -25,13 +25,14 @@ export async function addThread(data: Thread): Promise<Thread> {
 /**
  * 刺繍糸を更新（全体上書き）
  */
-export async function updateThread(
-    id: number,
-    data: Partial<Thread>
-): Promise<Thread> {
+export async function updateThread(data: Partial<Thread> & { id: number }): Promise<Thread> {
+    const { id, ...updateData } = data;
+    if (typeof id !== 'number') {
+        throw new Error('Invalid ID provided for updating thread.');
+    }
     return prisma.thread.update({
-        where: {id},
-        data: data
+        where: { id },
+        data: updateData
     });
 }
 
@@ -45,6 +46,15 @@ export async function setWishlistThread(
     return prisma.thread.update({
         where: {id},
         data: {wishlist}
+    });
+}
+
+/**
+ * IDで刺繍糸を取得
+ */
+export async function getThreadById(id: number): Promise<Thread | null> {
+    return prisma.thread.findUnique({
+        where: { id },
     });
 }
 
