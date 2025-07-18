@@ -1,6 +1,4 @@
 <script lang="ts">
-    import Pencil from 'svelte-material-icons/Pencil.svelte';
-
     export let material: any; // thread, bead, or cutCloth object
     export let onDelete: (id: number, type: string) => void;
 
@@ -40,7 +38,7 @@
 <div class="material-card">
     <div class="card-actions">
         <a href={`/inventory/edit-${material.brand ? 'thread' : (material.itemCode ? 'bead' : 'cutCloth')}/${material.id}`} class="edit-button" title="編集">
-            <Pencil size="1.2em" />
+            編集
         </a>
         <button class="delete-button" on:click={handleDelete} title="削除">&times;</button>
     </div>
