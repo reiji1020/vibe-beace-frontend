@@ -3,8 +3,19 @@ import type { CutCloth } from '$lib/types';
 import { prisma } from '$lib/db';
 
 /** 全カットクロスを取得（ソート付き） */
-export async function getAllCutCloth(): Promise<CutCloth[]> {
+export async function getAllCutCloth(query: string | null = null): Promise<CutCloth[]> {
+	const where = query
+		? {
+				OR: [
+					{ fabricType: { contains: query } },
+					{ pattern: { contains: query } },
+					{ size: { contains: query } }
+				]
+		  }
+		: {};
+
 	return prisma.cutCloth.findMany({
+		where,
 		orderBy: { id: 'asc' }
 	});
 }

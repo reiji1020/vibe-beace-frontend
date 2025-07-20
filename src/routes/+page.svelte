@@ -1,5 +1,5 @@
 <script>
-	import { Carousel, Button, Footer, CommonHeader } from 'cclkit4svelte';
+	import { Carousel, Button, CommonHeader } from 'cclkit4svelte';
 	import { CCLVividColor } from 'cclkit4svelte';
 
 	const carouselItem = [
@@ -9,13 +9,6 @@
 	];
 </script>
 
-<CommonHeader
-	bgColor={CCLVividColor.PINEAPPLE_YELLOW}
-	height="--hd-normal"
-	logo="beace.svg"
-	logoHeight="50px"
-	href="/"
-/>
 <section class="splash">
 	<img class="splashImage" src="Splash.png" alt="main visual" />
 </section>
@@ -53,7 +46,6 @@
 		</a>
 	</div>
 </section>
-<Footer bgColor={CCLVividColor.PINEAPPLE_YELLOW} />
 
 <style>
 	.splash {

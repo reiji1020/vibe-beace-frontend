@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { CommonHeader, RadioButton, Button, Alert } from 'cclkit4svelte';
+	import {CommonHeader, RadioButton, Button, Alert, Footer} from 'cclkit4svelte';
 	import { CCLVividColor } from 'cclkit4svelte';
 	import MaterialCard from '$lib/components/MaterialCard.svelte';
 
@@ -12,6 +12,7 @@
 	];
 
 	let selectedMaterial = 'threads';
+	let searchQuery = data.query || '';
 
 	let showAlert = false;
 	let alertMessage = '';
@@ -63,111 +64,124 @@
 	}
 </script>
 
-<CommonHeader
-	bgColor={CCLVividColor.PINEAPPLE_YELLOW}
-	height="--hd-normal"
-	logo="/beace.svg"
-	logoHeight="50px"
-	href="/"
-/>
+{#if showAlert}
+	<div class="alert-container">
+		<!-- Note: Based on previous inspection of node_modules/cclkit4svelte/dist/index.js, 'Alert' does not appear to be exported.
+				 If a SyntaxError occurs, it might be due to this component not being available in the library. -->
+		<Alert message={alertMessage} type={alertType} dismissible={true} />
+	</div>
+{/if}
 
-<main>
-	{#if showAlert}
-		<div class="alert-container">
-			<!-- Note: Based on previous inspection of node_modules/cclkit4svelte/dist/index.js, 'Alert' does not appear to be exported.
-                 If a SyntaxError occurs, it might be due to this component not being available in the library. -->
-			<Alert message={alertMessage} type={alertType} dismissible={true} />
-		</div>
-	{/if}
-
+<div class="controls-container">
 	<div class="radio-group">
 		{#each materialTypes as material}
 			<RadioButton bind:group={selectedMaterial} value={material.id} label={material.label} />
 		{/each}
 	</div>
 
-	<div class="add-button-container">
-		{#if selectedMaterial === 'threads'}
-			<a href="/inventory/add-thread">
-				<Button
-					label="刺繍糸を追加する"
-					onClick={() => {}}
-					bgColor={CCLVividColor.PINEAPPLE_YELLOW}
-				/>
-			</a>
-		{/if}
-		{#if selectedMaterial === 'beads'}
-			<a href="/inventory/add-bead">
-				<Button
-					label="ビーズを追加する"
-					onClick={() => {}}
-					bgColor={CCLVividColor.PINEAPPLE_YELLOW}
-				/>
-			</a>
-		{/if}
-		{#if selectedMaterial === 'cutCloths'}
-			<a href="/inventory/add-cut-cloth">
-				<Button
-					label="カットクロスを追加する"
-					onClick={() => {}}
-					bgColor={CCLVividColor.PINEAPPLE_YELLOW}
-				/>
-			</a>
-		{/if}
-	</div>
+	<form class="search-form" method="GET">
+		<input type="search" name="query" placeholder="検索..." bind:value={searchQuery} />
+		<Button type="submit" label="検索" bgColor={CCLVividColor.PINEAPPLE_YELLOW} />
+	</form>
+</div>
 
-	<div class="card-container">
-		{#if selectedMaterial === 'threads'}
-			{#if data.threads.length > 0}
-				{#each data.threads as thread}
-					<MaterialCard material={thread} onDelete={handleDelete} />
-				{/each}
-			{:else}
-				<div class="no-data">
-					<p>刺繍糸のデータがありません。</p>
-				</div>
-			{/if}
+<div class="add-button-container">
+	{#if selectedMaterial === 'threads'}
+		<a href="/inventory/add-thread">
+			<Button
+				label="刺繍糸を追加する"
+				onClick={() => {}}
+				bgColor={CCLVividColor.PINEAPPLE_YELLOW}
+			/>
+		</a>
+	{/if}
+	{#if selectedMaterial === 'beads'}
+		<a href="/inventory/add-bead">
+			<Button
+				label="ビーズを追加する"
+				onClick={() => {}}
+				bgColor={CCLVividColor.PINEAPPLE_YELLOW}
+			/>
+		</a>
+	{/if}
+	{#if selectedMaterial === 'cutCloths'}
+		<a href="/inventory/add-cut-cloth">
+			<Button
+				label="カットクロスを追加する"
+				onClick={() => {}}
+				bgColor={CCLVividColor.PINEAPPLE_YELLOW}
+			/>
+		</a>
+	{/if}
+</div>
+
+<div class="search-results-alert">
+	{#if data.query}
+		{#if data.threads.length > 0 || data.beads.length > 0 || data.cutCloths.length > 0}
+			<Alert type="success" message={`「${data.query}」の検索結果が見つかりました。`} />
+		{:else}
+			<Alert type="error" message={`「${data.query}」に一致する資材は見つかりませんでした。`} />
 		{/if}
-		{#if selectedMaterial === 'beads'}
-			{#if data.beads.length > 0}
-				{#each data.beads as bead}
-					<MaterialCard material={bead} onDelete={handleDelete} />
-				{/each}
-			{:else}
-				<div class="no-data">
-					<p>ビーズのデータがありません。</p>
-				</div>
-			{/if}
-		{/if}
-		{#if selectedMaterial === 'cutCloths'}
-			{#if data.cutCloths.length > 0}
-				{#each data.cutCloths as cutCloth}
-					<MaterialCard material={cutCloth} onDelete={handleDelete} />
-				{/each}
-			{:else}
-				<div class="no-data">
-					<p>カットクロスのデータがありません。</p>
-				</div>
-			{/if}
-		{/if}
-	</div>
-</main>
+	{/if}
+</div>
+
+<div class="card-container">
+	{#if selectedMaterial === 'threads'}
+		{#each data.threads as thread}
+			<MaterialCard material={thread} onDelete={handleDelete} />
+		{/each}
+	{/if}
+	{#if selectedMaterial === 'beads'}
+		{#each data.beads as bead}
+			<MaterialCard material={bead} onDelete={handleDelete} />
+		{/each}
+	{/if}
+	{#if selectedMaterial === 'cutCloths'}
+		{#each data.cutCloths as cutCloth}
+			<MaterialCard material={cutCloth} onDelete={handleDelete} />
+		{/each}
+	{/if}
+</div>
 
 <style>
 	.alert-container {
 		margin: 1rem 2rem;
 	}
+	.controls-container {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin: 2rem;
+		flex-wrap: wrap;
+		gap: 1rem;
+	}
+
 	.radio-group {
 		display: flex;
 		justify-content: center;
 		gap: 2rem; /* Add some space between radio buttons */
-		margin: 2rem;
 	}
+
+	.search-form {
+		display: flex;
+		gap: 0.5rem;
+	}
+
+	.search-form input {
+		padding: 0.5rem;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+	}
+
 	.add-button-container {
 		display: flex;
 		justify-content: center;
 		margin: 0 2rem 1rem;
 	}
+	.search-results-alert {
+		margin: 1rem 2rem;
+	}
+
 	.card-container {
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));

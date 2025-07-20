@@ -3,8 +3,20 @@ import type { Bead } from '$lib/types';
 import { prisma } from '$lib/db';
 
 /** 全ビーズを取得（ソート付き） */
-export async function getAllBeads(): Promise<Bead[]> {
+export async function getAllBeads(query: string | null = null): Promise<Bead[]> {
+	const where = query
+		? {
+				OR: [
+					{ brand: { contains: query } },
+					{ itemCode: { contains: query } },
+					{ colorName: { contains: query } },
+					{ size: { contains: query } }
+				]
+		  }
+		: {};
+
 	return prisma.bead.findMany({
+		where,
 		orderBy: { itemCode: 'asc' }
 	});
 }

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, Checkbox, CommonHeader, FormGroup, Input, Select } from 'cclkit4svelte';
+	import { Button, Checkbox, FormGroup, Input, Select } from 'cclkit4svelte';
 	import { CCLVividColor } from 'cclkit4svelte';
 	import type { PageData } from './$types';
 
@@ -12,13 +12,6 @@
 		{ value: 'low', label: '残りわずか' }
 	];
 </script>
-
-<CommonHeader
-	bgColor={CCLVividColor.PINEAPPLE_YELLOW}
-	height="--hd-normal"
-	logo="/beace.svg"
-	logoHeight="50px"
-/>
 
 <main>
 	<h1>刺繍糸を編集</h1>

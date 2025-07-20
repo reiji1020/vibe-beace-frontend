@@ -13,15 +13,6 @@ export const actions: Actions = {
 		const status = data.get('status') as string;
 		const wishlist = data.get('wishlist') === 'on';
 
-		console.log('Attempting to add thread with data:', {
-			brand,
-			colorNumber,
-			colorName,
-			quantity,
-			status,
-			wishlist
-		});
-
 		try {
 			await addThread({
 				brand,
@@ -31,7 +22,6 @@ export const actions: Actions = {
 				status,
 				wishlist
 			});
-			console.log('Thread added successfully.');
 		} catch (error) {
 			console.error('Error adding thread:', error);
 			// エラーハンドリングをここに追加することもできます

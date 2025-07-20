@@ -1,18 +1,20 @@
-// src/routes/inventory/+page.ts
 import { getAllBeads } from '$lib/controllers/beadController';
 import { getAllThreads } from '$lib/controllers/threadController';
 import { getAllCutCloth } from '$lib/controllers/cutClothController';
 
-export async function load() {
+export async function load({ url }) {
+	const query = url.searchParams.get('query');
+
 	const [beads, threads, cutCloths] = await Promise.all([
-		getAllBeads(),
-		getAllThreads(),
-		getAllCutCloth()
+		getAllBeads(query),
+		getAllThreads(query),
+		getAllCutCloth(query)
 	]);
 
 	return {
 		beads,
 		threads,
-		cutCloths
+		cutCloths,
+		query
 	};
 }
