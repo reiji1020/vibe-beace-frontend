@@ -17,11 +17,13 @@
 ## 🧵 Thread（刺繍糸）
 
 ### 取得系
+
 - `GET /api/getThreads`：全件取得
 - `GET /api/getThread/:id`：ID指定取得
 - `GET /api/getWishlistThreads`：買い物リストのみ
 
 ### 登録・更新・削除
+
 - `POST /api/addThread`：新規追加
 - `PUT /api/updateThread/:id`：上書き更新
 - `PATCH /api/setWishlistThread/:id`：wishlistフラグのみ更新
@@ -32,11 +34,13 @@
 ## 🟣 Bead（ビーズ）
 
 ### 取得系
+
 - `GET /api/getBeads`
 - `GET /api/getBead/:id`
 - `GET /api/getWishlistBeads`
 
 ### 登録・更新・削除
+
 - `POST /api/addBead`
 - `PUT /api/updateBead/:id`
 - `PATCH /api/setWishlistBead/:id`
@@ -47,11 +51,13 @@
 ## 🧵 CutCloth（カットクロス）
 
 ### 取得系
+
 - `GET /api/getCutCloths`
 - `GET /api/getCutCloth/:id`
 - `GET /api/getWishlistCutCloths`
 
 ### 登録・更新・削除
+
 - `POST /api/addCutCloth`
 - `PUT /api/updateCutCloth/:id`
 - `PATCH /api/setWishlistCutCloth/:id`
@@ -62,11 +68,13 @@
 ## 🧵 XStitchCloth（クロスステッチ布）
 
 ### 取得系
+
 - `GET /api/getXStitchCloths`
 - `GET /api/getXStitchCloth/:id`
 - `GET /api/getWishlistXStitchCloths`
 
 ### 登録・更新・削除
+
 - `POST /api/addXStitchCloth`
 - `PUT /api/updateXStitchCloth/:id`
 - `PATCH /api/setWishlistXStitchCloth/:id`
@@ -77,14 +85,15 @@
 ## 📦 リクエストボディ例（共通）
 
 ### addThread / updateThread 用
+
 ```json
 {
-  "brand": "DMC",
-  "colorNumber": "310",
-  "colorName": "Black",
-  "quantity": 3,
-  "status": "used",
-  "wishlist": false
+	"brand": "DMC",
+	"colorNumber": "310",
+	"colorName": "Black",
+	"quantity": 3,
+	"status": "used",
+	"wishlist": false
 }
 ```
 
@@ -96,13 +105,13 @@
 
 ```json
 {
-  "success": true,
-  "data": {
-    "id": 1,
-    "brand": "DMC",
-    "colorNumber": "310",
-    "quantity": 3
-  }
+	"success": true,
+	"data": {
+		"id": 1,
+		"brand": "DMC",
+		"colorNumber": "310",
+		"quantity": 3
+	}
 }
 ```
 
@@ -112,4 +121,3 @@
 
 - `PATCH` エンドポイントは、部分的な更新（wishlistやstatusのトグル）に使用
 - 名前付きエンドポイントのため、Vibe CodingやUI側で意図が明確に
-

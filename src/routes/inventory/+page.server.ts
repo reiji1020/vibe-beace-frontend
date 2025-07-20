@@ -4,15 +4,15 @@ import { getAllThreads } from '$lib/controllers/threadController';
 import { getAllCutCloth } from '$lib/controllers/cutClothController';
 
 export async function load() {
-    const [beads, threads, cutCloths] = await Promise.all([
-        getAllBeads(),
-        getAllThreads(),
-        getAllCutCloth()
-    ]);
+	const [beads, threads, cutCloths] = await Promise.all([
+		getAllBeads(),
+		getAllThreads(),
+		getAllCutCloth()
+	]);
 
-    return {
-        beads,
-        threads,
-        cutCloths
-    };
+	return {
+		beads,
+		threads,
+		cutCloths
+	};
 }

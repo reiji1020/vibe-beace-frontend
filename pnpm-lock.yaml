@@ -12,8 +12,8 @@ dependencies:
     specifier: ^6.8.2
     version: 6.8.2(prisma@6.8.2)(typescript@5.8.3)
   cclkit4svelte:
-    specifier: ^2.0.1
-    version: 2.0.1
+    specifier: ^2.0.2
+    version: 2.0.2
   zod:
     specifier: ^3.25.42
     version: 3.25.42
@@ -1142,8 +1142,8 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
-  /cclkit4svelte@2.0.1:
-    resolution: {integrity: sha512-JtT73dEivJyTvBJzy2PvOHLEE2J7hF/fN29Zkkqgrb1sAEfbqtRIbfL1SKRBF8weMkHdFeaoxyZw/Qod1paPmQ==}
+  /cclkit4svelte@2.0.2:
+    resolution: {integrity: sha512-6xWUIceoVEDRiRyqWTrVnjQKN7cgbS+PC2ZJ6QTHdsm4EM8j2Y9sa0PIKjQiGDw7jZ2F/ssA+J46w5vhZZcBDQ==}
     dependencies:
       luxon: 3.7.1
     dev: false

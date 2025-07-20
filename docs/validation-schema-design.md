@@ -19,12 +19,12 @@
 import { z } from 'zod';
 
 export const threadSchema = z.object({
-  brand: z.string().min(1),
-  colorNumber: z.string().min(1),
-  colorName: z.string().optional(),
-  quantity: z.number().int().min(0),
-  status: z.enum(['unused', 'used', 'low']).optional(),
-  wishlist: z.boolean()
+	brand: z.string().min(1),
+	colorNumber: z.string().min(1),
+	colorName: z.string().optional(),
+	quantity: z.number().int().min(0),
+	status: z.enum(['unused', 'used', 'low']).optional(),
+	wishlist: z.boolean()
 });
 ```
 
@@ -34,13 +34,13 @@ export const threadSchema = z.object({
 
 ```ts
 export const beadSchema = z.object({
-  brand: z.string().min(1),
-  itemCode: z.string().min(1),
-  size: z.string().min(1),
-  colorName: z.string().optional(),
-  quantity: z.number().int().min(0),
-  status: z.enum(['unused', 'used', 'low']).optional(),
-  wishlist: z.boolean()
+	brand: z.string().min(1),
+	itemCode: z.string().min(1),
+	size: z.string().min(1),
+	colorName: z.string().optional(),
+	quantity: z.number().int().min(0),
+	status: z.enum(['unused', 'used', 'low']).optional(),
+	wishlist: z.boolean()
 });
 ```
 
@@ -50,12 +50,12 @@ export const beadSchema = z.object({
 
 ```ts
 export const cutClothSchema = z.object({
-  fabricType: z.string().min(1),
-  pattern: z.string().min(1),
-  size: z.string().min(1),
-  quantity: z.number().int().min(0),
-  status: z.enum(['unused', 'used']).optional(),
-  wishlist: z.boolean()
+	fabricType: z.string().min(1),
+	pattern: z.string().min(1),
+	size: z.string().min(1),
+	quantity: z.number().int().min(0),
+	status: z.enum(['unused', 'used']).optional(),
+	wishlist: z.boolean()
 });
 ```
 
@@ -65,12 +65,12 @@ export const cutClothSchema = z.object({
 
 ```ts
 export const xStitchClothSchema = z.object({
-  count: z.string().min(1),
-  color: z.string().min(1),
-  size: z.string().min(1),
-  quantity: z.number().int().min(0),
-  status: z.enum(['unused', 'used']).optional(),
-  wishlist: z.boolean()
+	count: z.string().min(1),
+	color: z.string().min(1),
+	size: z.string().min(1),
+	quantity: z.number().int().min(0),
+	status: z.enum(['unused', 'used']).optional(),
+	wishlist: z.boolean()
 });
 ```
 
@@ -82,14 +82,14 @@ export const xStitchClothSchema = z.object({
 import { threadSchema } from '$lib/validation/threadSchema';
 
 export const POST: RequestHandler = async ({ request }) => {
-  try {
-    const body = await request.json();
-    const validated = threadSchema.parse(body);
-    const created = await addThread(validated);
-    return new Response(JSON.stringify({ success: true, data: created }), { status: 201 });
-  } catch (err) {
-    return new Response(JSON.stringify({ success: false, error: err.message }), { status: 400 });
-  }
+	try {
+		const body = await request.json();
+		const validated = threadSchema.parse(body);
+		const created = await addThread(validated);
+		return new Response(JSON.stringify({ success: true, data: created }), { status: 201 });
+	} catch (err) {
+		return new Response(JSON.stringify({ success: false, error: err.message }), { status: 400 });
+	}
 };
 ```
 

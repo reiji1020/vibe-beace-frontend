@@ -9,7 +9,7 @@
 ```
 project-root/
 ├── src/
-│   ├── lib/                 
+│   ├── lib/
 │   │   └── db.ts            # NeonDBへの接続設定（postgres.jsやPrisma）
 │   ├── routes/
 │   │   └── api/
@@ -55,4 +55,3 @@ project-root/
 
 - `src/lib/types.ts`  
   型定義ファイル。APIやDBで共通化します。
-

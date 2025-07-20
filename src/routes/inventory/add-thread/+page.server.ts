@@ -4,32 +4,39 @@ import { redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
 
 export const actions: Actions = {
-    default: async ({ request }) => {
-        const data = await request.formData();
-        const brand = data.get('brand') as string;
-        const colorNumber = data.get('colorNumber') as string;
-        const colorName = data.get('colorName') as string;
-        const quantity = Number(data.get('quantity'));
-        const status = data.get('status') as string;
-        const wishlist = data.get('wishlist') === 'on';
+	default: async ({ request }) => {
+		const data = await request.formData();
+		const brand = data.get('brand') as string;
+		const colorNumber = data.get('colorNumber') as string;
+		const colorName = data.get('colorName') as string;
+		const quantity = Number(data.get('quantity'));
+		const status = data.get('status') as string;
+		const wishlist = data.get('wishlist') === 'on';
 
-        console.log('Attempting to add thread with data:', { brand, colorNumber, colorName, quantity, status, wishlist });
+		console.log('Attempting to add thread with data:', {
+			brand,
+			colorNumber,
+			colorName,
+			quantity,
+			status,
+			wishlist
+		});
 
-        try {
-            await addThread({
-                brand,
-                colorNumber,
-                colorName,
-                quantity,
-                status,
-                wishlist,
-            });
-            console.log('Thread added successfully.');
-        } catch (error) {
-            console.error('Error adding thread:', error);
-            // エラーハンドリングをここに追加することもできます
-        }
+		try {
+			await addThread({
+				brand,
+				colorNumber,
+				colorName,
+				quantity,
+				status,
+				wishlist
+			});
+			console.log('Thread added successfully.');
+		} catch (error) {
+			console.error('Error adding thread:', error);
+			// エラーハンドリングをここに追加することもできます
+		}
 
-        throw redirect(303, '/inventory');
-    },
+		throw redirect(303, '/inventory');
+	}
 };

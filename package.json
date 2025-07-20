@@ -47,7 +47,7 @@
 	},
 	"dependencies": {
 		"@prisma/client": "^6.8.2",
-		"cclkit4svelte": "^2.0.1",
+		"cclkit4svelte": "^2.0.2",
 		"zod": "^3.25.42"
 	}
 }

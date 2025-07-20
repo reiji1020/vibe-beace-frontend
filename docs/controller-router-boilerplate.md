@@ -40,9 +40,9 @@ export async function addThread(data: {
   wishlist: boolean;
 }) {
   return await sql\`
-    INSERT INTO thread 
-      (brand, colorNumber, colorName, quantity, status, wishlist) 
-    VALUES 
+    INSERT INTO thread
+      (brand, colorNumber, colorName, quantity, status, wishlist)
+    VALUES
       (\${data.brand}, \${data.colorNumber}, \${data.colorName}, \${data.quantity}, \${data.status}, \${data.wishlist})
     RETURNING *;
   \`;
@@ -59,10 +59,10 @@ import { getAllThreads } from '$lib/controllers/threadController';
 import type { RequestHandler } from '@sveltejs/kit';
 
 export const GET: RequestHandler = async () => {
-  const threads = await getAllThreads();
-  return new Response(JSON.stringify({ success: true, data: threads }), {
-    status: 200
-  });
+	const threads = await getAllThreads();
+	return new Response(JSON.stringify({ success: true, data: threads }), {
+		status: 200
+	});
 };
 ```
 
@@ -76,19 +76,19 @@ import { addThread } from '$lib/controllers/threadController';
 import type { RequestHandler } from '@sveltejs/kit';
 
 export const POST: RequestHandler = async ({ request }) => {
-  try {
-    const body = await request.json();
-    const newThread = await addThread(body);
+	try {
+		const body = await request.json();
+		const newThread = await addThread(body);
 
-    return new Response(JSON.stringify({ success: true, data: newThread }), {
-      status: 201
-    });
-  } catch (err) {
-    console.error(err);
-    return new Response(JSON.stringify({ success: false, error: 'Invalid input' }), {
-      status: 400
-    });
-  }
+		return new Response(JSON.stringify({ success: true, data: newThread }), {
+			status: 201
+		});
+	} catch (err) {
+		console.error(err);
+		return new Response(JSON.stringify({ success: false, error: 'Invalid input' }), {
+			status: 400
+		});
+	}
 };
 ```
 
