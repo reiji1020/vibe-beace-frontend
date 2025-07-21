@@ -1,8 +1,7 @@
 <script lang="ts">
   import { enhance } from "$app/forms";
   import type { ActionData } from "./$types";
-  import { Button, CCLVividColor } from "cclkit4svelte";
-  import AlertMessage from "$lib/components/AlertMessage.svelte";
+  import { Button, CCLVividColor, Alert } from "cclkit4svelte";
 
   export let form: ActionData;
 </script>
@@ -11,7 +10,7 @@
   <div class="login-card">
     <h1 class="login-title">Login</h1>
     {#if form?.error}
-      <AlertMessage type="error" message={form.error} />
+      <Alert type="error" message={form.error} />
     {/if}
     <form method="POST" use:enhance class="login-form">
       <div class="form-group">

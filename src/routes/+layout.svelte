@@ -1,8 +1,9 @@
 <script lang="ts">
 	import '../app.css';
-	import {CCLVividColor, CommonHeader, Footer} from 'cclkit4svelte';
+	import { CCLVividColor, CommonHeader, Footer, Button } from 'cclkit4svelte';
+	import type { LayoutData } from './$types';
 
-	let { children } = $props();
+	let { children, data } = $props();
 </script>
 
 <div class="page-container">
@@ -13,6 +14,13 @@
 			logoHeight="50px"
 			href="/"
 	/>
+	{#if data.user}
+		<div class="logout-button-wrapper">
+			<a href="/logout">
+				<Button label="Logout" bgColor={CCLVividColor.PINEAPPLE_YELLOW} />
+			</a>
+		</div>
+	{/if}
 	<main>
 		{@render children()}
 	</main>
@@ -29,4 +37,13 @@
 	main {
 		flex: 1;
 	}
+
+	.logout-button-wrapper {
+		position: absolute;
+		top: 10px;
+		right: 20px;
+		z-index: 1000;
+	}
 </style>
+
+
