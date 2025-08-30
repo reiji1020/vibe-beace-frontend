@@ -1,6 +1,18 @@
 <script lang="ts">
-	import { Button, Checkbox, CommonHeader, FormGroup, Input, Select } from 'cclkit4svelte';
+	import { Button, Checkbox, FormGroup, Input, Select } from 'cclkit4svelte';
 	import { CCLVividColor } from 'cclkit4svelte';
+	export let data: any;
+  export let form: any;
+  import { enhance } from '$app/forms';
+
+  const topError = () => {
+    const e = form?.error;
+    if (!e) return '';
+    if (typeof e === 'string') return e;
+    const arr = e?.formErrors as string[] | undefined;
+    return arr && arr.length ? arr.join(', ') : '';
+  };
+  const fe = (name: string) => form?.error?.fieldErrors?.[name]?.[0] as string | undefined;
 
 	let brand: string = '';
 	let colorNumber: string = '';
@@ -16,40 +28,44 @@
 	];
 </script>
 
-<CommonHeader
-	bgColor={CCLVividColor.PINEAPPLE_YELLOW}
-	height="--hd-normal"
-	logo="/beace.svg"
-	logoHeight="50px"
-/>
-
 <main>
 	<h1>刺繍糸を追加</h1>
 
-	<form method="POST">
+	<form method="POST" use:enhance>
+		<input type="hidden" name="csrfToken" value={data.csrfToken} />
+
+    {#if topError()}
+      <div class="mt-2 mb-2 text-red-600">{topError()}</div>
+    {/if}
 		<FormGroup>
 			<Input label="メーカー" bind:value={brand} required />
 			<input type="hidden" name="brand" value={brand} />
+      {#if fe('brand')}<div class="text-red-600 text-sm mt-1">{fe('brand')}</div>{/if}
 		</FormGroup>
 		<FormGroup>
 			<Input label="色番号" bind:value={colorNumber} required />
 			<input type="hidden" name="colorNumber" value={colorNumber} />
+      {#if fe('colorNumber')}<div class="text-red-600 text-sm mt-1">{fe('colorNumber')}</div>{/if}
 		</FormGroup>
 		<FormGroup>
 			<Input label="色名" bind:value={colorName} />
 			<input type="hidden" name="colorName" value={colorName} />
+      {#if fe('colorName')}<div class="text-red-600 text-sm mt-1">{fe('colorName')}</div>{/if}
 		</FormGroup>
 		<FormGroup>
 			<Input label="数量" type="number" bind:value={quantity} required />
 			<input type="hidden" name="quantity" value={quantity} />
+      {#if fe('quantity')}<div class="text-red-600 text-sm mt-1">{fe('quantity')}</div>{/if}
 		</FormGroup>
 		<FormGroup>
 			<Select label="状態" options={statusOptions} bind:value={status} />
 			<input type="hidden" name="status" value={status} />
+      {#if fe('status')}<div class="text-red-600 text-sm mt-1">{fe('status')}</div>{/if}
 		</FormGroup>
 		<FormGroup>
 			<Checkbox label="欲しいものリストに追加" bind:checked={wishlist} />
 			<input type="hidden" name="wishlist" value={wishlist ? 'on' : 'off'} />
+      {#if fe('wishlist')}<div class="text-red-600 text-sm mt-1">{fe('wishlist')}</div>{/if}
 		</FormGroup>
 		<Button
 			type="submit"

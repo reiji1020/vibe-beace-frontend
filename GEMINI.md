@@ -31,7 +31,7 @@
 
 **タスク:**
 
-- **API エンドポイント:** 既存の資材タイプと同様に、API ルート (`src/routes/api/getXStitchCloth/+server.ts`、`src/routes/api/addXStitchCloth/+server.ts`、`src/routes/api/deleteXStitchCloth/+server.ts`) を作成します。
+- **API エンドポイント:** 既存の資材タイプと同様に、API ルート (`src/routes/api/getXStitchCloths/+server.ts`、`src/routes/api/addXStitchCloth/+server.ts`、`src/routes/api/deleteXStitchCloth/+server.ts`) を作成します。
 - **コントローラー:** `src/lib/controllers/xStitchClothController.ts` に `getAllXStitchCloth`、`addXStitchCloth`、`deleteXStitchCloth` 関数を実装します。
 - **フロントエンド統合:**
   - `src/routes/inventory/+page.server.ts` を更新して `XStitchCloth` データを取得します。

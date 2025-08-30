@@ -1,12 +1,25 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import { xStitchClothSchema } from '$lib/validation/xStitchClothSchema';
 import { addXStitchCloth } from '$lib/controllers/xStitchClothController';
+import { verifyCsrfFromHeader } from '$lib/csrf';
 
-export const POST: RequestHandler = async ({ request }) => {
+export const POST: RequestHandler = async ({ request, cookies }) => {
+  if (!verifyCsrfFromHeader(cookies, request)) {
+    return new Response(JSON.stringify({ success: false, error: 'Invalid CSRF token' }), {
+      status: 403,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
   try {
     const body = await request.json();
-    const validated = xStitchClothSchema.parse(body);
-    const created = await addXStitchCloth(validated);
+    const parsed = xStitchClothSchema.safeParse(body);
+    if (!parsed.success) {
+      return new Response(JSON.stringify({ success: false, error: parsed.error.flatten() }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+    const created = await addXStitchCloth(parsed.data);
     return new Response(JSON.stringify({ success: true, data: created }), {
       status: 201,
       headers: { 'Content-Type': 'application/json' }
@@ -19,4 +32,3 @@ export const POST: RequestHandler = async ({ request }) => {
     });
   }
 };
-

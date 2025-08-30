@@ -1,5 +1,5 @@
 <script>
-	import { Carousel, Button, CommonHeader } from 'cclkit4svelte';
+	import { Carousel, Button } from 'cclkit4svelte';
 	import { CCLVividColor } from 'cclkit4svelte';
 
 	const carouselItem = [

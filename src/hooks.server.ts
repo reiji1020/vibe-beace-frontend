@@ -7,8 +7,17 @@ export const handle: Handle = async ({ event, resolve }) => {
     event.locals.user = { name: 'authenticated' };
   }
 
-  if (!event.locals.user && event.url.pathname.startsWith('/inventory')) {
-    return new Response('Redirect', { headers: { Location: '/login' }, status: 302 });
+  if (!event.locals.user) {
+    const path = event.url.pathname;
+    if (path.startsWith('/inventory')) {
+      return new Response('Redirect', { headers: { Location: '/login' }, status: 302 });
+    }
+    if (path.startsWith('/api')) {
+      return new Response(JSON.stringify({ success: false, error: 'Unauthorized' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
   }
 
   const response = await resolve(event);

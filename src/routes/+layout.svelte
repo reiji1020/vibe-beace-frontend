@@ -8,11 +8,11 @@
 
 <div class="page-container">
 	<CommonHeader
-			bgColor={CCLVividColor.PINEAPPLE_YELLOW}
-			height="--hd-normal"
-			logo="beace.svg"
-			logoHeight="50px"
-			href="/"
+		bgColor={CCLVividColor.PINEAPPLE_YELLOW}
+		height="--hd-normal"
+		logo="/beace.svg"
+		logoHeight="50px"
+		href="/"
 	/>
 	{#if data.user}
 		<div class="logout-button-wrapper">
@@ -45,5 +45,4 @@
 		z-index: 1000;
 	}
 </style>
-
 

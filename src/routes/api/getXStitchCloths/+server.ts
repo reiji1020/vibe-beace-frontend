@@ -9,4 +9,3 @@ export const GET: RequestHandler = async ({ url }) => {
     headers: { 'Content-Type': 'application/json' }
   });
 };
-

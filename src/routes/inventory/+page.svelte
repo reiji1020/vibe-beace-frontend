@@ -1,5 +1,5 @@
 <script lang="ts">
-	import {CommonHeader, RadioButton, Button, Alert, Footer} from 'cclkit4svelte';
+	import { RadioButton, Button, Alert } from 'cclkit4svelte';
 	import { CCLVividColor } from 'cclkit4svelte';
 	import MaterialCard from '$lib/components/MaterialCard.svelte';
 
@@ -40,11 +40,16 @@
 				return;
 		}
 
-		if (confirm('本当に削除しますか？')) {
+    if (confirm('本当に削除しますか？')) {
+			// Read CSRF token from cookie
+			const csrf = document.cookie
+				.split('; ')
+				.find((c) => c.startsWith('csrf='))?.split('=')[1] ?? '';
 			const response = await fetch(apiEndpoint, {
 				method: 'DELETE',
 				headers: {
-					'Content-Type': 'application/json'
+					'Content-Type': 'application/json',
+					'X-CSRF-Token': csrf
 				},
 				body: JSON.stringify({ id })
 			});

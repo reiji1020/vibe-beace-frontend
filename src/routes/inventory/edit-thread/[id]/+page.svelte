@@ -5,6 +5,17 @@
 
 	export let data: PageData;
 	let { thread } = data;
+  export let form: any;
+  import { enhance } from '$app/forms';
+
+  const topError = () => {
+    const e = form?.error;
+    if (!e) return '';
+    if (typeof e === 'string') return e;
+    const arr = e?.formErrors as string[] | undefined;
+    return arr && arr.length ? arr.join(', ') : '';
+  };
+  const fe = (name: string) => form?.error?.fieldErrors?.[name]?.[0] as string | undefined;
 
 	const statusOptions = [
 		{ value: 'unused', label: '未使用' },
@@ -16,30 +27,38 @@
 <main>
 	<h1>刺繍糸を編集</h1>
 
-	<form method="POST">
+	<form method="POST" use:enhance>
+		<input type="hidden" name="csrfToken" value={data.csrfToken} />
+    {#if topError()}<div class="mt-2 mb-2 text-red-600">{topError()}</div>{/if}
 		<FormGroup>
 			<Input label="メーカー" bind:value={thread.brand} required />
 			<input type="hidden" name="brand" value={thread.brand} />
+      {#if fe('brand')}<div class="text-red-600 text-sm mt-1">{fe('brand')}</div>{/if}
 		</FormGroup>
 		<FormGroup>
 			<Input label="色番号" bind:value={thread.colorNumber} required />
 			<input type="hidden" name="colorNumber" value={thread.colorNumber} />
+      {#if fe('colorNumber')}<div class="text-red-600 text-sm mt-1">{fe('colorNumber')}</div>{/if}
 		</FormGroup>
 		<FormGroup>
 			<Input label="色名" bind:value={thread.colorName} />
 			<input type="hidden" name="colorName" value={thread.colorName} />
+      {#if fe('colorName')}<div class="text-red-600 text-sm mt-1">{fe('colorName')}</div>{/if}
 		</FormGroup>
 		<FormGroup>
 			<Input label="数量" type="number" bind:value={thread.quantity} required />
 			<input type="hidden" name="quantity" value={thread.quantity} />
+      {#if fe('quantity')}<div class="text-red-600 text-sm mt-1">{fe('quantity')}</div>{/if}
 		</FormGroup>
 		<FormGroup>
 			<Select label="状態" options={statusOptions} bind:value={thread.status} />
 			<input type="hidden" name="status" value={thread.status} />
+      {#if fe('status')}<div class="text-red-600 text-sm mt-1">{fe('status')}</div>{/if}
 		</FormGroup>
 		<FormGroup>
 			<Checkbox label="欲しいものリストに追加" bind:checked={thread.wishlist} />
 			<input type="hidden" name="wishlist" value={thread.wishlist ? 'on' : 'off'} />
+      {#if fe('wishlist')}<div class="text-red-600 text-sm mt-1">{fe('wishlist')}</div>{/if}
 		</FormGroup>
 		<Button
 			type="submit"
