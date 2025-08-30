@@ -2,6 +2,19 @@
 
 このドキュメントは、Vibe Beace フロントエンドプロジェクトの次の計画ステップを概説し、継続性と将来の開発のための明確な方向性を提供します。
 
+## プロジェクト概要
+
+- 目的: ハンドメイド資材の在庫管理（Thread / Bead / CutCloth / XStitchCloth）の追加・編集・削除・閲覧を中心に、検索・フィルタ機能で素早く絞り込める管理ツール。
+- 技術スタック: SvelteKit v2（TypeScript, Vite）/ Tailwind CSS v4 / Prisma v6（PostgreSQL）/ Zod / Netlify Adapter / UI: cclkit4svelte + カスタムコンポーネント。
+- データモデル: `prisma/schema.prisma` に Thread, Bead, CutCloth, XStitchCloth を定義。`@prisma/client` を経由して操作。
+- 主要構成:
+  - コントローラー: `src/lib/controllers/*Controller.ts`（各資材のCRUDロジック、検索対応）
+  - バリデーション: `src/lib/validation/*.ts`（Zodで入力検証）
+  - 画面/ルーティング: `src/routes/inventory/*`（在庫一覧/追加/編集）、`src/routes/api/*`（APIエンドポイント）
+  - 認証: `src/hooks.server.ts` による `session` クッキー判定。`/inventory` は認証必須。
+- スクリプト: `npm run dev/build/preview/check/format/lint`、`prisma:deploy`（マイグレーション適用）。
+- デプロイ: Netlify（`@sveltejs/adapter-netlify`）。
+
 ## 完了したタスク
 
 ### 1. 資材編集機能の実装

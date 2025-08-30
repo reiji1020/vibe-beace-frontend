@@ -19,36 +19,46 @@
 		}
 	}
 
-	// Determine content based on material type
-	$: {
-		if (material.brand && material.colorNumber) {
-			// Thread
-			title = `${material.brand} ${material.colorNumber}`;
-			details = `色名: ${material.colorName || 'N/A'}\n数量: ${material.quantity}\n状態: ${getStatusLabel(material.status)}\n欲しいもの: ${material.wishlist ? 'はい' : 'いいえ'}`;
-		} else if (material.itemCode && material.size) {
-			// Bead
-			title = `${material.brand} ${material.itemCode}`;
-			details = `サイズ: ${material.size}\n色名: ${material.colorName || 'N/A'}\n数量: ${material.quantity}\n状態: ${getStatusLabel(material.status)}\n欲しいもの: ${material.wishlist ? 'はい' : 'いいえ'}`;
-		} else if (material.fabricType && material.pattern) {
-			// CutCloth
-			title = `${material.fabricType} ${material.pattern}`;
-			details = `サイズ: ${material.size}\n数量: ${material.quantity}\n状態: ${getStatusLabel(material.status)}\n欲しいもの: ${material.wishlist ? 'はい' : 'いいえ'}`;
+		// Determine content based on material type
+		$: {
+			if (material.brand && material.colorNumber) {
+				// Thread
+				title = `${material.brand} ${material.colorNumber}`;
+				details = `色名: ${material.colorName || 'N/A'}\n数量: ${material.quantity}\n状態: ${getStatusLabel(material.status)}\n欲しいもの: ${material.wishlist ? 'はい' : 'いいえ'}`;
+			} else if (material.itemCode && material.size) {
+				// Bead
+				title = `${material.brand} ${material.itemCode}`;
+				details = `サイズ: ${material.size}\n色名: ${material.colorName || 'N/A'}\n数量: ${material.quantity}\n状態: ${getStatusLabel(material.status)}\n欲しいもの: ${material.wishlist ? 'はい' : 'いいえ'}`;
+			} else if (material.fabricType && material.pattern) {
+				// CutCloth
+				title = `${material.fabricType} ${material.pattern}`;
+				details = `サイズ: ${material.size}\n数量: ${material.quantity}\n状態: ${getStatusLabel(material.status)}\n欲しいもの: ${material.wishlist ? 'はい' : 'いいえ'}`;
+			} else if (material.count && material.color && material.size) {
+				// XStitchCloth
+				title = `${material.count}ct ${material.color}`;
+				details = `サイズ: ${material.size}\n数量: ${material.quantity}\n状態: ${getStatusLabel(material.status)}\n欲しいもの: ${material.wishlist ? 'はい' : 'いいえ'}`;
+			}
 		}
-	}
 
-	function handleDelete() {
-		const type = material.brand ? 'thread' : material.itemCode ? 'bead' : 'cutCloth';
-		onDelete(material.id, type);
-	}
+		function handleDelete() {
+			const type = material.brand
+				? 'thread'
+				: material.itemCode
+				? 'bead'
+				: material.fabricType
+				? 'cutCloth'
+				: 'xStitchCloth';
+			onDelete(material.id, type);
+		}
 </script>
 
 <div class="material-card">
 	<div class="card-actions">
-		<a
-			href={`/inventory/edit-${material.brand ? 'thread' : material.itemCode ? 'bead' : 'cutCloth'}/${material.id}`}
-			class="edit-button"
-			title="編集"
-		>
+			<a
+				href={`/inventory/edit-${material.brand ? 'thread' : material.itemCode ? 'bead' : material.fabricType ? 'cut-cloth' : 'xstitch-cloth'}/${material.id}`}
+				class="edit-button"
+				title="編集"
+			>
 			<img src="/edit.svg" alt="編集" class="icon" />
 		</a>
 		<button class="delete-button" on:click={handleDelete} title="削除">&times;</button>

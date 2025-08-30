@@ -22,7 +22,7 @@ export const actions: Actions = {
 			size: data.get('size') as string,
 			quantity: Number(data.get('quantity')),
 			status: data.get('status') as string,
-			wishlist: data.has('wishlist')
+			wishlist: (data.get('wishlist') as string) === 'on'
 		};
 
 		try {

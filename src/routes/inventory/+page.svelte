@@ -8,7 +8,8 @@
 	const materialTypes = [
 		{ id: 'threads', label: '刺繍糸' },
 		{ id: 'beads', label: 'ビーズ' },
-		{ id: 'cutCloths', label: 'カットクロス' }
+		{ id: 'cutCloths', label: 'カットクロス' },
+		{ id: 'xStitchCloths', label: 'クロスステッチ布' }
 	];
 
 	let selectedMaterial = 'threads';
@@ -30,6 +31,9 @@
 				break;
 			case 'cutCloth':
 				apiEndpoint = '/api/deleteCutCloth';
+				break;
+			case 'xStitchCloth':
+				apiEndpoint = '/api/deleteXStitchCloth';
 				break;
 			default:
 				console.error('Unknown material type for deletion:', type);
@@ -85,39 +89,48 @@
 	</form>
 </div>
 
-<div class="add-button-container">
-	{#if selectedMaterial === 'threads'}
-		<a href="/inventory/add-thread">
-			<Button
-				label="刺繍糸を追加する"
-				onClick={() => {}}
-				bgColor={CCLVividColor.PINEAPPLE_YELLOW}
-			/>
-		</a>
-	{/if}
-	{#if selectedMaterial === 'beads'}
-		<a href="/inventory/add-bead">
-			<Button
-				label="ビーズを追加する"
-				onClick={() => {}}
-				bgColor={CCLVividColor.PINEAPPLE_YELLOW}
-			/>
-		</a>
-	{/if}
-	{#if selectedMaterial === 'cutCloths'}
-		<a href="/inventory/add-cut-cloth">
-			<Button
-				label="カットクロスを追加する"
-				onClick={() => {}}
-				bgColor={CCLVividColor.PINEAPPLE_YELLOW}
-			/>
-		</a>
-	{/if}
-</div>
+	<div class="add-button-container">
+		{#if selectedMaterial === 'threads'}
+			<a href="/inventory/add-thread">
+				<Button
+					label="刺繍糸を追加する"
+					onClick={() => {}}
+					bgColor={CCLVividColor.PINEAPPLE_YELLOW}
+				/>
+			</a>
+		{/if}
+		{#if selectedMaterial === 'beads'}
+			<a href="/inventory/add-bead">
+				<Button
+					label="ビーズを追加する"
+					onClick={() => {}}
+					bgColor={CCLVividColor.PINEAPPLE_YELLOW}
+				/>
+			</a>
+		{/if}
+		{#if selectedMaterial === 'cutCloths'}
+			<a href="/inventory/add-cut-cloth">
+				<Button
+					label="カットクロスを追加する"
+					onClick={() => {}}
+					bgColor={CCLVividColor.PINEAPPLE_YELLOW}
+				/>
+			</a>
+		{/if}
+		{#if selectedMaterial === 'xStitchCloths'}
+			<a href="/inventory/add-xstitch-cloth">
+				<Button
+					label="クロスステッチ布を追加する"
+					onClick={() => {}}
+					bgColor={CCLVividColor.PINEAPPLE_YELLOW}
+				/>
+			</a>
+		{/if}
+	</div>
 
 <div class="search-results-alert">
 	{#if data.query}
-		{#if data.threads.length > 0 || data.beads.length > 0 || data.cutCloths.length > 0}
+		{#if data.threads.length > 0 || data.beads.length > 0 || data.cutCloths.length > 0 || data.xStitchCloths.length > 0}
 			<Alert type="success" message={`「${data.query}」の検索結果が見つかりました。`} />
 		{:else}
 			<Alert type="error" message={`「${data.query}」に一致する資材は見つかりませんでした。`} />
@@ -139,6 +152,11 @@
 	{#if selectedMaterial === 'cutCloths'}
 		{#each data.cutCloths as cutCloth}
 			<MaterialCard material={cutCloth} onDelete={handleDelete} />
+		{/each}
+	{/if}
+	{#if selectedMaterial === 'xStitchCloths'}
+		{#each data.xStitchCloths as xSc}
+			<MaterialCard material={xSc} onDelete={handleDelete} />
 		{/each}
 	{/if}
 </div>
