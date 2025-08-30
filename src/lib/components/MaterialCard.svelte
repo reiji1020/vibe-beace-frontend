@@ -55,7 +55,7 @@
 <div class="material-card">
 	<div class="card-actions">
 			<a
-				href={`/inventory/edit-${material.brand ? 'thread' : material.itemCode ? 'bead' : material.fabricType ? 'cut-cloth' : 'xstitch-cloth'}/${material.id}`}
+				href={`/inventory/update/${material.brand ? 'thread' : material.itemCode ? 'bead' : material.fabricType ? 'cut-cloth' : 'xstitch-cloth'}/${material.id}`}
 				class="edit-button"
 				title="編集"
 			>

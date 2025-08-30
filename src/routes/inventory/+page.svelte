@@ -22,19 +22,19 @@
 	async function handleDelete(id: number, type: string) {
 		let apiEndpoint = '';
 
-		switch (type) {
-			case 'thread':
-				apiEndpoint = '/api/deleteThread';
-				break;
-			case 'bead':
-				apiEndpoint = '/api/deleteBead';
-				break;
-			case 'cutCloth':
-				apiEndpoint = '/api/deleteCutCloth';
-				break;
-			case 'xStitchCloth':
-				apiEndpoint = '/api/deleteXStitchCloth';
-				break;
+			switch (type) {
+				case 'thread':
+					apiEndpoint = '/api/delete/deleteThread';
+					break;
+				case 'bead':
+					apiEndpoint = '/api/delete/deleteBead';
+					break;
+				case 'cutCloth':
+					apiEndpoint = '/api/delete/deleteCutCloth';
+					break;
+				case 'xStitchCloth':
+					apiEndpoint = '/api/delete/deleteXStitchCloth';
+					break;
 			default:
 				console.error('Unknown material type for deletion:', type);
 				return;
@@ -96,7 +96,7 @@
 
 	<div class="add-button-container">
 		{#if selectedMaterial === 'threads'}
-			<a href="/inventory/add-thread">
+			<a href="/inventory/add/thread">
 				<Button
 					label="刺繍糸を追加する"
 					onClick={() => {}}
@@ -105,7 +105,7 @@
 			</a>
 		{/if}
 		{#if selectedMaterial === 'beads'}
-			<a href="/inventory/add-bead">
+			<a href="/inventory/add/bead">
 				<Button
 					label="ビーズを追加する"
 					onClick={() => {}}
@@ -114,7 +114,7 @@
 			</a>
 		{/if}
 		{#if selectedMaterial === 'cutCloths'}
-			<a href="/inventory/add-cut-cloth">
+			<a href="/inventory/add/cut-cloth">
 				<Button
 					label="カットクロスを追加する"
 					onClick={() => {}}
@@ -123,7 +123,7 @@
 			</a>
 		{/if}
 		{#if selectedMaterial === 'xStitchCloths'}
-			<a href="/inventory/add-xstitch-cloth">
+			<a href="/inventory/add/xstitch-cloth">
 				<Button
 					label="クロスステッチ布を追加する"
 					onClick={() => {}}

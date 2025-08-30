@@ -16,7 +16,9 @@
 - 主な配置:
   - コントローラー: `src/lib/controllers/*Controller.ts`
   - バリデーション: `src/lib/validation/*.ts`
-  - 画面/ルーティング: `src/routes/inventory/*`, `src/routes/api/*`
+- 画面/ルーティング: `src/routes/inventory/*`, `src/routes/api/*`
+  - API は `add/ get/ update/ delete` ディレクトリで整理（URL例: `/api/update/updateThread`）。
+  - インベントリの追加/更新ページは `inventory/add/*` と `inventory/update/*` に整理（URL例: `/inventory/add/thread`, `/inventory/update/thread/[id]`）。
   - 認証: `src/hooks.server.ts`（session クッキー、/inventory 保護）
 - スクリプト: `dev`, `build`, `preview`, `check`, `format`, `lint`, `prisma:deploy`。
 - デプロイ: Netlify（`@sveltejs/adapter-netlify`）。
@@ -94,39 +96,39 @@
   - TypeScript を徹底（型の明示、`any` 回避）。不要なグローバル変更・依存追加は行わない。
  - ドキュメント更新は影響範囲内で実施（`GEMINI.md`/`docs/*`/本ファイル）。
 
-## 開発バックログ
+## 開発バックログ（整理）
 
-- XStitchCloth 一式:
-  - コントローラ `src/lib/controllers/xStitchClothController.ts` を新規作成（CRUD + 検索）。
-  - API ルート `/src/routes/api/` に GET/POST/PUT/DELETE を整備（`getXStitchCloth`/`addXStitchCloth`/`updateXStitchCloth`/`deleteXStitchCloth`）。
-  - UI: `/inventory` にラジオと一覧表示を追加、`/inventory/add-xstitch-cloth`、`/inventory/edit-xstitch-cloth/[id]` を実装。
-  - `MaterialCard.svelte` に XStitchCloth 表示分岐を追加、Zod 検証適用。
-- API 保護:
-  - `/api/*` をセッション必須にする（`hooks.server.ts` でガード拡張 or 各 `+server.ts` で検証）。
-  - CSRF 対策（フォームアクションの利用 or トークン導入）。
-- 入力検証の徹底:
-  - `add*/update*` で Zod の `safeParse` を使用し、エラーを UI へ還元。
-  - フォームは `enhance` を活用し hidden ミラーを縮小。
-- API/設計の整合性:
-  - 取得系 API の不足補完（例: `/api/getCutCloth`）。
-  - 追加系 API の揃え（`/api/addBead`、`/api/addCutCloth`、`/api/addXStitchCloth`）。
-  - ルート命名の統一（REST 風 `/api/threads|beads|cut-cloths|xstitch-cloths` + メソッド or kebab-case へ）。
-- UI/UX 改善:
-  - 検索/フィルタ（ブランド・ステータス・ウィッシュリスト）、ソート切替。
-  - 削除モーダルの導入（`confirm` 置換）。
-  - ウィッシュリストのトグルをカード上で操作可能に。
-  - ページネーション/無限スクロール（API に `limit/offset` or `cursor`）。
-- バリデーション/スキーマ整合:
-  - `status` 値の統一方針（XStitchCloth だけ `low` 無し → 仕様決定）。
-  - 型・UI の整合（サーバ側で厳格パース、`any` 回避）。
-- セキュリティ/信頼性:
-  - 環境変数名の明確化（`VITE_AUTH_*` → `AUTH_*` 等へ見直し）。
-  - API エラーレスポンスの標準化（構造化 JSON、メッセージ整備）。
-- DX/運用:
-  - コントローラの単体テスト、簡易 E2E（認証/主要 CRUD）。
-  - Prisma Seed による開発用データ投入。
-  - 検索頻出列の DB インデックス検討。
-  - 変更に伴う `docs/*` と `GEMINI.md` の更新。
+— Done
+- XStitchCloth 一式: コントローラ/検索、API（get/add/update/delete）、UI（一覧ラジオ・カード、add/edit 画面）、`MaterialCard` 分岐、Zod 検証を実装。
+- API 保護: `hooks.server.ts` により `/api/*` は未認証 401、`/inventory` は 302 `/login`。CSRF は Double-Submit Token 方式を導入（フォーム hidden + ヘッダ、検証ユーティリティ追加）。
+- 入力検証: add/update API と全フォームアクションで Zod `safeParse` 適用、失敗時は `fail(400)` とフィールド別エラー返却。フォームへエラー表示を実装。全フォームで `enhance` を適用。
+- 取得系 API の補完: `getBeads|getCutCloths|getThreads|getXStitchCloths` を整備。
+- 追加系 API の揃え: `addBead|addCutCloth|addThread|addXStitchCloth` を整備（`safeParse` 適用）。
+- ローディング UX: `/inventory` 遷移時に `cclkit4svelte` の `Spinner`（PINEAPPLE_YELLOW）でオーバーレイ表示。
+
+— Partial
+- API レスポンス標準化: update 系を `{ success, data|error }` に統一。add/削除/取得は概ね準拠、完全統一は未完。
+- フォーム hidden ミラー削減: ライブラリ `Input/Select` が `name` を透過しないため維持。将来はラッパー導入で隠蔽可能。
+- 型安全性: `MaterialCard.svelte` が `any` 依存。判別可能ユニオン化の余地あり。
+
+— Next Up（候補）
+- Wishlist トグルをカード上に配置（高速更新 API）。
+- API レスポンス完全統一（全エンドポイントを `{ success, data|error }`）。
+- 検索/フィルタ/ソート（ブランド・ステータス・wishlist、ソート切替）。
+
+— Todo
+- 削除モーダル導入（cclkit4svelte のモーダル提供後に実装。現状は `confirm` 維持）。
+- ルート命名の統一（REST 風 `/api/{resources}` + メソッド or kebab-case）。
+- ページネーション/無限スクロール（`limit/offset` or `cursor`）。
+- スキーマ整合: `status` 値の統一方針（XStitchCloth の `low` 有無の決定）。
+- セキュリティ/信頼性: 環境変数命名の見直し（`VITE_AUTH_*` → `AUTH_*` 等）。
+- DX/運用: コントローラ単体テスト、簡易 E2E（認証/CRUD）。Prisma Seed。頻出列の DB インデックス。関連ドキュメント更新（`docs/*`/`GEMINI.md`）。
+
+## API 配置方針
+
+- ディレクトリ構成: `src/routes/api/{add|get|update|delete}/<ActionName>/+server.ts`
+- ルートパス: `/api/{add|get|update|delete}/<ActionName>`（例: `/api/delete/deleteThread`）
+- 既存フロント実装の参照パスは上記へ順次合わせる。ルートグループ（`(foo)`）は使用しない。
 
 ## 参考/連携
 
