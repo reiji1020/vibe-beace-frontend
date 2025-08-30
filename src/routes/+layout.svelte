@@ -1,7 +1,8 @@
 <script lang="ts">
 	import '../app.css';
-	import { CCLVividColor, CommonHeader, Footer, Button } from 'cclkit4svelte';
+	import { CCLVividColor, CommonHeader, Footer, Button, Spinner } from 'cclkit4svelte';
 	import type { LayoutData } from './$types';
+	import { navigating } from '$app/stores';
 
 	let { children, data } = $props();
 </script>
@@ -25,6 +26,12 @@
 		{@render children()}
 	</main>
 	<Footer bgColor={CCLVividColor.PINEAPPLE_YELLOW} />
+
+	{#if $navigating && $navigating.to?.url?.pathname?.startsWith('/inventory')}
+		<div class="loading-overlay" aria-live="polite" aria-busy="true">
+			<Spinner size="64px" color={CCLVividColor.PINEAPPLE_YELLOW} />
+		</div>
+	{/if}
 </div>
 
 <style>
@@ -44,5 +51,17 @@
 		right: 20px;
 		z-index: 1000;
 	}
-</style>
 
+	.loading-overlay {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: rgba(255, 255, 255, 0.7);
+		z-index: 2000;
+	}
+</style>
