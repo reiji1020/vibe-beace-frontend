@@ -22,6 +22,11 @@
     { value: 'used', label: '使用中' },
     { value: 'low', label: '残りわずか' }
   ];
+
+  // Normalize nullable fields for component props
+  let status = bead.status ?? 'unused';
+  let colorName = bead.colorName ?? '';
+  let quantity = String(bead.quantity ?? 0);
 </script>
 
 <main>
@@ -31,33 +36,33 @@
     <input type="hidden" name="csrfToken" value={data.csrfToken} />
     {#if topError()}<div class="mt-2 mb-2 text-red-600">{topError()}</div>{/if}
     <FormGroup>
-      <Input label="メーカー" bind:value={bead.brand} required />
+      <Input label="メーカー" bind:value={bead.brand} />
       <input type="hidden" name="brand" value={bead.brand} />
       {#if fe('brand')}<div class="mt-1 text-sm text-red-600">{fe('brand')}</div>{/if}
     </FormGroup>
     <FormGroup>
-      <Input label="品番" bind:value={bead.itemCode} required />
+      <Input label="品番" bind:value={bead.itemCode} />
       <input type="hidden" name="itemCode" value={bead.itemCode} />
       {#if fe('itemCode')}<div class="mt-1 text-sm text-red-600">{fe('itemCode')}</div>{/if}
     </FormGroup>
     <FormGroup>
-      <Input label="サイズ" bind:value={bead.size} required />
+      <Input label="サイズ" bind:value={bead.size} />
       <input type="hidden" name="size" value={bead.size} />
       {#if fe('size')}<div class="mt-1 text-sm text-red-600">{fe('size')}</div>{/if}
     </FormGroup>
     <FormGroup>
-      <Input label="色名" bind:value={bead.colorName} />
-      <input type="hidden" name="colorName" value={bead.colorName} />
+      <Input label="色名" bind:value={colorName} />
+      <input type="hidden" name="colorName" value={colorName} />
       {#if fe('colorName')}<div class="mt-1 text-sm text-red-600">{fe('colorName')}</div>{/if}
     </FormGroup>
     <FormGroup>
-      <Input label="数量" type="number" bind:value={bead.quantity} required />
-      <input type="hidden" name="quantity" value={bead.quantity} />
+      <Input label="数量" type="number" bind:value={quantity} />
+      <input type="hidden" name="quantity" value={quantity} />
       {#if fe('quantity')}<div class="mt-1 text-sm text-red-600">{fe('quantity')}</div>{/if}
     </FormGroup>
     <FormGroup>
-      <Select label="状態" options={statusOptions} bind:value={bead.status} />
-      <input type="hidden" name="status" value={bead.status} />
+      <Select label="状態" options={statusOptions} bind:value={status} />
+      <input type="hidden" name="status" value={status} />
       {#if fe('status')}<div class="mt-1 text-sm text-red-600">{fe('status')}</div>{/if}
     </FormGroup>
     <FormGroup>
@@ -66,10 +71,9 @@
       {#if fe('wishlist')}<div class="mt-1 text-sm text-red-600">{fe('wishlist')}</div>{/if}
     </FormGroup>
     <Button
-      type="submit"
       label="更新する"
       bgColor={CCLVividColor.PINEAPPLE_YELLOW}
-      onClick={() => {}}
+      onClick={() => (document.querySelector('form') as HTMLFormElement)?.requestSubmit()}
     />
   </form>
 </main>

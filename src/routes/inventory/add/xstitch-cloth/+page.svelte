@@ -22,7 +22,7 @@
   let count = '';
   let color = '';
   let size = '';
-  let quantity: number = 0;
+  let quantity = '';
   let status: string = 'unused';
   let wishlist: boolean = false;
 </script>
@@ -33,22 +33,22 @@
     <input type="hidden" name="csrfToken" value={data.csrfToken} />
     {#if topError()}<div class="mt-2 mb-2 text-red-600">{topError()}</div>{/if}
     <FormGroup>
-      <Input label="カウント" placeholder="例: 14" bind:value={count} required />
+      <Input label="カウント" placeholder="例: 14" bind:value={count} />
       <input type="hidden" name="count" value={count} />
       {#if fe('count')}<div class="mt-1 text-sm text-red-600">{fe('count')}</div>{/if}
     </FormGroup>
     <FormGroup>
-      <Input label="色" bind:value={color} required />
+      <Input label="色" bind:value={color} />
       <input type="hidden" name="color" value={color} />
       {#if fe('color')}<div class="mt-1 text-sm text-red-600">{fe('color')}</div>{/if}
     </FormGroup>
     <FormGroup>
-      <Input label="サイズ" placeholder="例: 50x70cm" bind:value={size} required />
+      <Input label="サイズ" placeholder="例: 50x70cm" bind:value={size} />
       <input type="hidden" name="size" value={size} />
       {#if fe('size')}<div class="mt-1 text-sm text-red-600">{fe('size')}</div>{/if}
     </FormGroup>
     <FormGroup>
-      <Input label="数量" type="number" bind:value={quantity} required />
+      <Input label="数量" type="number" bind:value={quantity} />
       <input type="hidden" name="quantity" value={quantity} />
       {#if fe('quantity')}<div class="mt-1 text-sm text-red-600">{fe('quantity')}</div>{/if}
     </FormGroup>
@@ -62,7 +62,11 @@
       <input type="hidden" name="wishlist" value={wishlist ? 'on' : 'off'} />
       {#if fe('wishlist')}<div class="mt-1 text-sm text-red-600">{fe('wishlist')}</div>{/if}
     </FormGroup>
-    <Button type="submit" label="追加する" bgColor={CCLVividColor.PINEAPPLE_YELLOW} />
+    <Button
+      label="追加する"
+      bgColor={CCLVividColor.PINEAPPLE_YELLOW}
+      onClick={() => (document.querySelector('form') as HTMLFormElement)?.requestSubmit()}
+    />
   </form>
 </main>
 

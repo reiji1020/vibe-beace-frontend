@@ -34,14 +34,19 @@
   let sort = (data.sort as string) || 'default';
 
   $: brandApplicable = selectedMaterial === 'threads' || selectedMaterial === 'beads';
-  $: statusOptions = selectedMaterial === 'cutCloths' || selectedMaterial === 'xStitchCloths'
-    ? ['all', 'unused', 'used']
-    : ['all', 'unused', 'used', 'low'];
+  $: statusOptions =
+    selectedMaterial === 'cutCloths' || selectedMaterial === 'xStitchCloths'
+      ? ['all', 'unused', 'used']
+      : ['all', 'unused', 'used', 'low'];
   $: if (!brandApplicable) filterBrand = '';
 
   let showAlert = false;
   let alertMessage = '';
   let alertType: 'success' | 'error' | 'warning' | 'info' = 'info';
+
+  // helper to coerce server items into InventoryCardItem for UI
+  const asCard = (obj: any, type: InventoryCardItem['type']) =>
+    ({ ...obj, type }) as unknown as InventoryCardItem;
 
   // toastはグローバル（+layout.svelte）に移行済み
 
@@ -123,10 +128,22 @@
       <input type="hidden" name="wishlist" value="on" />
     {/if}
 
-    <Input type="search" placeholder="キーワード検索（ブランド/色番号/色名など）" bind:value={searchQuery} />
+    <Input
+      type="text"
+      placeholder="キーワード検索（ブランド/色番号/色名など）"
+      bind:value={searchQuery}
+    />
     <select name="status" bind:value={filterStatus}>
       {#each statusOptions as opt}
-        <option value={opt}>{opt === 'all' ? 'すべての状態' : opt === 'unused' ? '未使用' : opt === 'used' ? '使用中' : '残りわずか'}</option>
+        <option value={opt}
+          >{opt === 'all'
+            ? 'すべての状態'
+            : opt === 'unused'
+              ? '未使用'
+              : opt === 'used'
+                ? '使用中'
+                : '残りわずか'}</option
+        >
       {/each}
     </select>
     {#if brandApplicable}
@@ -142,7 +159,11 @@
       <option value="brand_asc">ブランド 昇順（該当資材）</option>
       <option value="brand_desc">ブランド 降順（該当資材）</option>
     </select>
-    <Button type="submit" label="適用" bgColor={CCLVividColor.MELON_GREEN} />
+    <Button
+      label="適用"
+      bgColor={CCLVividColor.MELON_GREEN}
+      onClick={() => (document.querySelector('.search-form') as HTMLFormElement)?.requestSubmit()}
+    />
     <a class="reset-link" href="/inventory" aria-label="フィルタをリセット">リセット</a>
   </form>
 </div>
@@ -202,7 +223,7 @@
 <div class="api-docs-link">
   <a href="/api-docs/swagger" aria-label="Swagger API Docs">API Docs (Swagger)</a>
   <span class="hint">（開発者向け）</span>
-  </div>
+</div>
 
 <div class="summary">
   <span>
@@ -219,22 +240,22 @@
 <div class="card-container">
   {#if selectedMaterial === 'threads'}
     {#each data.threads as thread}
-      <MaterialCard material={{ ...thread, type: 'thread' }} onDelete={handleDelete} />
+      <MaterialCard material={asCard(thread, 'thread')} onDelete={handleDelete} />
     {/each}
   {/if}
   {#if selectedMaterial === 'beads'}
     {#each data.beads as bead}
-      <MaterialCard material={{ ...bead, type: 'bead' }} onDelete={handleDelete} />
+      <MaterialCard material={asCard(bead, 'bead')} onDelete={handleDelete} />
     {/each}
   {/if}
   {#if selectedMaterial === 'cutCloths'}
     {#each data.cutCloths as cutCloth}
-      <MaterialCard material={{ ...cutCloth, type: 'cutCloth' }} onDelete={handleDelete} />
+      <MaterialCard material={asCard(cutCloth, 'cutCloth')} onDelete={handleDelete} />
     {/each}
   {/if}
   {#if selectedMaterial === 'xStitchCloths'}
     {#each data.xStitchCloths as xSc}
-      <MaterialCard material={{ ...xSc, type: 'xStitchCloth' }} onDelete={handleDelete} />
+      <MaterialCard material={asCard(xSc, 'xStitchCloth')} onDelete={handleDelete} />
     {/each}
   {/if}
 </div>
@@ -263,8 +284,15 @@
     flex-wrap: wrap;
     width: 100%;
   }
-  .reset-link { color: #888; font-size: 0.85rem; text-decoration: underline dotted; align-self: center; }
-  .reset-link:hover { color: #555; }
+  .reset-link {
+    color: #888;
+    font-size: 0.85rem;
+    text-decoration: underline dotted;
+    align-self: center;
+  }
+  .reset-link:hover {
+    color: #555;
+  }
 
   .search-form input {
     padding: 0.5rem;
@@ -304,5 +332,7 @@
   .api-docs-link a:hover {
     color: #555;
   }
-  .api-docs-link .hint { margin-left: 6px; }
+  .api-docs-link .hint {
+    margin-left: 6px;
+  }
 </style>

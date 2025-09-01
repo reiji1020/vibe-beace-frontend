@@ -2,8 +2,9 @@ import { getAllBeads } from '$lib/controllers/beadController';
 import { getAllThreads } from '$lib/controllers/threadController';
 import { getAllCutCloth } from '$lib/controllers/cutClothController';
 import { getAllXStitchCloth } from '$lib/controllers/xStitchClothController';
+import type { PageServerLoad } from './$types';
 
-export async function load({ url }) {
+export const load: PageServerLoad = async ({ url }) => {
   const query = url.searchParams.get('query');
   const statusParam = url.searchParams.get('status');
   const brand = url.searchParams.get('brand');
@@ -80,4 +81,4 @@ export async function load({ url }) {
     sort: sortParam,
     type
   };
-}
+};

@@ -16,8 +16,8 @@ export function badRequest<E = unknown>(error: E, init?: ResponseInit): Response
   return json({ success: false, error } as ApiFailure<E>, { status: 400, ...(init ?? {}) });
 }
 
-export function forbidden<E = unknown>(error: E = 'Forbidden', init?: ResponseInit): Response {
-  return json({ success: false, error } as ApiFailure<E>, { status: 403, ...(init ?? {}) });
+export function forbidden(error: unknown = 'Forbidden', init?: ResponseInit): Response {
+  return json({ success: false, error } as ApiFailure<unknown>, { status: 403, ...(init ?? {}) });
 }
 
 export function serverError<E = unknown>(error: E, init?: ResponseInit): Response {

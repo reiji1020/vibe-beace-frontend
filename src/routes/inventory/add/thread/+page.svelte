@@ -17,7 +17,7 @@
   let brand: string = '';
   let colorNumber: string = '';
   let colorName: string = '';
-  let quantity: number = 0;
+  let quantity = '';
   let status: string = '';
   let wishlist: boolean = false;
 
@@ -38,12 +38,12 @@
       <div class="mt-2 mb-2 text-red-600">{topError()}</div>
     {/if}
     <FormGroup>
-      <Input label="メーカー" bind:value={brand} required />
+      <Input label="メーカー" bind:value={brand} />
       <input type="hidden" name="brand" value={brand} />
       {#if fe('brand')}<div class="mt-1 text-sm text-red-600">{fe('brand')}</div>{/if}
     </FormGroup>
     <FormGroup>
-      <Input label="色番号" bind:value={colorNumber} required />
+      <Input label="色番号" bind:value={colorNumber} />
       <input type="hidden" name="colorNumber" value={colorNumber} />
       {#if fe('colorNumber')}<div class="mt-1 text-sm text-red-600">{fe('colorNumber')}</div>{/if}
     </FormGroup>
@@ -53,7 +53,7 @@
       {#if fe('colorName')}<div class="mt-1 text-sm text-red-600">{fe('colorName')}</div>{/if}
     </FormGroup>
     <FormGroup>
-      <Input label="数量" type="number" bind:value={quantity} required />
+      <Input label="数量" type="number" bind:value={quantity} />
       <input type="hidden" name="quantity" value={quantity} />
       {#if fe('quantity')}<div class="mt-1 text-sm text-red-600">{fe('quantity')}</div>{/if}
     </FormGroup>
@@ -68,10 +68,9 @@
       {#if fe('wishlist')}<div class="mt-1 text-sm text-red-600">{fe('wishlist')}</div>{/if}
     </FormGroup>
     <Button
-      type="submit"
       label="追加する"
       bgColor={CCLVividColor.PINEAPPLE_YELLOW}
-      onClick={() => {}}
+      onClick={() => (document.querySelector('form') as HTMLFormElement)?.requestSubmit()}
     />
   </form>
 </main>

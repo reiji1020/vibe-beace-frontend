@@ -36,7 +36,7 @@ components:
       properties:
         id: { type: integer, example: 1 }
         brand: { type: string, example: DMC }
-        colorNumber: { type: string, example: "310" }
+        colorNumber: { type: string, example: '310' }
         colorName: { type: string, nullable: true, example: Black }
         quantity: { type: integer, minimum: 0 }
         status: { type: string, enum: [unused, used, low], nullable: true }
@@ -102,7 +102,15 @@ paths:
                   value:
                     success: true
                     data:
-                      - { id: 1, brand: DMC, colorNumber: "310", colorName: Black, quantity: 2, status: unused, wishlist: false }
+                      - {
+                          id: 1,
+                          brand: DMC,
+                          colorNumber: '310',
+                          colorName: Black,
+                          quantity: 2,
+                          status: unused,
+                          wishlist: false
+                        }
         '500':
           description: Server error
           content:
@@ -134,10 +142,31 @@ paths:
                 created:
                   value:
                     success: true
-                    data: { id: 10, brand: DMC, colorNumber: "321", colorName: Red, quantity: 1, status: unused, wishlist: false }
-        '400': { description: Invalid input, content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } } }
-        '403': { description: CSRF required, content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } } }
-        '500': { description: Server error, content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } } }
+                    data:
+                      {
+                        id: 10,
+                        brand: DMC,
+                        colorNumber: '321',
+                        colorName: Red,
+                        quantity: 1,
+                        status: unused,
+                        wishlist: false
+                      }
+        '400':
+          {
+            description: Invalid input,
+            content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } }
+          }
+        '403':
+          {
+            description: CSRF required,
+            content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } }
+          }
+        '500':
+          {
+            description: Server error,
+            content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } }
+          }
   /api/threads/{id}:
     put:
       tags: [Threads]
@@ -153,10 +182,59 @@ paths:
           application/json:
             schema: { $ref: '#/components/schemas/Thread' }
       responses:
-        '200': { description: Updated, content: { application/json: { schema: { type: object, properties: { success: { type: boolean, enum: [true] }, data: { $ref: '#/components/schemas/Thread' } }, required: [success, data] }, examples: { ok: { value: { success: true, data: { id: 5, brand: DMC, colorNumber: "321", quantity: 3, wishlist: true } } } } } } }
-        '400': { description: Invalid input, content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } } }
-        '403': { description: CSRF required, content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } } }
-        '500': { description: Server error, content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } } }
+        '200':
+          {
+            description: Updated,
+            content:
+              {
+                application/json:
+                  {
+                    schema:
+                      {
+                        type: object,
+                        properties:
+                          {
+                            success: { type: boolean, enum: [true] },
+                            data: { $ref: '#/components/schemas/Thread' }
+                          },
+                        required: [success, data]
+                      },
+                    examples:
+                      {
+                        ok:
+                          {
+                            value:
+                              {
+                                success: true,
+                                data:
+                                  {
+                                    id: 5,
+                                    brand: DMC,
+                                    colorNumber: '321',
+                                    quantity: 3,
+                                    wishlist: true
+                                  }
+                              }
+                          }
+                      }
+                  }
+              }
+          }
+        '400':
+          {
+            description: Invalid input,
+            content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } }
+          }
+        '403':
+          {
+            description: CSRF required,
+            content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } }
+          }
+        '500':
+          {
+            description: Server error,
+            content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } }
+          }
     delete:
       tags: [Threads]
       security: [{ CsrfToken: [] }]
@@ -179,8 +257,16 @@ paths:
               examples:
                 deleted:
                   value: { success: true, data: { id: 5 } }
-        '403': { description: CSRF required, content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } } }
-        '500': { description: Server error, content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } } }
+        '403':
+          {
+            description: CSRF required,
+            content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } }
+          }
+        '500':
+          {
+            description: Server error,
+            content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } }
+          }
   /api/threads/{id}/wishlist:
     patch:
       tags: [Threads]
@@ -200,10 +286,42 @@ paths:
                 wishlist: { type: boolean }
               required: [wishlist]
       responses:
-        '200': { description: Updated, content: { application/json: { schema: { type: object, properties: { success: { type: boolean, enum: [true] }, data: { $ref: '#/components/schemas/Thread' } }, required: [success, data] }, examples: { ok: { value: { success: true, data: { id: 5, wishlist: true } } } } } } }
-        '400': { description: Invalid input, content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } } }
-        '403': { description: CSRF required, content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } } }
-        '500': { description: Server error, content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } } }
+        '200':
+          {
+            description: Updated,
+            content:
+              {
+                application/json:
+                  {
+                    schema:
+                      {
+                        type: object,
+                        properties:
+                          {
+                            success: { type: boolean, enum: [true] },
+                            data: { $ref: '#/components/schemas/Thread' }
+                          },
+                        required: [success, data]
+                      },
+                    examples: { ok: { value: { success: true, data: { id: 5, wishlist: true } } } }
+                  }
+              }
+          }
+        '400':
+          {
+            description: Invalid input,
+            content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } }
+          }
+        '403':
+          {
+            description: CSRF required,
+            content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } }
+          }
+        '500':
+          {
+            description: Server error,
+            content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } }
+          }
 
   /api/beads:
     get:
@@ -230,7 +348,16 @@ paths:
                   value:
                     success: true
                     data:
-                      - { id: 10, brand: TOHO, itemCode: A-01, size: 11/0, colorName: Red, quantity: 1, status: unused, wishlist: false }
+                      - {
+                          id: 10,
+                          brand: TOHO,
+                          itemCode: A-01,
+                          size: 11/0,
+                          colorName: Red,
+                          quantity: 1,
+                          status: unused,
+                          wishlist: false
+                        }
         '500':
           description: Server error
           content:
@@ -245,10 +372,60 @@ paths:
           application/json:
             schema: { $ref: '#/components/schemas/Bead' }
       responses:
-        '201': { description: Created, content: { application/json: { schema: { type: object, properties: { success: { type: boolean, enum: [true] }, data: { $ref: '#/components/schemas/Bead' } }, required: [success, data] }, examples: { created: { value: { success: true, data: { id: 20, brand: TOHO, itemCode: A-01, size: 11/0, quantity: 1, wishlist: false } } } } } } }
-        '400': { description: Invalid input, content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } } }
-        '403': { description: CSRF required, content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } } }
-        '500': { description: Server error, content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } } }
+        '201':
+          {
+            description: Created,
+            content:
+              {
+                application/json:
+                  {
+                    schema:
+                      {
+                        type: object,
+                        properties:
+                          {
+                            success: { type: boolean, enum: [true] },
+                            data: { $ref: '#/components/schemas/Bead' }
+                          },
+                        required: [success, data]
+                      },
+                    examples:
+                      {
+                        created:
+                          {
+                            value:
+                              {
+                                success: true,
+                                data:
+                                  {
+                                    id: 20,
+                                    brand: TOHO,
+                                    itemCode: A-01,
+                                    size: 11/0,
+                                    quantity: 1,
+                                    wishlist: false
+                                  }
+                              }
+                          }
+                      }
+                  }
+              }
+          }
+        '400':
+          {
+            description: Invalid input,
+            content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } }
+          }
+        '403':
+          {
+            description: CSRF required,
+            content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } }
+          }
+        '500':
+          {
+            description: Server error,
+            content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } }
+          }
   /api/beads/{id}:
     put:
       tags: [Beads]
@@ -264,9 +441,36 @@ paths:
           application/json:
             schema: { $ref: '#/components/schemas/Bead' }
       responses:
-        '200': { description: Updated, content: { application/json: { schema: { type: object, properties: { success: { type: boolean, enum: [true] }, data: { $ref: '#/components/schemas/Bead' } }, required: [success, data] } } } }
-        '400': { description: Invalid input, content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } } }
-        '403': { description: CSRF required, content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } } }
+        '200':
+          {
+            description: Updated,
+            content:
+              {
+                application/json:
+                  {
+                    schema:
+                      {
+                        type: object,
+                        properties:
+                          {
+                            success: { type: boolean, enum: [true] },
+                            data: { $ref: '#/components/schemas/Bead' }
+                          },
+                        required: [success, data]
+                      }
+                  }
+              }
+          }
+        '400':
+          {
+            description: Invalid input,
+            content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } }
+          }
+        '403':
+          {
+            description: CSRF required,
+            content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } }
+          }
     delete:
       tags: [Beads]
       security: [{ CsrfToken: [] }]
@@ -276,9 +480,42 @@ paths:
           required: true
           schema: { type: integer }
       responses:
-        '200': { description: Deleted, content: { application/json: { schema: { type: object, properties: { success: { type: boolean, enum: [true] }, data: { type: object, properties: { id: { type: integer } }, required: [id] } }, required: [success, data] }, examples: { deleted: { value: { success: true, data: { id: 9 } } } } } } }
-        '403': { description: CSRF required, content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } } }
-        '500': { description: Server error, content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } } }
+        '200':
+          {
+            description: Deleted,
+            content:
+              {
+                application/json:
+                  {
+                    schema:
+                      {
+                        type: object,
+                        properties:
+                          {
+                            success: { type: boolean, enum: [true] },
+                            data:
+                              {
+                                type: object,
+                                properties: { id: { type: integer } },
+                                required: [id]
+                              }
+                          },
+                        required: [success, data]
+                      },
+                    examples: { deleted: { value: { success: true, data: { id: 9 } } } }
+                  }
+              }
+          }
+        '403':
+          {
+            description: CSRF required,
+            content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } }
+          }
+        '500':
+          {
+            description: Server error,
+            content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } }
+          }
   /api/beads/{id}/wishlist:
     patch:
       tags: [Beads]
@@ -292,12 +529,45 @@ paths:
         required: true
         content:
           application/json:
-            schema: { type: object, properties: { wishlist: { type: boolean } }, required: [wishlist] }
+            schema:
+              { type: object, properties: { wishlist: { type: boolean } }, required: [wishlist] }
       responses:
-        '200': { description: Updated, content: { application/json: { schema: { type: object, properties: { success: { type: boolean, enum: [true] }, data: { $ref: '#/components/schemas/Bead' } }, required: [success, data] }, examples: { ok: { value: { success: true, data: { id: 9, wishlist: true } } } } } } }
-        '400': { description: Invalid input, content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } } }
-        '403': { description: CSRF required, content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } } }
-        '500': { description: Server error, content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } } }
+        '200':
+          {
+            description: Updated,
+            content:
+              {
+                application/json:
+                  {
+                    schema:
+                      {
+                        type: object,
+                        properties:
+                          {
+                            success: { type: boolean, enum: [true] },
+                            data: { $ref: '#/components/schemas/Bead' }
+                          },
+                        required: [success, data]
+                      },
+                    examples: { ok: { value: { success: true, data: { id: 9, wishlist: true } } } }
+                  }
+              }
+          }
+        '400':
+          {
+            description: Invalid input,
+            content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } }
+          }
+        '403':
+          {
+            description: CSRF required,
+            content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } }
+          }
+        '500':
+          {
+            description: Server error,
+            content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } }
+          }
 
   /api/cut-cloths:
     get:
@@ -324,7 +594,15 @@ paths:
                   value:
                     success: true
                     data:
-                      - { id: 30, fabricType: Linen, pattern: Plain, size: 30x30, quantity: 1, status: unused, wishlist: false }
+                      - {
+                          id: 30,
+                          fabricType: Linen,
+                          pattern: Plain,
+                          size: 30x30,
+                          quantity: 1,
+                          status: unused,
+                          wishlist: false
+                        }
         '500':
           description: Server error
           content:
@@ -339,10 +617,60 @@ paths:
           application/json:
             schema: { $ref: '#/components/schemas/CutCloth' }
       responses:
-        '201': { description: Created, content: { application/json: { schema: { type: object, properties: { success: { type: boolean, enum: [true] }, data: { $ref: '#/components/schemas/CutCloth' } }, required: [success, data] }, examples: { created: { value: { success: true, data: { id: 40, fabricType: Linen, pattern: Plain, size: 30x30, quantity: 1, wishlist: false } } } } } } }
-        '400': { description: Invalid input, content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } } }
-        '403': { description: CSRF required, content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } } }
-        '500': { description: Server error, content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } } }
+        '201':
+          {
+            description: Created,
+            content:
+              {
+                application/json:
+                  {
+                    schema:
+                      {
+                        type: object,
+                        properties:
+                          {
+                            success: { type: boolean, enum: [true] },
+                            data: { $ref: '#/components/schemas/CutCloth' }
+                          },
+                        required: [success, data]
+                      },
+                    examples:
+                      {
+                        created:
+                          {
+                            value:
+                              {
+                                success: true,
+                                data:
+                                  {
+                                    id: 40,
+                                    fabricType: Linen,
+                                    pattern: Plain,
+                                    size: 30x30,
+                                    quantity: 1,
+                                    wishlist: false
+                                  }
+                              }
+                          }
+                      }
+                  }
+              }
+          }
+        '400':
+          {
+            description: Invalid input,
+            content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } }
+          }
+        '403':
+          {
+            description: CSRF required,
+            content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } }
+          }
+        '500':
+          {
+            description: Server error,
+            content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } }
+          }
 
   /api/cut-cloths/{id}/wishlist:
     patch:
@@ -357,12 +685,45 @@ paths:
         required: true
         content:
           application/json:
-            schema: { type: object, properties: { wishlist: { type: boolean } }, required: [wishlist] }
+            schema:
+              { type: object, properties: { wishlist: { type: boolean } }, required: [wishlist] }
       responses:
-        '200': { description: Updated, content: { application/json: { schema: { type: object, properties: { success: { type: boolean, enum: [true] }, data: { $ref: '#/components/schemas/CutCloth' } }, required: [success, data] }, examples: { ok: { value: { success: true, data: { id: 7, quantity: 2 } } } } } } }
-        '400': { description: Invalid input, content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } } }
-        '403': { description: CSRF required, content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } } }
-        '500': { description: Server error, content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } } }
+        '200':
+          {
+            description: Updated,
+            content:
+              {
+                application/json:
+                  {
+                    schema:
+                      {
+                        type: object,
+                        properties:
+                          {
+                            success: { type: boolean, enum: [true] },
+                            data: { $ref: '#/components/schemas/CutCloth' }
+                          },
+                        required: [success, data]
+                      },
+                    examples: { ok: { value: { success: true, data: { id: 7, quantity: 2 } } } }
+                  }
+              }
+          }
+        '400':
+          {
+            description: Invalid input,
+            content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } }
+          }
+        '403':
+          {
+            description: CSRF required,
+            content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } }
+          }
+        '500':
+          {
+            description: Server error,
+            content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } }
+          }
 
   /api/cut-cloths/{id}:
     put:
@@ -379,7 +740,26 @@ paths:
           application/json:
             schema: { $ref: '#/components/schemas/CutCloth' }
       responses:
-        '200': { description: Updated, content: { application/json: { schema: { type: object, properties: { success: { type: boolean, enum: [true] }, data: { $ref: '#/components/schemas/CutCloth' } }, required: [success, data] } } } }
+        '200':
+          {
+            description: Updated,
+            content:
+              {
+                application/json:
+                  {
+                    schema:
+                      {
+                        type: object,
+                        properties:
+                          {
+                            success: { type: boolean, enum: [true] },
+                            data: { $ref: '#/components/schemas/CutCloth' }
+                          },
+                        required: [success, data]
+                      }
+                  }
+              }
+          }
     delete:
       tags: [CutCloths]
       security: [{ CsrfToken: [] }]
@@ -389,9 +769,42 @@ paths:
           required: true
           schema: { type: integer }
       responses:
-        '200': { description: Deleted, content: { application/json: { schema: { type: object, properties: { success: { type: boolean, enum: [true] }, data: { type: object, properties: { id: { type: integer } }, required: [id] } }, required: [success, data] }, examples: { deleted: { value: { success: true, data: { id: 7 } } } } } } }
-        '403': { description: CSRF required, content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } } }
-        '500': { description: Server error, content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } } }
+        '200':
+          {
+            description: Deleted,
+            content:
+              {
+                application/json:
+                  {
+                    schema:
+                      {
+                        type: object,
+                        properties:
+                          {
+                            success: { type: boolean, enum: [true] },
+                            data:
+                              {
+                                type: object,
+                                properties: { id: { type: integer } },
+                                required: [id]
+                              }
+                          },
+                        required: [success, data]
+                      },
+                    examples: { deleted: { value: { success: true, data: { id: 7 } } } }
+                  }
+              }
+          }
+        '403':
+          {
+            description: CSRF required,
+            content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } }
+          }
+        '500':
+          {
+            description: Server error,
+            content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } }
+          }
 
   /api/xstitch-cloths:
     get:
@@ -418,7 +831,15 @@ paths:
                   value:
                     success: true
                     data:
-                      - { id: 50, count: "14", color: White, size: 30x30, quantity: 1, status: unused, wishlist: false }
+                      - {
+                          id: 50,
+                          count: '14',
+                          color: White,
+                          size: 30x30,
+                          quantity: 1,
+                          status: unused,
+                          wishlist: false
+                        }
         '500':
           description: Server error
           content:
@@ -433,10 +854,60 @@ paths:
           application/json:
             schema: { $ref: '#/components/schemas/XStitchCloth' }
       responses:
-        '201': { description: Created, content: { application/json: { schema: { type: object, properties: { success: { type: boolean, enum: [true] }, data: { $ref: '#/components/schemas/XStitchCloth' } }, required: [success, data] }, examples: { created: { value: { success: true, data: { id: 60, count: "14", color: White, size: 30x30, quantity: 1, wishlist: false } } } } } } }
-        '400': { description: Invalid input, content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } } }
-        '403': { description: CSRF required, content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } } }
-        '500': { description: Server error, content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } } }
+        '201':
+          {
+            description: Created,
+            content:
+              {
+                application/json:
+                  {
+                    schema:
+                      {
+                        type: object,
+                        properties:
+                          {
+                            success: { type: boolean, enum: [true] },
+                            data: { $ref: '#/components/schemas/XStitchCloth' }
+                          },
+                        required: [success, data]
+                      },
+                    examples:
+                      {
+                        created:
+                          {
+                            value:
+                              {
+                                success: true,
+                                data:
+                                  {
+                                    id: 60,
+                                    count: '14',
+                                    color: White,
+                                    size: 30x30,
+                                    quantity: 1,
+                                    wishlist: false
+                                  }
+                              }
+                          }
+                      }
+                  }
+              }
+          }
+        '400':
+          {
+            description: Invalid input,
+            content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } }
+          }
+        '403':
+          {
+            description: CSRF required,
+            content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } }
+          }
+        '500':
+          {
+            description: Server error,
+            content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } }
+          }
 
   /api/xstitch-cloths/{id}/wishlist:
     patch:
@@ -451,12 +922,45 @@ paths:
         required: true
         content:
           application/json:
-            schema: { type: object, properties: { wishlist: { type: boolean } }, required: [wishlist] }
+            schema:
+              { type: object, properties: { wishlist: { type: boolean } }, required: [wishlist] }
       responses:
-        '200': { description: Updated, content: { application/json: { schema: { type: object, properties: { success: { type: boolean, enum: [true] }, data: { $ref: '#/components/schemas/XStitchCloth' } }, required: [success, data] }, examples: { ok: { value: { success: true, data: { id: 3, quantity: 2 } } } } } } }
-        '400': { description: Invalid input, content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } } }
-        '403': { description: CSRF required, content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } } }
-        '500': { description: Server error, content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } } }
+        '200':
+          {
+            description: Updated,
+            content:
+              {
+                application/json:
+                  {
+                    schema:
+                      {
+                        type: object,
+                        properties:
+                          {
+                            success: { type: boolean, enum: [true] },
+                            data: { $ref: '#/components/schemas/XStitchCloth' }
+                          },
+                        required: [success, data]
+                      },
+                    examples: { ok: { value: { success: true, data: { id: 3, quantity: 2 } } } }
+                  }
+              }
+          }
+        '400':
+          {
+            description: Invalid input,
+            content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } }
+          }
+        '403':
+          {
+            description: CSRF required,
+            content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } }
+          }
+        '500':
+          {
+            description: Server error,
+            content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } }
+          }
 
   /api/xstitch-cloths/{id}:
     put:
@@ -473,7 +977,26 @@ paths:
           application/json:
             schema: { $ref: '#/components/schemas/XStitchCloth' }
       responses:
-        '200': { description: Updated, content: { application/json: { schema: { type: object, properties: { success: { type: boolean, enum: [true] }, data: { $ref: '#/components/schemas/XStitchCloth' } }, required: [success, data] } } } }
+        '200':
+          {
+            description: Updated,
+            content:
+              {
+                application/json:
+                  {
+                    schema:
+                      {
+                        type: object,
+                        properties:
+                          {
+                            success: { type: boolean, enum: [true] },
+                            data: { $ref: '#/components/schemas/XStitchCloth' }
+                          },
+                        required: [success, data]
+                      }
+                  }
+              }
+          }
     delete:
       tags: [XStitchCloths]
       security: [{ CsrfToken: [] }]
@@ -483,6 +1006,39 @@ paths:
           required: true
           schema: { type: integer }
       responses:
-        '200': { description: Deleted, content: { application/json: { schema: { type: object, properties: { success: { type: boolean, enum: [true] }, data: { type: object, properties: { id: { type: integer } }, required: [id] } }, required: [success, data] }, examples: { deleted: { value: { success: true, data: { id: 3 } } } } } } }
-        '403': { description: CSRF required, content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } } }
-        '500': { description: Server error, content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } } }
+        '200':
+          {
+            description: Deleted,
+            content:
+              {
+                application/json:
+                  {
+                    schema:
+                      {
+                        type: object,
+                        properties:
+                          {
+                            success: { type: boolean, enum: [true] },
+                            data:
+                              {
+                                type: object,
+                                properties: { id: { type: integer } },
+                                required: [id]
+                              }
+                          },
+                        required: [success, data]
+                      },
+                    examples: { deleted: { value: { success: true, data: { id: 3 } } } }
+                  }
+              }
+          }
+        '403':
+          {
+            description: CSRF required,
+            content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } }
+          }
+        '500':
+          {
+            description: Server error,
+            content: { application/json: { schema: { $ref: '#/components/schemas/ApiFailure' } } }
+          }

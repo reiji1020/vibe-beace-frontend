@@ -17,7 +17,7 @@
   let fabricType: string = '';
   let pattern: string = '';
   let size: string = '';
-  let quantity: number = 0;
+  let quantity = '';
   let status: string = '';
   let wishlist: boolean = false;
 
@@ -37,22 +37,22 @@
       <div class="mt-2 mb-2 text-red-600">{topError()}</div>
     {/if}
     <FormGroup>
-      <Input label="種類" bind:value={fabricType} required />
+      <Input label="種類" bind:value={fabricType} />
       <input type="hidden" name="fabricType" value={fabricType} />
       {#if fe('fabricType')}<div class="mt-1 text-sm text-red-600">{fe('fabricType')}</div>{/if}
     </FormGroup>
     <FormGroup>
-      <Input label="柄" bind:value={pattern} required />
+      <Input label="柄" bind:value={pattern} />
       <input type="hidden" name="pattern" value={pattern} />
       {#if fe('pattern')}<div class="mt-1 text-sm text-red-600">{fe('pattern')}</div>{/if}
     </FormGroup>
     <FormGroup>
-      <Input label="サイズ" bind:value={size} required />
+      <Input label="サイズ" bind:value={size} />
       <input type="hidden" name="size" value={size} />
       {#if fe('size')}<div class="mt-1 text-sm text-red-600">{fe('size')}</div>{/if}
     </FormGroup>
     <FormGroup>
-      <Input label="数量" type="number" bind:value={quantity} required />
+      <Input label="数量" type="number" bind:value={quantity} />
       <input type="hidden" name="quantity" value={quantity} />
       {#if fe('quantity')}<div class="mt-1 text-sm text-red-600">{fe('quantity')}</div>{/if}
     </FormGroup>
@@ -67,10 +67,9 @@
       {#if fe('wishlist')}<div class="mt-1 text-sm text-red-600">{fe('wishlist')}</div>{/if}
     </FormGroup>
     <Button
-      type="submit"
       label="追加する"
       bgColor={CCLVividColor.PINEAPPLE_YELLOW}
-      onClick={() => {}}
+      onClick={() => (document.querySelector('form') as HTMLFormElement)?.requestSubmit()}
     />
   </form>
 </main>

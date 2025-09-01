@@ -22,6 +22,11 @@
     { value: 'used', label: '使用中' },
     { value: 'low', label: '残りわずか' }
   ];
+
+  // Normalize nullable fields for component props
+  let status = thread.status ?? 'unused';
+  let colorName = thread.colorName ?? '';
+  let quantity = String(thread.quantity ?? 0);
 </script>
 
 <main>
@@ -31,28 +36,28 @@
     <input type="hidden" name="csrfToken" value={data.csrfToken} />
     {#if topError()}<div class="mt-2 mb-2 text-red-600">{topError()}</div>{/if}
     <FormGroup>
-      <Input label="メーカー" bind:value={thread.brand} required />
+      <Input label="メーカー" bind:value={thread.brand} />
       <input type="hidden" name="brand" value={thread.brand} />
       {#if fe('brand')}<div class="mt-1 text-sm text-red-600">{fe('brand')}</div>{/if}
     </FormGroup>
     <FormGroup>
-      <Input label="色番号" bind:value={thread.colorNumber} required />
+      <Input label="色番号" bind:value={thread.colorNumber} />
       <input type="hidden" name="colorNumber" value={thread.colorNumber} />
       {#if fe('colorNumber')}<div class="mt-1 text-sm text-red-600">{fe('colorNumber')}</div>{/if}
     </FormGroup>
     <FormGroup>
-      <Input label="色名" bind:value={thread.colorName} />
-      <input type="hidden" name="colorName" value={thread.colorName} />
+      <Input label="色名" bind:value={colorName} />
+      <input type="hidden" name="colorName" value={colorName} />
       {#if fe('colorName')}<div class="mt-1 text-sm text-red-600">{fe('colorName')}</div>{/if}
     </FormGroup>
     <FormGroup>
-      <Input label="数量" type="number" bind:value={thread.quantity} required />
-      <input type="hidden" name="quantity" value={thread.quantity} />
+      <Input label="数量" type="number" bind:value={quantity} />
+      <input type="hidden" name="quantity" value={quantity} />
       {#if fe('quantity')}<div class="mt-1 text-sm text-red-600">{fe('quantity')}</div>{/if}
     </FormGroup>
     <FormGroup>
-      <Select label="状態" options={statusOptions} bind:value={thread.status} />
-      <input type="hidden" name="status" value={thread.status} />
+      <Select label="状態" options={statusOptions} bind:value={status} />
+      <input type="hidden" name="status" value={status} />
       {#if fe('status')}<div class="mt-1 text-sm text-red-600">{fe('status')}</div>{/if}
     </FormGroup>
     <FormGroup>
@@ -61,10 +66,9 @@
       {#if fe('wishlist')}<div class="mt-1 text-sm text-red-600">{fe('wishlist')}</div>{/if}
     </FormGroup>
     <Button
-      type="submit"
       label="更新する"
       bgColor={CCLVividColor.PINEAPPLE_YELLOW}
-      onClick={() => {}}
+      onClick={() => (document.querySelector('form') as HTMLFormElement)?.requestSubmit()}
     />
   </form>
 </main>

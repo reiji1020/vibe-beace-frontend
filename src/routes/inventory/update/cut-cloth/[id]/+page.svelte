@@ -21,6 +21,10 @@
     { value: 'unused', label: '未使用' },
     { value: 'used', label: '使用中' }
   ];
+
+  // Normalize nullable fields for component props
+  let status = cutCloth.status ?? 'unused';
+  let quantity = String(cutCloth.quantity ?? 0);
 </script>
 
 <main>
@@ -30,28 +34,28 @@
     <input type="hidden" name="csrfToken" value={data.csrfToken} />
     {#if topError()}<div class="mt-2 mb-2 text-red-600">{topError()}</div>{/if}
     <FormGroup>
-      <Input label="種類" bind:value={cutCloth.fabricType} required />
+      <Input label="種類" bind:value={cutCloth.fabricType} />
       <input type="hidden" name="fabricType" value={cutCloth.fabricType} />
       {#if fe('fabricType')}<div class="mt-1 text-sm text-red-600">{fe('fabricType')}</div>{/if}
     </FormGroup>
     <FormGroup>
-      <Input label="柄" bind:value={cutCloth.pattern} required />
+      <Input label="柄" bind:value={cutCloth.pattern} />
       <input type="hidden" name="pattern" value={cutCloth.pattern} />
       {#if fe('pattern')}<div class="mt-1 text-sm text-red-600">{fe('pattern')}</div>{/if}
     </FormGroup>
     <FormGroup>
-      <Input label="サイズ" bind:value={cutCloth.size} required />
+      <Input label="サイズ" bind:value={cutCloth.size} />
       <input type="hidden" name="size" value={cutCloth.size} />
       {#if fe('size')}<div class="mt-1 text-sm text-red-600">{fe('size')}</div>{/if}
     </FormGroup>
     <FormGroup>
-      <Input label="数量" type="number" bind:value={cutCloth.quantity} required />
-      <input type="hidden" name="quantity" value={cutCloth.quantity} />
+      <Input label="数量" type="number" bind:value={quantity} />
+      <input type="hidden" name="quantity" value={quantity} />
       {#if fe('quantity')}<div class="mt-1 text-sm text-red-600">{fe('quantity')}</div>{/if}
     </FormGroup>
     <FormGroup>
-      <Select label="状態" options={statusOptions} bind:value={cutCloth.status} />
-      <input type="hidden" name="status" value={cutCloth.status} />
+      <Select label="状態" options={statusOptions} bind:value={status} />
+      <input type="hidden" name="status" value={status} />
       {#if fe('status')}<div class="mt-1 text-sm text-red-600">{fe('status')}</div>{/if}
     </FormGroup>
     <FormGroup>
@@ -60,10 +64,9 @@
       {#if fe('wishlist')}<div class="mt-1 text-sm text-red-600">{fe('wishlist')}</div>{/if}
     </FormGroup>
     <Button
-      type="submit"
       label="更新する"
       bgColor={CCLVividColor.PINEAPPLE_YELLOW}
-      onClick={() => {}}
+      onClick={() => (document.querySelector('form') as HTMLFormElement)?.requestSubmit()}
     />
   </form>
 </main>

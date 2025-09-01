@@ -22,7 +22,12 @@
         <input type="password" id="password" name="password" class="login-input" required />
       </div>
       <div class="form-group">
-        <Button type="submit" label="Login" bgColor={CCLVividColor.PINEAPPLE_YELLOW} />
+        <Button
+          label="Login"
+          bgColor={CCLVividColor.PINEAPPLE_YELLOW}
+          onClick={() =>
+            (document.querySelector('.login-form') as HTMLFormElement)?.requestSubmit()}
+        />
       </div>
     </form>
   </div>

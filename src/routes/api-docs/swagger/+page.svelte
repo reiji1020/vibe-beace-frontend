@@ -35,7 +35,16 @@
 <div id="swagger-ui" style="min-height: 100vh"></div>
 
 <style>
-  .guide { padding: 16px; }
-  .guide h1 { margin: 0 0 8px; font-size: 20px; }
-  .guide code { background: #f5f5f5; padding: 0 4px; border-radius: 3px; }
+  .guide {
+    padding: 16px;
+  }
+  .guide h1 {
+    margin: 0 0 8px;
+    font-size: 20px;
+  }
+  .guide code {
+    background: #f5f5f5;
+    padding: 0 4px;
+    border-radius: 3px;
+  }
 </style>

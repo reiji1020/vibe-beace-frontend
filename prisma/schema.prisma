@@ -13,13 +13,25 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Status enums: models differ in allowed values
+enum StatusWithLow {
+  unused
+  used
+  low
+}
+
+enum StatusBasic {
+  unused
+  used
+}
+
 model Thread {
   id           Int     @id @default(autoincrement())
   brand        String
   colorNumber  String
   colorName    String?
   quantity     Int
-  status       String?  // unused, used, low
+  status       StatusWithLow?
   wishlist     Boolean
 }
 
@@ -30,7 +42,7 @@ model Bead {
   size       String
   colorName  String?
   quantity   Int
-  status     String?  // unused, used, low
+  status     StatusWithLow?
   wishlist   Boolean
 }
 
@@ -40,7 +52,7 @@ model CutCloth {
   pattern     String
   size        String
   quantity    Int
-  status      String?  // unused, used
+  status      StatusBasic?
   wishlist    Boolean
 }
 
@@ -50,6 +62,6 @@ model XStitchCloth {
   color     String
   size      String
   quantity  Int
-  status    String?  // unused, used
+  status    StatusBasic?
   wishlist  Boolean
 }
