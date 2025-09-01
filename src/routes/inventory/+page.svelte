@@ -190,6 +190,11 @@
   {/if}
 </div>
 
+<div class="api-docs-link">
+  <a href="/api-docs/swagger" aria-label="Swagger API Docs">API Docs (Swagger)</a>
+  <span class="hint">（開発者向け）</span>
+  </div>
+
 <div class="summary">
   <span>
     現在の表示: {selectedMaterial === 'threads'
@@ -276,4 +281,17 @@
     gap: 1rem;
     margin: 2rem;
   }
+  .api-docs-link {
+    margin: 0 2rem 0.5rem;
+    font-size: 0.8rem;
+    color: #888;
+  }
+  .api-docs-link a {
+    color: inherit;
+    text-decoration: underline dotted;
+  }
+  .api-docs-link a:hover {
+    color: #555;
+  }
+  .api-docs-link .hint { margin-left: 6px; }
 </style>
