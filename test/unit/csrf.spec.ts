@@ -42,4 +42,3 @@ describe('csrf utils', () => {
     expect(verifyCsrfFromForm(cookies, fd)).toBe(true);
   });
 });
-

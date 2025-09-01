@@ -20,4 +20,3 @@ describe('toast store', () => {
     unsub();
   });
 });
-

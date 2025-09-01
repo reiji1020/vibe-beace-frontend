@@ -7,10 +7,17 @@ const hoisted = vi.hoisted(() => ({
 }));
 
 vi.mock('$lib/db', () => ({
-  prisma: { xStitchCloth: { create: hoisted.create, update: hoisted.update, delete: hoisted.delete } }
+  prisma: {
+    xStitchCloth: { create: hoisted.create, update: hoisted.update, delete: hoisted.delete }
+  }
 }));
 
-import { addXStitchCloth, updateXStitchCloth, deleteXStitchCloth, setWishlistXStitchCloth } from '../../src/lib/controllers/xStitchClothController';
+import {
+  addXStitchCloth,
+  updateXStitchCloth,
+  deleteXStitchCloth,
+  setWishlistXStitchCloth
+} from '../../src/lib/controllers/xStitchClothController';
 
 beforeEach(() => {
   hoisted.create.mockClear();
@@ -20,19 +27,44 @@ beforeEach(() => {
 
 describe('xStitchClothController mutations', () => {
   it('addXStitchCloth calls prisma.xStitchCloth.create with data', async () => {
-    const data = { count: '14', color: 'White', size: '30x30', quantity: 1, status: 'unused', wishlist: false };
+    const data = {
+      count: '14',
+      color: 'White',
+      size: '30x30',
+      quantity: 1,
+      status: 'unused',
+      wishlist: false
+    };
     await addXStitchCloth(data as any);
     expect(hoisted.create).toHaveBeenCalledWith({ data });
   });
 
   it('updateXStitchCloth calls prisma.xStitchCloth.update with where/data', async () => {
-    const upd = { id: 8, count: '16', color: 'White', size: '30x30', quantity: 2, wishlist: true } as any;
+    const upd = {
+      id: 8,
+      count: '16',
+      color: 'White',
+      size: '30x30',
+      quantity: 2,
+      wishlist: true
+    } as any;
     await updateXStitchCloth(upd);
-    expect(hoisted.update).toHaveBeenCalledWith({ where: { id: 8 }, data: { count: '16', color: 'White', size: '30x30', quantity: 2, wishlist: true } });
+    expect(hoisted.update).toHaveBeenCalledWith({
+      where: { id: 8 },
+      data: { count: '16', color: 'White', size: '30x30', quantity: 2, wishlist: true }
+    });
   });
 
   it('updateXStitchCloth throws on invalid id', async () => {
-    await expect(updateXStitchCloth({ count: '14', color: 'White', size: '30x30', quantity: 1, wishlist: false } as any)).rejects.toThrow();
+    await expect(
+      updateXStitchCloth({
+        count: '14',
+        color: 'White',
+        size: '30x30',
+        quantity: 1,
+        wishlist: false
+      } as any)
+    ).rejects.toThrow();
   });
 
   it('setWishlistXStitchCloth updates only wishlist', async () => {

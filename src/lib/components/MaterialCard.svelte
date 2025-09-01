@@ -48,14 +48,15 @@
   }
 
   async function toggleWishlist() {
-    const endpoint =
+    const endpointBase =
       material.type === 'thread'
-        ? '/api/update/setWishlistThread'
+        ? '/api/threads'
         : material.type === 'bead'
-          ? '/api/update/setWishlistBead'
+          ? '/api/beads'
           : material.type === 'cutCloth'
-            ? '/api/update/setWishlistCutCloth'
-            : '/api/update/setWishlistXStitchCloth';
+            ? '/api/cut-cloths'
+            : '/api/xstitch-cloths';
+    const endpoint = `${endpointBase}/${material.id}/wishlist`;
 
     const next = !material.wishlist;
     // optimistic update
@@ -68,18 +69,23 @@
           .find((c) => c.startsWith('csrf='))
           ?.split('=')[1] ?? '';
       const res = await fetch(endpoint, {
-        method: 'POST',
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRF-Token': csrf
         },
-        body: JSON.stringify({ id: material.id, wishlist: next })
+        body: JSON.stringify({ wishlist: next })
       });
       if (!res.ok) {
         material.wishlist = prev; // rollback
         const j = await res.json().catch(() => ({}));
         console.error('Failed to toggle wishlist', j.error || res.statusText);
-        const msg = res.status === 403 ? '不正な操作です' : (j.error ? String(j.error) : 'Wishlistの更新に失敗しました');
+        const msg =
+          res.status === 403
+            ? '不正な操作です'
+            : j.error
+              ? String(j.error)
+              : 'Wishlistの更新に失敗しました';
         showToast(msg, 'error');
       } else {
         const j = await res.json().catch(() => null);
@@ -114,7 +120,7 @@
     >
       <span class:wished={material.wishlist}>★</span>
     </button>
-      <a
+    <a
       href={`/inventory/update/${material.type === 'thread' ? 'thread' : material.type === 'bead' ? 'bead' : material.type === 'cutCloth' ? 'cut-cloth' : 'xstitch-cloth'}/${material.id}`}
       class="edit-button"
       title="編集"
@@ -130,7 +136,6 @@
   <div class="card-body">
     <p>{details}</p>
   </div>
-
 </div>
 
 <style>

@@ -29,4 +29,3 @@ describe('beadController.getAllBeads', () => {
     expect(arg.orderBy).toEqual({ brand: 'desc' });
   });
 });
-

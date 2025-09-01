@@ -26,4 +26,3 @@ describe('flash cookie helpers', () => {
     expect(f2).toBeNull();
   });
 });
-

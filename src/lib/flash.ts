@@ -29,4 +29,3 @@ export function getAndClearFlash(cookies: Cookies): { message: string; type: Fla
   }
   return null;
 }
-

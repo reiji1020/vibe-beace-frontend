@@ -10,7 +10,10 @@ export type ThreadListOptions = {
   status?: string | null;
   brand?: string | null;
   wishlist?: boolean | null;
-  sort?: { by: 'colorNumber' | 'brand' | 'quantity' | 'status' | 'wishlist'; order: 'asc' | 'desc' } | null;
+  sort?: {
+    by: 'colorNumber' | 'brand' | 'quantity' | 'status' | 'wishlist';
+    order: 'asc' | 'desc';
+  } | null;
 };
 
 export async function getAllThreads(
@@ -33,9 +36,7 @@ export async function getAllThreads(
   if (opts.brand) where.brand = { contains: opts.brand };
   if (typeof opts.wishlist === 'boolean') where.wishlist = opts.wishlist;
 
-  const orderBy = opts.sort
-    ? { [opts.sort.by]: opts.sort.order }
-    : { colorNumber: 'asc' as const };
+  const orderBy = opts.sort ? { [opts.sort.by]: opts.sort.order } : { colorNumber: 'asc' as const };
 
   return prisma.thread.findMany({ where, orderBy });
 }

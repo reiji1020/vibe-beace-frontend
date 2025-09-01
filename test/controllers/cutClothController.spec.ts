@@ -28,4 +28,3 @@ describe('cutClothController.getAllCutCloth', () => {
     expect(arg.orderBy).toEqual({ quantity: 'desc' });
   });
 });
-

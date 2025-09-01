@@ -8,7 +8,10 @@ export type BeadListOptions = {
   status?: string | null;
   brand?: string | null;
   wishlist?: boolean | null;
-  sort?: { by: 'itemCode' | 'brand' | 'quantity' | 'status' | 'wishlist'; order: 'asc' | 'desc' } | null;
+  sort?: {
+    by: 'itemCode' | 'brand' | 'quantity' | 'status' | 'wishlist';
+    order: 'asc' | 'desc';
+  } | null;
 };
 
 export async function getAllBeads(

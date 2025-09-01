@@ -10,7 +10,12 @@ vi.mock('$lib/db', () => ({
   prisma: { thread: { create: hoisted.create, update: hoisted.update, delete: hoisted.delete } }
 }));
 
-import { addThread, updateThread, deleteThread, setWishlistThread } from '../../src/lib/controllers/threadController';
+import {
+  addThread,
+  updateThread,
+  deleteThread,
+  setWishlistThread
+} from '../../src/lib/controllers/threadController';
 
 beforeEach(() => {
   hoisted.create.mockClear();
@@ -20,7 +25,14 @@ beforeEach(() => {
 
 describe('threadController mutations', () => {
   it('addThread calls prisma.thread.create with data', async () => {
-    const data = { brand: 'DMC', colorNumber: '310', colorName: 'Black', quantity: 1, status: 'unused', wishlist: false };
+    const data = {
+      brand: 'DMC',
+      colorNumber: '310',
+      colorName: 'Black',
+      quantity: 1,
+      status: 'unused',
+      wishlist: false
+    };
     await addThread(data as any);
     expect(hoisted.create).toHaveBeenCalledWith({ data });
   });
@@ -28,7 +40,10 @@ describe('threadController mutations', () => {
   it('updateThread calls prisma.thread.update with where/data', async () => {
     const upd = { id: 10, brand: 'DMC', colorNumber: '312', quantity: 2, wishlist: true } as any;
     await updateThread(upd);
-    expect(hoisted.update).toHaveBeenCalledWith({ where: { id: 10 }, data: { brand: 'DMC', colorNumber: '312', quantity: 2, wishlist: true } });
+    expect(hoisted.update).toHaveBeenCalledWith({
+      where: { id: 10 },
+      data: { brand: 'DMC', colorNumber: '312', quantity: 2, wishlist: true }
+    });
   });
 
   it('updateThread throws on invalid id', async () => {

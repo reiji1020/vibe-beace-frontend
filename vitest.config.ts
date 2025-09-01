@@ -24,7 +24,13 @@ export default defineConfig({
         'src/**/*.svelte',
         'node_modules/**',
         'test/**'
-      ]
+      ],
+      thresholds: {
+        lines: 80,
+        functions: 75,
+        branches: 70,
+        statements: 80
+      }
     }
   },
   resolve: {

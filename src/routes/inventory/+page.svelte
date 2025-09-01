@@ -42,23 +42,15 @@
   async function handleDelete(id: number, type: InventoryCardItem['type']) {
     let apiEndpoint = '';
 
-    switch (type) {
-      case 'thread':
-        apiEndpoint = '/api/delete/deleteThread';
-        break;
-      case 'bead':
-        apiEndpoint = '/api/delete/deleteBead';
-        break;
-      case 'cutCloth':
-        apiEndpoint = '/api/delete/deleteCutCloth';
-        break;
-      case 'xStitchCloth':
-        apiEndpoint = '/api/delete/deleteXStitchCloth';
-        break;
-      default:
-        console.error('Unknown material type for deletion:', type);
-        return;
-    }
+    const base =
+      type === 'thread'
+        ? '/api/threads'
+        : type === 'bead'
+          ? '/api/beads'
+          : type === 'cutCloth'
+            ? '/api/cut-cloths'
+            : '/api/xstitch-cloths';
+    apiEndpoint = `${base}/${id}`;
 
     if (confirm('本当に削除しますか？')) {
       // Read CSRF token from cookie
@@ -87,9 +79,10 @@
         location.reload();
       } else {
         const errorData = await response.json();
-        const msg = response.status === 403
-          ? '不正な操作です'
-          : `削除に失敗しました: ${errorData.error || response.statusText}`;
+        const msg =
+          response.status === 403
+            ? '不正な操作です'
+            : `削除に失敗しました: ${errorData.error || response.statusText}`;
         alertMessage = msg;
         alertType = 'error';
         showAlert = true;
@@ -184,7 +177,7 @@
   {/if}
 </div>
 
-  <div class="search-results-alert">
+<div class="search-results-alert">
   {#if filterWishlist}
     <Alert type="info" message="Wishlistのみを表示中" />
   {/if}
@@ -195,36 +188,42 @@
       <Alert type="error" message={`「${data.query}」に一致する資材は見つかりませんでした。`} />
     {/if}
   {/if}
-  </div>
+</div>
 
-  <div class="summary">
-    <span>
-      現在の表示: {selectedMaterial === 'threads' ? counts.threads : selectedMaterial === 'beads' ? counts.beads : selectedMaterial === 'cutCloths' ? counts.cutCloths : counts.xStitchCloths} 件
-    </span>
-  </div>
+<div class="summary">
+  <span>
+    現在の表示: {selectedMaterial === 'threads'
+      ? counts.threads
+      : selectedMaterial === 'beads'
+        ? counts.beads
+        : selectedMaterial === 'cutCloths'
+          ? counts.cutCloths
+          : counts.xStitchCloths} 件
+  </span>
+</div>
 
-  <div class="card-container">
-    {#if selectedMaterial === 'threads'}
+<div class="card-container">
+  {#if selectedMaterial === 'threads'}
     {#each data.threads as thread}
       <MaterialCard material={{ ...thread, type: 'thread' }} onDelete={handleDelete} />
     {/each}
-    {/if}
-    {#if selectedMaterial === 'beads'}
+  {/if}
+  {#if selectedMaterial === 'beads'}
     {#each data.beads as bead}
       <MaterialCard material={{ ...bead, type: 'bead' }} onDelete={handleDelete} />
     {/each}
-    {/if}
-    {#if selectedMaterial === 'cutCloths'}
+  {/if}
+  {#if selectedMaterial === 'cutCloths'}
     {#each data.cutCloths as cutCloth}
       <MaterialCard material={{ ...cutCloth, type: 'cutCloth' }} onDelete={handleDelete} />
     {/each}
-    {/if}
-    {#if selectedMaterial === 'xStitchCloths'}
+  {/if}
+  {#if selectedMaterial === 'xStitchCloths'}
     {#each data.xStitchCloths as xSc}
       <MaterialCard material={{ ...xSc, type: 'xStitchCloth' }} onDelete={handleDelete} />
     {/each}
-    {/if}
-  </div>
+  {/if}
+</div>
 
 <style>
   .alert-container {

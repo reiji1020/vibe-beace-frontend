@@ -28,4 +28,3 @@ describe('xStitchClothController.getAllXStitchCloth', () => {
     expect(arg.orderBy).toEqual({ quantity: 'desc' });
   });
 });
-

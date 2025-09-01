@@ -38,4 +38,3 @@ export const toast = {
   info,
   hide
 };
-

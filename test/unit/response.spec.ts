@@ -30,4 +30,3 @@ describe('api/response helpers', () => {
     expect(b.body.success).toBe(false);
   });
 });
-

@@ -107,21 +107,29 @@
 - 追加系 API の揃え: `addBead|addCutCloth|addThread|addXStitchCloth` を整備（`safeParse` 適用）。
 - ローディング UX: `/inventory` 遷移時に `cclkit4svelte` の `Spinner`（PINEAPPLE_YELLOW）でオーバーレイ表示。
 - API レスポンス統一: 全エンドポイントを `{ success, data|error }` に統一、共通ヘルパ `src/lib/api/response.ts` を導入。
+- 検索/フィルタ/ソート拡張: `status/brand/wishlist` と並び替え（quantity/brand）を追加。
+- 一覧UX: ラジオラベル件数バッジ、カテゴリ件数サマリ、`wishlistのみ` 適用中のインフォ表示を追加。
 - Wishlist トグル: 全資材に対して `setWishlist*` API を追加、`MaterialCard` にトグルを実装（CSRF/楽観的更新）。
 - トースト: `cclkit4svelte` の `Alert` を用いたグローバルトーストを導入（`src/lib/ui/toast.ts` + `+layout` 表示）。
 - フラッシュトースト: 追加/更新後のリダイレクトに対応するフラッシュ（`src/lib/flash.ts`）を実装。成功/失敗の両方に対応。
+- 型安全化: `MaterialCard` を判別可能ユニオン型で厳密化。
+- テスト整備: Vitest導入・カバレッジ設定、ユーティリティ/API（get/add/update/delete/wishlist）/コントローラ（検索/CRUD）の主要パス（200/400/403/500）を網羅。
 - Lint/Format: ESLint の `indent: 2` を追加、Prettier を 2スペースに統一（`tabWidth: 2`, `useTabs: false`）。
 
 — Partial
 
 - フォーム hidden ミラー削減: ライブラリ `Input/Select` が `name` を透過しないため維持。将来はラッパー導入で隠蔽可能。
-- 型安全性: `MaterialCard.svelte` が `any` 依存。判別可能ユニオン化（判別可能ユニオン/共通型の導入）の余地あり。
+- 型安全性（追加余地）: APIレスポンス型（`ApiResponse<T>`）のフロント活用、ページ間の型共有。
+- エラーメッセージ整形: Zodの `flatten()` をUIで統一表示する仕組みの共通化。
+- カバレッジしきい値: しきい値（lines/functions/branches）未設定（導入余地あり）。
 
 — Next Up（候補）
 
-- 検索/フィルタ/ソート（ブランド・ステータス・wishlist、ソート切替）。
-- Wishlist 絞り込み（トグル併用時のUX最適化、件数バッジ）。
-- 型安全化: `MaterialCard` の判別可能ユニオン化、APIレスポンスの型活用。
+- ルート命名の統一（REST 風 `/api/{resource}` + メソッド、または kebab-case）とフロント参照の追随。
+- ページネーション/無限スクロール（`limit/offset` or `cursor`）。
+- カバレッジしきい値の導入（例: lines 80% / functions 75% / branches 70%）。
+- 検索UIポリッシュ: フィルタ状態の保持、ブランド欄の資材別表示最適化。
+- 型安全化強化: APIレスポンス型のフロント反映、フォーム値の型付け。
 
 — Todo
 
@@ -130,13 +138,16 @@
 - ページネーション/無限スクロール（`limit/offset` or `cursor`）。
 - スキーマ整合: `status` 値の統一方針（XStitchCloth の `low` 有無の決定）。
 - セキュリティ/信頼性: 環境変数命名の見直し（`VITE_AUTH_*` → `AUTH_*` 等）。
-- DX/運用: コントローラ単体テスト、簡易 E2E（認証/CRUD）。Prisma Seed。頻出列の DB インデックス。関連ドキュメント更新（`docs/*`/`GEMINI.md`）。
+- DX/運用: 簡易 E2E（認証/CRUD）。Prisma Seed。頻出列の DB インデックス。関連ドキュメント更新（`docs/*`/`GEMINI.md`）。
 
 ## API 配置方針
 
-- ディレクトリ構成: `src/routes/api/{add|get|update|delete}/<ActionName>/+server.ts`
-- ルートパス: `/api/{add|get|update|delete}/<ActionName>`（例: `/api/delete/deleteThread`）
-- 既存フロント実装の参照パスは上記へ順次合わせる。ルートグループ（`(foo)`）は使用しない。
+- 推奨（REST）: リソースベースの階層構造
+  - スレッド: `/api/threads`（GET/POST）、`/api/threads/[id]`（PUT/DELETE）、`/api/threads/[id]/wishlist`（PATCH）
+  - ビーズ: `/api/beads`（GET/POST）、`/api/beads/[id]`（PUT/DELETE）、`/api/beads/[id]/wishlist`（PATCH）
+  - カットクロス: `/api/cut-cloths`（GET/POST）、`/api/cut-cloths/[id]`（PUT/DELETE）、`/api/cut-cloths/[id]/wishlist`（PATCH）
+  - クロスステッチ布: `/api/xstitch-cloths`（GET/POST）、`/api/xstitch-cloths/[id]`（PUT/DELETE）、`/api/xstitch-cloths/[id]/wishlist`（PATCH）
+- 旧式（互換・非推奨）: `/api/{add|get|update|delete}/<ActionName>` は当面維持しつつ、順次RESTへ移行する。
 
 ## 参考/連携
 
