@@ -1,6 +1,8 @@
 <script lang="ts">
-  export let material: any; // thread, bead, or cutCloth object
-  export let onDelete: (id: number, type: string) => void;
+  import { toast } from '$lib/ui/toast';
+  import type { InventoryCardItem } from '$lib/types';
+  export let material: InventoryCardItem;
+  export let onDelete: (id: number, type: InventoryCardItem['type']) => void;
 
   let title: string;
   let details: string;
@@ -21,41 +23,99 @@
 
   // Determine content based on material type
   $: {
-    if (material.brand && material.colorNumber) {
-      // Thread
-      title = `${material.brand} ${material.colorNumber}`;
-      details = `色名: ${material.colorName || 'N/A'}\n数量: ${material.quantity}\n状態: ${getStatusLabel(material.status)}\n欲しいもの: ${material.wishlist ? 'はい' : 'いいえ'}`;
-    } else if (material.itemCode && material.size) {
-      // Bead
-      title = `${material.brand} ${material.itemCode}`;
-      details = `サイズ: ${material.size}\n色名: ${material.colorName || 'N/A'}\n数量: ${material.quantity}\n状態: ${getStatusLabel(material.status)}\n欲しいもの: ${material.wishlist ? 'はい' : 'いいえ'}`;
-    } else if (material.fabricType && material.pattern) {
-      // CutCloth
-      title = `${material.fabricType} ${material.pattern}`;
-      details = `サイズ: ${material.size}\n数量: ${material.quantity}\n状態: ${getStatusLabel(material.status)}\n欲しいもの: ${material.wishlist ? 'はい' : 'いいえ'}`;
-    } else if (material.count && material.color && material.size) {
-      // XStitchCloth
-      title = `${material.count}ct ${material.color}`;
-      details = `サイズ: ${material.size}\n数量: ${material.quantity}\n状態: ${getStatusLabel(material.status)}\n欲しいもの: ${material.wishlist ? 'はい' : 'いいえ'}`;
+    switch (material.type) {
+      case 'thread':
+        title = `${material.brand} ${material.colorNumber}`;
+        details = `色名: ${material.colorName || 'N/A'}\n数量: ${material.quantity}\n状態: ${getStatusLabel(material.status)}\n欲しいもの: ${material.wishlist ? 'はい' : 'いいえ'}`;
+        break;
+      case 'bead':
+        title = `${material.brand} ${material.itemCode}`;
+        details = `サイズ: ${material.size}\n色名: ${material.colorName || 'N/A'}\n数量: ${material.quantity}\n状態: ${getStatusLabel(material.status)}\n欲しいもの: ${material.wishlist ? 'はい' : 'いいえ'}`;
+        break;
+      case 'cutCloth':
+        title = `${material.fabricType} ${material.pattern}`;
+        details = `サイズ: ${material.size}\n数量: ${material.quantity}\n状態: ${getStatusLabel(material.status)}\n欲しいもの: ${material.wishlist ? 'はい' : 'いいえ'}`;
+        break;
+      case 'xStitchCloth':
+        title = `${material.count}ct ${material.color}`;
+        details = `サイズ: ${material.size}\n数量: ${material.quantity}\n状態: ${getStatusLabel(material.status)}\n欲しいもの: ${material.wishlist ? 'はい' : 'いいえ'}`;
+        break;
     }
   }
 
   function handleDelete() {
-    const type = material.brand
-      ? 'thread'
-      : material.itemCode
-        ? 'bead'
-        : material.fabricType
-          ? 'cutCloth'
-          : 'xStitchCloth';
-    onDelete(material.id, type);
+    onDelete(material.id, material.type);
+  }
+
+  async function toggleWishlist() {
+    const endpoint =
+      material.type === 'thread'
+        ? '/api/update/setWishlistThread'
+        : material.type === 'bead'
+          ? '/api/update/setWishlistBead'
+          : material.type === 'cutCloth'
+            ? '/api/update/setWishlistCutCloth'
+            : '/api/update/setWishlistXStitchCloth';
+
+    const next = !material.wishlist;
+    // optimistic update
+    const prev = material.wishlist;
+    material.wishlist = next;
+    try {
+      const csrf =
+        document.cookie
+          .split('; ')
+          .find((c) => c.startsWith('csrf='))
+          ?.split('=')[1] ?? '';
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': csrf
+        },
+        body: JSON.stringify({ id: material.id, wishlist: next })
+      });
+      if (!res.ok) {
+        material.wishlist = prev; // rollback
+        const j = await res.json().catch(() => ({}));
+        console.error('Failed to toggle wishlist', j.error || res.statusText);
+        const msg = res.status === 403 ? '不正な操作です' : (j.error ? String(j.error) : 'Wishlistの更新に失敗しました');
+        showToast(msg, 'error');
+      } else {
+        const j = await res.json().catch(() => null);
+        if (j && j.success && j.data) {
+          material = j.data; // sync with server
+        }
+        showToast(next ? 'Wishlistに追加しました' : 'Wishlistを解除しました', 'success');
+      }
+    } catch (e) {
+      material.wishlist = prev; // rollback
+      console.error('Error toggling wishlist', e);
+      showToast('通信エラーが発生しました', 'error');
+    }
+  }
+
+  function showToast(message: string, type: 'success' | 'error' | 'warning' | 'info' = 'info') {
+    // use global toast store
+    if (type === 'success') toast.success(message);
+    else if (type === 'error') toast.error(message);
+    else if (type === 'warning') toast.warning(message);
+    else toast.info(message);
   }
 </script>
 
 <div class="material-card">
   <div class="card-actions">
-    <a
-      href={`/inventory/update/${material.brand ? 'thread' : material.itemCode ? 'bead' : material.fabricType ? 'cut-cloth' : 'xstitch-cloth'}/${material.id}`}
+    <button
+      class="wishlist-button"
+      on:click|preventDefault={toggleWishlist}
+      aria-label={material.wishlist ? 'Remove from wishlist' : 'Add to wishlist'}
+      title={material.wishlist ? 'Wishlist解除' : 'Wishlist登録'}
+    >
+      <span class:wished={material.wishlist}>★</span>
+    </button>
+      <a
+      href={`/inventory/update/${material.type === 'thread' ? 'thread' : material.type === 'bead' ? 'bead' : material.type === 'cutCloth' ? 'cut-cloth' : 'xstitch-cloth'}/${material.id}`}
       class="edit-button"
       title="編集"
     >
@@ -70,6 +130,7 @@
   <div class="card-body">
     <p>{details}</p>
   </div>
+
 </div>
 
 <style>
@@ -102,6 +163,20 @@
     text-decoration: none;
     display: inline-flex;
     align-items: center;
+  }
+
+  .wishlist-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0 5px;
+    font-size: 16px;
+    line-height: 1;
+    color: #999;
+  }
+
+  .wishlist-button .wished {
+    color: #ffb400; /* gold-ish */
   }
 
   .icon {
@@ -140,4 +215,6 @@
     font-size: 0.9rem;
     color: #555;
   }
+
+  /* toast display is handled by parent via event */
 </style>

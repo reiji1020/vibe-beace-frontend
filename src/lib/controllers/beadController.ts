@@ -3,22 +3,37 @@ import type { Bead } from '$lib/types';
 import { prisma } from '$lib/db';
 
 /** 全ビーズを取得（ソート付き） */
-export async function getAllBeads(query: string | null = null): Promise<Bead[]> {
-  const where = query
-    ? {
-        OR: [
-          { brand: { contains: query } },
-          { itemCode: { contains: query } },
-          { colorName: { contains: query } },
-          { size: { contains: query } }
-        ]
-      }
-    : {};
+export type BeadListOptions = {
+  query?: string | null;
+  status?: string | null;
+  brand?: string | null;
+  wishlist?: boolean | null;
+  sort?: { by: 'itemCode' | 'brand' | 'quantity' | 'status' | 'wishlist'; order: 'asc' | 'desc' } | null;
+};
 
-  return prisma.bead.findMany({
-    where,
-    orderBy: { itemCode: 'asc' }
-  });
+export async function getAllBeads(
+  queryOrOptions: string | null | BeadListOptions = null
+): Promise<Bead[]> {
+  const opts: BeadListOptions =
+    typeof queryOrOptions === 'string' || queryOrOptions === null
+      ? { query: queryOrOptions }
+      : queryOrOptions;
+
+  const where: any = {};
+  if (opts.query) {
+    where.OR = [
+      { brand: { contains: opts.query } },
+      { itemCode: { contains: opts.query } },
+      { colorName: { contains: opts.query } },
+      { size: { contains: opts.query } }
+    ];
+  }
+  if (opts.status) where.status = opts.status as any;
+  if (opts.brand) where.brand = { contains: opts.brand };
+  if (typeof opts.wishlist === 'boolean') where.wishlist = opts.wishlist;
+
+  const orderBy = opts.sort ? { [opts.sort.by]: opts.sort.order } : { itemCode: 'asc' as const };
+  return prisma.bead.findMany({ where, orderBy });
 }
 
 /** 特定 ID のビーズを取得 */

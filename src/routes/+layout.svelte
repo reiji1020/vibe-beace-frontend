@@ -1,10 +1,22 @@
 <script lang="ts">
   import '../app.css';
-  import { CCLVividColor, CommonHeader, Footer, Button, Spinner } from 'cclkit4svelte';
+  import { CCLVividColor, CommonHeader, Footer, Button, Spinner, Alert } from 'cclkit4svelte';
   import type { LayoutData } from './$types';
   import { navigating } from '$app/stores';
+  import { toast } from '$lib/ui/toast';
+  import { onMount } from 'svelte';
 
   let { children, data } = $props();
+
+  onMount(() => {
+    if (data?.flash) {
+      const { message, type } = data.flash;
+      if (type === 'success') toast.success(message);
+      else if (type === 'error') toast.error(message);
+      else if (type === 'warning') toast.warning(message);
+      else toast.info(message);
+    }
+  });
 </script>
 
 <div class="page-container">
@@ -30,6 +42,12 @@
   {#if $navigating && $navigating.to?.url?.pathname?.startsWith('/inventory')}
     <div class="loading-overlay" aria-live="polite" aria-busy="true">
       <Spinner size="64px" color={CCLVividColor.PINEAPPLE_YELLOW} />
+    </div>
+  {/if}
+
+  {#if $toast.visible}
+    <div class="global-toast">
+      <Alert message={$toast.message} type={$toast.type} dismissible={true} />
     </div>
   {/if}
 </div>
@@ -63,5 +81,13 @@
     justify-content: center;
     background: rgba(255, 255, 255, 0.7);
     z-index: 2000;
+  }
+
+  .global-toast {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    width: min(320px, 80vw);
+    z-index: 3000;
   }
 </style>

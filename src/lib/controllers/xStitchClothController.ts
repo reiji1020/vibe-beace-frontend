@@ -1,18 +1,33 @@
 import type { XStitchCloth } from '$lib/types';
 import { prisma } from '$lib/db';
 
-export async function getAllXStitchCloth(query: string | null = null): Promise<XStitchCloth[]> {
-  const where = query
-    ? {
-        OR: [
-          { count: { contains: query } },
-          { color: { contains: query } },
-          { size: { contains: query } }
-        ]
-      }
-    : {};
+export type XStitchClothListOptions = {
+  query?: string | null;
+  status?: string | null;
+  wishlist?: boolean | null;
+  sort?: { by: 'id' | 'quantity' | 'status' | 'wishlist'; order: 'asc' | 'desc' } | null;
+};
 
-  return prisma.xStitchCloth.findMany({ where, orderBy: { id: 'asc' } });
+export async function getAllXStitchCloth(
+  queryOrOptions: string | null | XStitchClothListOptions = null
+): Promise<XStitchCloth[]> {
+  const opts: XStitchClothListOptions =
+    typeof queryOrOptions === 'string' || queryOrOptions === null
+      ? { query: queryOrOptions }
+      : queryOrOptions;
+
+  const where: any = {};
+  if (opts.query) {
+    where.OR = [
+      { count: { contains: opts.query } },
+      { color: { contains: opts.query } },
+      { size: { contains: opts.query } }
+    ];
+  }
+  if (opts.status) where.status = opts.status as any;
+  if (typeof opts.wishlist === 'boolean') where.wishlist = opts.wishlist;
+  const orderBy = opts.sort ? { [opts.sort.by]: opts.sort.order } : { id: 'asc' as const };
+  return prisma.xStitchCloth.findMany({ where, orderBy });
 }
 
 export async function getXStitchClothById(id: number): Promise<XStitchCloth | null> {

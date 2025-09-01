@@ -106,18 +106,22 @@
 - 取得系 API の補完: `getBeads|getCutCloths|getThreads|getXStitchCloths` を整備。
 - 追加系 API の揃え: `addBead|addCutCloth|addThread|addXStitchCloth` を整備（`safeParse` 適用）。
 - ローディング UX: `/inventory` 遷移時に `cclkit4svelte` の `Spinner`（PINEAPPLE_YELLOW）でオーバーレイ表示。
+- API レスポンス統一: 全エンドポイントを `{ success, data|error }` に統一、共通ヘルパ `src/lib/api/response.ts` を導入。
+- Wishlist トグル: 全資材に対して `setWishlist*` API を追加、`MaterialCard` にトグルを実装（CSRF/楽観的更新）。
+- トースト: `cclkit4svelte` の `Alert` を用いたグローバルトーストを導入（`src/lib/ui/toast.ts` + `+layout` 表示）。
+- フラッシュトースト: 追加/更新後のリダイレクトに対応するフラッシュ（`src/lib/flash.ts`）を実装。成功/失敗の両方に対応。
+- Lint/Format: ESLint の `indent: 2` を追加、Prettier を 2スペースに統一（`tabWidth: 2`, `useTabs: false`）。
 
 — Partial
 
-- API レスポンス標準化: update 系を `{ success, data|error }` に統一。add/削除/取得は概ね準拠、完全統一は未完。
 - フォーム hidden ミラー削減: ライブラリ `Input/Select` が `name` を透過しないため維持。将来はラッパー導入で隠蔽可能。
-- 型安全性: `MaterialCard.svelte` が `any` 依存。判別可能ユニオン化の余地あり。
+- 型安全性: `MaterialCard.svelte` が `any` 依存。判別可能ユニオン化（判別可能ユニオン/共通型の導入）の余地あり。
 
 — Next Up（候補）
 
-- Wishlist トグルをカード上に配置（高速更新 API）。
-- API レスポンス完全統一（全エンドポイントを `{ success, data|error }`）。
 - 検索/フィルタ/ソート（ブランド・ステータス・wishlist、ソート切替）。
+- Wishlist 絞り込み（トグル併用時のUX最適化、件数バッジ）。
+- 型安全化: `MaterialCard` の判別可能ユニオン化、APIレスポンスの型活用。
 
 — Todo
 

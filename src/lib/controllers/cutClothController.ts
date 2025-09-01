@@ -3,21 +3,33 @@ import type { CutCloth } from '$lib/types';
 import { prisma } from '$lib/db';
 
 /** 全カットクロスを取得（ソート付き） */
-export async function getAllCutCloth(query: string | null = null): Promise<CutCloth[]> {
-  const where = query
-    ? {
-        OR: [
-          { fabricType: { contains: query } },
-          { pattern: { contains: query } },
-          { size: { contains: query } }
-        ]
-      }
-    : {};
+export type CutClothListOptions = {
+  query?: string | null;
+  status?: string | null;
+  wishlist?: boolean | null;
+  sort?: { by: 'id' | 'quantity' | 'status' | 'wishlist'; order: 'asc' | 'desc' } | null;
+};
 
-  return prisma.cutCloth.findMany({
-    where,
-    orderBy: { id: 'asc' }
-  });
+export async function getAllCutCloth(
+  queryOrOptions: string | null | CutClothListOptions = null
+): Promise<CutCloth[]> {
+  const opts: CutClothListOptions =
+    typeof queryOrOptions === 'string' || queryOrOptions === null
+      ? { query: queryOrOptions }
+      : queryOrOptions;
+
+  const where: any = {};
+  if (opts.query) {
+    where.OR = [
+      { fabricType: { contains: opts.query } },
+      { pattern: { contains: opts.query } },
+      { size: { contains: opts.query } }
+    ];
+  }
+  if (opts.status) where.status = opts.status as any;
+  if (typeof opts.wishlist === 'boolean') where.wishlist = opts.wishlist;
+  const orderBy = opts.sort ? { [opts.sort.by]: opts.sort.order } : { id: 'asc' as const };
+  return prisma.cutCloth.findMany({ where, orderBy });
 }
 
 /** 特定 ID のカットクロスを取得 */

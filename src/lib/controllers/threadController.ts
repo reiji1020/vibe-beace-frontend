@@ -5,22 +5,39 @@ import { prisma } from '$lib/db';
 /**
  * すべての刺繍糸を取得
  */
-export async function getAllThreads(query: string | null = null): Promise<Thread[]> {
-  const where = query
-    ? {
-        OR: [
-          { brand: { contains: query } },
-          { colorNumber: { contains: query } },
-          { colorName: { contains: query } }
-        ]
-      }
-    : {};
+export type ThreadListOptions = {
+  query?: string | null;
+  status?: string | null;
+  brand?: string | null;
+  wishlist?: boolean | null;
+  sort?: { by: 'colorNumber' | 'brand' | 'quantity' | 'status' | 'wishlist'; order: 'asc' | 'desc' } | null;
+};
 
-  const threads = await prisma.thread.findMany({
-    where,
-    orderBy: { colorNumber: 'asc' }
-  });
-  return threads;
+export async function getAllThreads(
+  queryOrOptions: string | null | ThreadListOptions = null
+): Promise<Thread[]> {
+  const opts: ThreadListOptions =
+    typeof queryOrOptions === 'string' || queryOrOptions === null
+      ? { query: queryOrOptions }
+      : queryOrOptions;
+
+  const where: any = {};
+  if (opts.query) {
+    where.OR = [
+      { brand: { contains: opts.query } },
+      { colorNumber: { contains: opts.query } },
+      { colorName: { contains: opts.query } }
+    ];
+  }
+  if (opts.status) where.status = opts.status as any;
+  if (opts.brand) where.brand = { contains: opts.brand };
+  if (typeof opts.wishlist === 'boolean') where.wishlist = opts.wishlist;
+
+  const orderBy = opts.sort
+    ? { [opts.sort.by]: opts.sort.order }
+    : { colorNumber: 'asc' as const };
+
+  return prisma.thread.findMany({ where, orderBy });
 }
 
 /**

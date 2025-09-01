@@ -2,6 +2,7 @@ import type { PageServerLoad, Actions } from './$types';
 import { error, redirect, fail } from '@sveltejs/kit';
 import { getXStitchClothById, updateXStitchCloth } from '$lib/controllers/xStitchClothController';
 import { xStitchClothSchema } from '$lib/validation/xStitchClothSchema';
+import { setFlash } from '$lib/flash';
 import { verifyCsrfFromForm } from '$lib/csrf';
 
 export const load: PageServerLoad = async ({ params }) => {
@@ -14,6 +15,7 @@ export const actions: Actions = {
   default: async ({ request, params, cookies }) => {
     const data = await request.formData();
     if (!verifyCsrfFromForm(cookies, data)) {
+      setFlash(cookies, '不正な操作です', 'error');
       return fail(403, { error: 'Invalid CSRF token' });
     }
     const id = Number(params.id);
@@ -28,13 +30,16 @@ export const actions: Actions = {
 
     try {
       if (!parsed.success) {
+        setFlash(cookies, '入力に誤りがあります', 'error');
         return error(400, 'Invalid input');
       }
       await updateXStitchCloth({ id, ...parsed.data } as any);
     } catch (e) {
+      setFlash(cookies, 'クロスステッチ布の更新に失敗しました', 'error');
       throw error(500, 'Failed to update xstitch cloth');
     }
 
+    setFlash(cookies, 'クロスステッチ布を更新しました', 'success');
     throw redirect(303, '/inventory');
   }
 };
