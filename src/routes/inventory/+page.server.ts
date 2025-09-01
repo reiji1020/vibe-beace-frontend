@@ -10,6 +10,7 @@ export async function load({ url }) {
   const wishlistOnly =
     url.searchParams.get('wishlist') === 'on' || url.searchParams.get('wishlist') === 'true';
   const sortParam = url.searchParams.get('sort');
+  const type = url.searchParams.get('type');
 
   function mapSort<T extends string>(def: {
     by: T;
@@ -76,6 +77,7 @@ export async function load({ url }) {
     status: statusParam,
     brand,
     wishlist: wishlistOnly,
-    sort: sortParam
+    sort: sortParam,
+    type
   };
 }

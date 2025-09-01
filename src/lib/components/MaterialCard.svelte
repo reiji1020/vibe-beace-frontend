@@ -124,8 +124,11 @@
       href={`/inventory/update/${material.type === 'thread' ? 'thread' : material.type === 'bead' ? 'bead' : material.type === 'cutCloth' ? 'cut-cloth' : 'xstitch-cloth'}/${material.id}`}
       class="edit-button"
       title="編集"
+      aria-label="編集"
     >
-      <img src="/edit.svg" alt="編集" class="icon" />
+      <svg class="icon" width="16" height="16" viewBox="0 0 32 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+        <path d="M0 25.3343V32H6.66574L26.3252 12.3405L19.6595 5.67477L0 25.3343ZM31.4801 7.18567C32.1733 6.49243 32.1733 5.37259 31.4801 4.67935L27.3207 0.519928C26.6274 -0.173309 25.5076 -0.173309 24.8143 0.519928L21.5615 3.77281L28.2272 10.4385L31.4801 7.18567Z"/>
+      </svg>
     </a>
     <button class="delete-button" on:click={handleDelete} title="削除">&times;</button>
   </div>
@@ -184,14 +187,10 @@
     color: #ffb400; /* gold-ish */
   }
 
-  .icon {
-    width: 16px;
-    height: 16px;
-  }
+  .icon { width: 16px; height: 16px; }
 
-  .edit-button:hover {
-    color: #70af0a; /* Melon Green */
-  }
+  .edit-button { color: var(--melon-green); }
+  .edit-button:hover { color: var(--melon-green); }
 
   .delete-button:hover {
     color: #f00;

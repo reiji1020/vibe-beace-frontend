@@ -106,39 +106,37 @@
 - 取得系 API の補完: `getBeads|getCutCloths|getThreads|getXStitchCloths` を整備。
 - 追加系 API の揃え: `addBead|addCutCloth|addThread|addXStitchCloth` を整備（`safeParse` 適用）。
 - ローディング UX: `/inventory` 遷移時に `cclkit4svelte` の `Spinner`（PINEAPPLE_YELLOW）でオーバーレイ表示。
-- API レスポンス統一: 全エンドポイントを `{ success, data|error }` に統一、共通ヘルパ `src/lib/api/response.ts` を導入。
+- API レスポンス統一: `{ success, data|error }` で統一、共通ヘルパ `src/lib/api/response.ts` を導入。
 - 検索/フィルタ/ソート拡張: `status/brand/wishlist` と並び替え（quantity/brand）を追加。
-- 一覧UX: ラジオラベル件数バッジ、カテゴリ件数サマリ、`wishlistのみ` 適用中のインフォ表示を追加。
-- Wishlist トグル: 全資材に対して `setWishlist*` API を追加、`MaterialCard` にトグルを実装（CSRF/楽観的更新）。
-- トースト: `cclkit4svelte` の `Alert` を用いたグローバルトーストを導入（`src/lib/ui/toast.ts` + `+layout` 表示）。
-- フラッシュトースト: 追加/更新後のリダイレクトに対応するフラッシュ（`src/lib/flash.ts`）を実装。成功/失敗の両方に対応。
-- 型安全化: `MaterialCard` を判別可能ユニオン型で厳密化。
-- テスト整備: Vitest導入・カバレッジ設定、ユーティリティ/API（get/add/update/delete/wishlist）/コントローラ（検索/CRUD）の主要パス（200/400/403/500）を網羅。
-- Lint/Format: ESLint の `indent: 2` を追加、Prettier を 2スペースに統一（`tabWidth: 2`, `useTabs: false`）。
+- 一覧UX: ラジオラベル件数バッジ、カテゴリ件数サマリ、`wishlistのみ` インフォ表示を追加。
+- REST移行: `/api/{threads|beads|cut-cloths|xstitch-cloths}`（GET/POST/PUT/DELETE/PATCH）を実装しUIを切替、旧APIを撤去。
+- Swagger導入: `/api-docs/swagger` で `static/openapi.yaml` を表示、AuthorizeでCSRF試験可。inventoryに控えめリンクを追加。
+- 型安全化: `MaterialCard` を判別ユニオン型に。
+- テスト整備: REST向け add/update/wishlist/delete/get の正常＋主要エラー（400/403/500）を各リソースで拡充。コントローラも網羅。
+- カバレッジ: 対象をAPI/コントローラ/ユーティリティに限定、しきい値（lines 80 / funcs 75 / branches 70 / stmts 80）を設定。
+- Lint/Format: ESLint 2スペース、Prettier 2スペースに統一。
 
 — Partial
 
 - フォーム hidden ミラー削減: ライブラリ `Input/Select` が `name` を透過しないため維持。将来はラッパー導入で隠蔽可能。
 - 型安全性（追加余地）: APIレスポンス型（`ApiResponse<T>`）のフロント活用、ページ間の型共有。
 - エラーメッセージ整形: Zodの `flatten()` をUIで統一表示する仕組みの共通化。
-- カバレッジしきい値: しきい値（lines/functions/branches）未設定（導入余地あり）。
+- RESTテストのエラーパス均一化（全リソースで 400/403/500 の網羅度を揃える）。
 
 — Next Up（候補）
 
-- ルート命名の統一（REST 風 `/api/{resource}` + メソッド、または kebab-case）とフロント参照の追随。
-- ページネーション/無限スクロール（`limit/offset` or `cursor`）。
-- カバレッジしきい値の導入（例: lines 80% / functions 75% / branches 70%）。
-- 検索UIポリッシュ: フィルタ状態の保持、ブランド欄の資材別表示最適化。
-- 型安全化強化: APIレスポンス型のフロント反映、フォーム値の型付け。
+- ドキュメント: RESTエンドポイントの簡易リファレンス（リクエスト/レスポンス例、エラー例）を拡充。
+- 検索UIポリッシュ: フィルタ状態保持、ブランド入力の資材別最適化。
+- ページネーション/無限スクロール（`limit/offset` か `cursor`）。
+- 型安全化強化: フロントで `ApiResponse<T>` の活用、フォーム値の型付け。
+- テスト拡張: 500系（コントローラ例外）のRESTテストを全リソースで均等化。
 
 — Todo
 
 - 削除モーダル導入（cclkit4svelte のモーダル提供後に実装。現状は `confirm` 維持）。
-- ルート命名の統一（REST 風 `/api/{resources}` + メソッド or kebab-case）。
-- ページネーション/無限スクロール（`limit/offset` or `cursor`）。
-- スキーマ整合: `status` 値の統一方針（XStitchCloth の `low` 有無の決定）。
+- スキーマ整合: `status` 値の最終方針（XStitchCloth の `low` 有無の決定）。
 - セキュリティ/信頼性: 環境変数命名の見直し（`VITE_AUTH_*` → `AUTH_*` 等）。
-- DX/運用: 簡易 E2E（認証/CRUD）。Prisma Seed。頻出列の DB インデックス。関連ドキュメント更新（`docs/*`/`GEMINI.md`）。
+- DX/運用: 簡易 E2E（認証/CRUD）、Prisma Seed、頻出列の DB インデックス、Docs更新（`docs/*`/`GEMINI.md`）。
 
 ## API 配置方針
 

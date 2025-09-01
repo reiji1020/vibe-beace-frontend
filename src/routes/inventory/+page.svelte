@@ -26,12 +26,18 @@
     label: `${m.label} (${counts[m.id as keyof typeof counts]})`
   }));
 
-  let selectedMaterial = 'threads';
+  let selectedMaterial = (data.type as string) || 'threads';
   let searchQuery = data.query || '';
   let filterStatus: 'all' | 'unused' | 'used' | 'low' = (data.status as any) || 'all';
   let filterBrand = data.brand || '';
   let filterWishlist = !!data.wishlist;
   let sort = (data.sort as string) || 'default';
+
+  $: brandApplicable = selectedMaterial === 'threads' || selectedMaterial === 'beads';
+  $: statusOptions = selectedMaterial === 'cutCloths' || selectedMaterial === 'xStitchCloths'
+    ? ['all', 'unused', 'used']
+    : ['all', 'unused', 'used', 'low'];
+  $: if (!brandApplicable) filterBrand = '';
 
   let showAlert = false;
   let alertMessage = '';
@@ -110,20 +116,22 @@
 
   <form class="search-form" method="GET">
     <!-- Hidden mirrors because cclkit Input/Checkbox do not forward name -->
+    <input type="hidden" name="type" value={selectedMaterial} />
     <input type="hidden" name="query" value={searchQuery} />
-    <input type="hidden" name="brand" value={filterBrand} />
+    <input type="hidden" name="brand" value={brandApplicable ? filterBrand : ''} />
     {#if filterWishlist}
       <input type="hidden" name="wishlist" value="on" />
     {/if}
 
-    <Input type="search" placeholder="検索..." bind:value={searchQuery} />
+    <Input type="search" placeholder="キーワード検索（ブランド/色番号/色名など）" bind:value={searchQuery} />
     <select name="status" bind:value={filterStatus}>
-      <option value="all">すべての状態</option>
-      <option value="unused">未使用</option>
-      <option value="used">使用中</option>
-      <option value="low">残りわずか</option>
+      {#each statusOptions as opt}
+        <option value={opt}>{opt === 'all' ? 'すべての状態' : opt === 'unused' ? '未使用' : opt === 'used' ? '使用中' : '残りわずか'}</option>
+      {/each}
     </select>
-    <Input type="text" placeholder="ブランド（糸/ビーズ）" bind:value={filterBrand} />
+    {#if brandApplicable}
+      <Input type="text" placeholder="ブランド（糸/ビーズのみ）" bind:value={filterBrand} />
+    {/if}
     <label class="wishlist-filter">
       <Checkbox bind:checked={filterWishlist} /> wishlistのみ
     </label>
@@ -134,7 +142,8 @@
       <option value="brand_asc">ブランド 昇順（該当資材）</option>
       <option value="brand_desc">ブランド 降順（該当資材）</option>
     </select>
-    <Button type="submit" label="適用" bgColor={CCLVividColor.PINEAPPLE_YELLOW} />
+    <Button type="submit" label="適用" bgColor={CCLVividColor.MELON_GREEN} />
+    <a class="reset-link" href="/inventory" aria-label="フィルタをリセット">リセット</a>
   </form>
 </div>
 
@@ -236,10 +245,9 @@
   }
   .controls-container {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    align-items: stretch;
     margin: 2rem;
-    flex-wrap: wrap;
     gap: 1rem;
   }
 
@@ -253,7 +261,10 @@
     display: flex;
     gap: 0.5rem;
     flex-wrap: wrap;
+    width: 100%;
   }
+  .reset-link { color: #888; font-size: 0.85rem; text-decoration: underline dotted; align-self: center; }
+  .reset-link:hover { color: #555; }
 
   .search-form input {
     padding: 0.5rem;

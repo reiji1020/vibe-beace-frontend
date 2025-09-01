@@ -30,7 +30,7 @@
   {#if data.user}
     <div class="logout-button-wrapper">
       <a href="/logout">
-        <Button label="Logout" bgColor={CCLVividColor.PINEAPPLE_YELLOW} />
+        <Button label="Logout" bgColor={CCLVividColor.WRAP_GREY} />
       </a>
     </div>
   {/if}
