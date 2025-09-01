@@ -41,4 +41,3 @@ export async function setWishlistXStitchCloth(
 export async function deleteXStitchCloth(id: number): Promise<XStitchCloth> {
   return prisma.xStitchCloth.delete({ where: { id } });
 }
-

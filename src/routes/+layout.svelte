@@ -1,67 +1,67 @@
 <script lang="ts">
-	import '../app.css';
-	import { CCLVividColor, CommonHeader, Footer, Button, Spinner } from 'cclkit4svelte';
-	import type { LayoutData } from './$types';
-	import { navigating } from '$app/stores';
+  import '../app.css';
+  import { CCLVividColor, CommonHeader, Footer, Button, Spinner } from 'cclkit4svelte';
+  import type { LayoutData } from './$types';
+  import { navigating } from '$app/stores';
 
-	let { children, data } = $props();
+  let { children, data } = $props();
 </script>
 
 <div class="page-container">
-	<CommonHeader
-		bgColor={CCLVividColor.PINEAPPLE_YELLOW}
-		height="--hd-normal"
-		logo="/beace.svg"
-		logoHeight="50px"
-		href="/"
-	/>
-	{#if data.user}
-		<div class="logout-button-wrapper">
-			<a href="/logout">
-				<Button label="Logout" bgColor={CCLVividColor.PINEAPPLE_YELLOW} />
-			</a>
-		</div>
-	{/if}
-	<main>
-		{@render children()}
-	</main>
-	<Footer bgColor={CCLVividColor.PINEAPPLE_YELLOW} />
+  <CommonHeader
+    bgColor={CCLVividColor.PINEAPPLE_YELLOW}
+    height="--hd-normal"
+    logo="/beace.svg"
+    logoHeight="50px"
+    href="/"
+  />
+  {#if data.user}
+    <div class="logout-button-wrapper">
+      <a href="/logout">
+        <Button label="Logout" bgColor={CCLVividColor.PINEAPPLE_YELLOW} />
+      </a>
+    </div>
+  {/if}
+  <main>
+    {@render children()}
+  </main>
+  <Footer bgColor={CCLVividColor.PINEAPPLE_YELLOW} />
 
-	{#if $navigating && $navigating.to?.url?.pathname?.startsWith('/inventory')}
-		<div class="loading-overlay" aria-live="polite" aria-busy="true">
-			<Spinner size="64px" color={CCLVividColor.PINEAPPLE_YELLOW} />
-		</div>
-	{/if}
+  {#if $navigating && $navigating.to?.url?.pathname?.startsWith('/inventory')}
+    <div class="loading-overlay" aria-live="polite" aria-busy="true">
+      <Spinner size="64px" color={CCLVividColor.PINEAPPLE_YELLOW} />
+    </div>
+  {/if}
 </div>
 
 <style>
-	.page-container {
-		display: flex;
-		flex-direction: column;
-		min-height: 100vh;
-	}
+  .page-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
 
-	main {
-		flex: 1;
-	}
+  main {
+    flex: 1;
+  }
 
-	.logout-button-wrapper {
-		position: absolute;
-		top: 10px;
-		right: 20px;
-		z-index: 1000;
-	}
+  .logout-button-wrapper {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    z-index: 1000;
+  }
 
-	.loading-overlay {
-		position: fixed;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		background: rgba(255, 255, 255, 0.7);
-		z-index: 2000;
-	}
+  .loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.7);
+    z-index: 2000;
+  }
 </style>

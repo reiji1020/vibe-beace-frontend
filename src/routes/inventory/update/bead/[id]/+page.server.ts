@@ -5,40 +5,40 @@ import { beadSchema } from '$lib/validation/beadSchema';
 import { verifyCsrfFromForm } from '$lib/csrf';
 
 export const load: PageServerLoad = async ({ params }) => {
-	const bead = await getBeadById(Number(params.id));
-	if (!bead) {
-		throw error(404, 'Bead not found');
-	}
-	return { bead };
+  const bead = await getBeadById(Number(params.id));
+  if (!bead) {
+    throw error(404, 'Bead not found');
+  }
+  return { bead };
 };
 
 export const actions: Actions = {
-	default: async ({ request, params, cookies }) => {
-		const data = await request.formData();
-		if (!verifyCsrfFromForm(cookies, data)) {
-			return fail(403, { error: 'Invalid CSRF token' });
-		}
-		const id = Number(params.id);
+  default: async ({ request, params, cookies }) => {
+    const data = await request.formData();
+    if (!verifyCsrfFromForm(cookies, data)) {
+      return fail(403, { error: 'Invalid CSRF token' });
+    }
+    const id = Number(params.id);
 
-		const parsed = beadSchema.safeParse({
-			brand: data.get('brand') as string,
-			itemCode: data.get('itemCode') as string,
-			size: data.get('size') as string,
-			colorName: (data.get('colorName') as string) || undefined,
-			quantity: Number(data.get('quantity')),
-			status: (data.get('status') as string) || undefined,
-			wishlist: (data.get('wishlist') as string) === 'on'
-		});
+    const parsed = beadSchema.safeParse({
+      brand: data.get('brand') as string,
+      itemCode: data.get('itemCode') as string,
+      size: data.get('size') as string,
+      colorName: (data.get('colorName') as string) || undefined,
+      quantity: Number(data.get('quantity')),
+      status: (data.get('status') as string) || undefined,
+      wishlist: (data.get('wishlist') as string) === 'on'
+    });
 
-		try {
-			if (!parsed.success) {
-				return error(400, 'Invalid input');
-			}
-			await updateBead({ id, ...parsed.data });
-		} catch (err) {
-			return error(500, 'Failed to update bead');
-		}
+    try {
+      if (!parsed.success) {
+        return error(400, 'Invalid input');
+      }
+      await updateBead({ id, ...parsed.data });
+    } catch (err) {
+      return error(500, 'Failed to update bead');
+    }
 
-		throw redirect(303, '/inventory');
-	}
+    throw redirect(303, '/inventory');
+  }
 };

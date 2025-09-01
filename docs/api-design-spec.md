@@ -88,12 +88,12 @@
 
 ```json
 {
-	"brand": "DMC",
-	"colorNumber": "310",
-	"colorName": "Black",
-	"quantity": 3,
-	"status": "used",
-	"wishlist": false
+  "brand": "DMC",
+  "colorNumber": "310",
+  "colorName": "Black",
+  "quantity": 3,
+  "status": "used",
+  "wishlist": false
 }
 ```
 
@@ -105,13 +105,13 @@
 
 ```json
 {
-	"success": true,
-	"data": {
-		"id": 1,
-		"brand": "DMC",
-		"colorNumber": "310",
-		"quantity": 3
-	}
+  "success": true,
+  "data": {
+    "id": 1,
+    "brand": "DMC",
+    "colorNumber": "310",
+    "quantity": 3
+  }
 }
 ```
 

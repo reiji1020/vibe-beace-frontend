@@ -94,11 +94,12 @@
 - 品質/ツール:
   - フォーマット: `npm run format`、Lint: `npm run lint`。変更は小さく、関連ファイルのみ。
   - TypeScript を徹底（型の明示、`any` 回避）。不要なグローバル変更・依存追加は行わない。
- - ドキュメント更新は影響範囲内で実施（`GEMINI.md`/`docs/*`/本ファイル）。
+- ドキュメント更新は影響範囲内で実施（`GEMINI.md`/`docs/*`/本ファイル）。
 
 ## 開発バックログ（整理）
 
 — Done
+
 - XStitchCloth 一式: コントローラ/検索、API（get/add/update/delete）、UI（一覧ラジオ・カード、add/edit 画面）、`MaterialCard` 分岐、Zod 検証を実装。
 - API 保護: `hooks.server.ts` により `/api/*` は未認証 401、`/inventory` は 302 `/login`。CSRF は Double-Submit Token 方式を導入（フォーム hidden + ヘッダ、検証ユーティリティ追加）。
 - 入力検証: add/update API と全フォームアクションで Zod `safeParse` 適用、失敗時は `fail(400)` とフィールド別エラー返却。フォームへエラー表示を実装。全フォームで `enhance` を適用。
@@ -107,16 +108,19 @@
 - ローディング UX: `/inventory` 遷移時に `cclkit4svelte` の `Spinner`（PINEAPPLE_YELLOW）でオーバーレイ表示。
 
 — Partial
+
 - API レスポンス標準化: update 系を `{ success, data|error }` に統一。add/削除/取得は概ね準拠、完全統一は未完。
 - フォーム hidden ミラー削減: ライブラリ `Input/Select` が `name` を透過しないため維持。将来はラッパー導入で隠蔽可能。
 - 型安全性: `MaterialCard.svelte` が `any` 依存。判別可能ユニオン化の余地あり。
 
 — Next Up（候補）
+
 - Wishlist トグルをカード上に配置（高速更新 API）。
 - API レスポンス完全統一（全エンドポイントを `{ success, data|error }`）。
 - 検索/フィルタ/ソート（ブランド・ステータス・wishlist、ソート切替）。
 
 — Todo
+
 - 削除モーダル導入（cclkit4svelte のモーダル提供後に実装。現状は `confirm` 維持）。
 - ルート命名の統一（REST 風 `/api/{resources}` + メソッド or kebab-case）。
 - ページネーション/無限スクロール（`limit/offset` or `cursor`）。
@@ -138,4 +142,5 @@
 ---
 
 更新履歴:
+
 - 2025-08-30: 初版作成（エージェント設定、概要、作法、ポリシー）

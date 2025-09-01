@@ -35,4 +35,3 @@ export function verifyCsrfFromForm(cookies: Cookies, formData: FormData): boolea
   const tokenCookie = cookies.get(COOKIE_NAME);
   return typeof tokenField === 'string' && !!tokenCookie && tokenField === tokenCookie;
 }
-

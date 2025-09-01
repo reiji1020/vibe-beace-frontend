@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { enhance } from "$app/forms";
-  import type { ActionData } from "./$types";
-  import { Button, CCLVividColor, Alert } from "cclkit4svelte";
+  import { enhance } from '$app/forms';
+  import type { ActionData } from './$types';
+  import { Button, CCLVividColor, Alert } from 'cclkit4svelte';
 
   export let form: ActionData;
 </script>
@@ -15,23 +15,11 @@
     <form method="POST" use:enhance class="login-form">
       <div class="form-group">
         <label for="username">Username</label>
-        <input
-          type="text"
-          id="username"
-          name="username"
-          class="login-input"
-          required
-        />
+        <input type="text" id="username" name="username" class="login-input" required />
       </div>
       <div class="form-group">
         <label for="password">Password</label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          class="login-input"
-          required
-        />
+        <input type="password" id="password" name="password" class="login-input" required />
       </div>
       <div class="form-group">
         <Button type="submit" label="Login" bgColor={CCLVividColor.PINEAPPLE_YELLOW} />

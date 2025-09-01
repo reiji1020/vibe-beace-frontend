@@ -20,11 +20,11 @@ export const actions: Actions = {
         httpOnly: true,
         sameSite: 'strict',
         secure: process.env.NODE_ENV === 'production',
-        maxAge: 60 * 60 * 24 * 7, // 1 week
+        maxAge: 60 * 60 * 24 * 7 // 1 week
       });
       throw redirect(302, '/inventory');
     }
 
     return fail(400, { error: 'Invalid username or password' });
-  },
+  }
 };
