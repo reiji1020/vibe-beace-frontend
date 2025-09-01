@@ -12,6 +12,9 @@ export const handle: Handle = async ({ event, resolve }) => {
     if (path.startsWith('/inventory')) {
       return new Response('Redirect', { headers: { Location: '/login' }, status: 302 });
     }
+    if (path.startsWith('/api-docs')) {
+      return new Response('Redirect', { headers: { Location: '/login' }, status: 302 });
+    }
     if (path.startsWith('/api')) {
       return new Response(JSON.stringify({ success: false, error: 'Unauthorized' }), {
         status: 401,
