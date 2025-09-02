@@ -12,20 +12,24 @@ export const actions: Actions = {
       setFlash(cookies, '不正な操作です', 'error');
       return fail(403, { error: 'Invalid CSRF token' });
     }
+    const brand = data.get('brand') as string;
     const fabricType = data.get('fabricType') as string;
     const pattern = data.get('pattern') as string;
     const size = data.get('size') as string;
     const quantity = Number(data.get('quantity'));
     const status = data.get('status') as string;
     const wishlist = data.get('wishlist') === 'on';
+    const notes = (data.get('notes') as string) || '';
 
     const parsed = cutClothSchema.safeParse({
+      brand: brand || undefined,
       fabricType,
       pattern,
       size,
       quantity,
       status: status || undefined,
-      wishlist
+      wishlist,
+      notes: notes || undefined
     });
 
     if (!parsed.success) {

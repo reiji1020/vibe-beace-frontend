@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Button, Checkbox, FormGroup, Input, Select } from 'cclkit4svelte';
+  import { Button, Checkbox, FormGroup, Input, Select, Textarea } from 'cclkit4svelte';
   import { CCLVividColor } from 'cclkit4svelte';
   import type { PageData } from './$types';
 
@@ -27,6 +27,7 @@
   let status = bead.status ?? 'unused';
   let colorName = bead.colorName ?? '';
   let quantity = String(bead.quantity ?? 0);
+  let notes = bead.notes ?? '';
 </script>
 
 <main>
@@ -36,27 +37,27 @@
     <input type="hidden" name="csrfToken" value={data.csrfToken} />
     {#if topError()}<div class="mt-2 mb-2 text-red-600">{topError()}</div>{/if}
     <FormGroup>
-      <Input label="メーカー" bind:value={bead.brand} />
+      <Input label="メーカー" bind:value={bead.brand} borderColor={CCLVividColor.MELON_GREEN} />
       <input type="hidden" name="brand" value={bead.brand} />
       {#if fe('brand')}<div class="mt-1 text-sm text-red-600">{fe('brand')}</div>{/if}
     </FormGroup>
     <FormGroup>
-      <Input label="品番" bind:value={bead.itemCode} />
+      <Input label="品番" bind:value={bead.itemCode} borderColor={CCLVividColor.MELON_GREEN} />
       <input type="hidden" name="itemCode" value={bead.itemCode} />
       {#if fe('itemCode')}<div class="mt-1 text-sm text-red-600">{fe('itemCode')}</div>{/if}
     </FormGroup>
     <FormGroup>
-      <Input label="サイズ" bind:value={bead.size} />
+      <Input label="サイズ" bind:value={bead.size} borderColor={CCLVividColor.MELON_GREEN} />
       <input type="hidden" name="size" value={bead.size} />
       {#if fe('size')}<div class="mt-1 text-sm text-red-600">{fe('size')}</div>{/if}
     </FormGroup>
     <FormGroup>
-      <Input label="色名" bind:value={colorName} />
+      <Input label="色名" bind:value={colorName} borderColor={CCLVividColor.MELON_GREEN} />
       <input type="hidden" name="colorName" value={colorName} />
       {#if fe('colorName')}<div class="mt-1 text-sm text-red-600">{fe('colorName')}</div>{/if}
     </FormGroup>
     <FormGroup>
-      <Input label="数量" type="number" bind:value={quantity} />
+      <Input label="数量" type="number" bind:value={quantity} borderColor={CCLVividColor.MELON_GREEN} />
       <input type="hidden" name="quantity" value={quantity} />
       {#if fe('quantity')}<div class="mt-1 text-sm text-red-600">{fe('quantity')}</div>{/if}
     </FormGroup>
@@ -66,15 +67,16 @@
       {#if fe('status')}<div class="mt-1 text-sm text-red-600">{fe('status')}</div>{/if}
     </FormGroup>
     <FormGroup>
-      <Checkbox label="欲しいものリストに追加" bind:checked={bead.wishlist} />
+      <Checkbox label="欲しいものリストに追加" bind:checked={bead.wishlist} color={CCLVividColor.MELON_GREEN} />
       <input type="hidden" name="wishlist" value={bead.wishlist ? 'on' : 'off'} />
       {#if fe('wishlist')}<div class="mt-1 text-sm text-red-600">{fe('wishlist')}</div>{/if}
     </FormGroup>
-    <Button
-      label="更新する"
-      bgColor={CCLVividColor.PINEAPPLE_YELLOW}
-      onClick={() => (document.querySelector('form') as HTMLFormElement)?.requestSubmit()}
-    />
+    <FormGroup>
+      <Textarea label="メモ（任意）" rows={3} placeholder="自由記述（最大1000文字）" bind:value={notes} borderColor={CCLVividColor.MELON_GREEN} />
+      <input type="hidden" name="notes" value={notes} />
+      {#if fe('notes')}<div class="mt-1 text-sm text-red-600">{fe('notes')}</div>{/if}
+    </FormGroup>
+    <Button label="更新する" bgColor={CCLVividColor.PINEAPPLE_YELLOW} />
   </form>
 </main>
 

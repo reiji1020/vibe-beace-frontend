@@ -29,7 +29,8 @@ export const actions: Actions = {
       colorName: (data.get('colorName') as string) || undefined,
       quantity: Number(data.get('quantity')),
       status: (data.get('status') as string) || undefined,
-      wishlist: (data.get('wishlist') as string) === 'on'
+      wishlist: (data.get('wishlist') as string) === 'on',
+      notes: ((data.get('notes') as string) || '') || undefined
     });
 
     try {

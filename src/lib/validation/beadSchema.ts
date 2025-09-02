@@ -8,5 +8,6 @@ export const beadSchema = z.object({
   colorName: z.string().nullable().optional(),
   quantity: z.number().int().min(0),
   status: z.enum(['unused', 'used', 'low']).nullable().optional(),
-  wishlist: z.boolean()
+  wishlist: z.boolean(),
+  notes: z.string().max(1000).nullable().optional()
 });

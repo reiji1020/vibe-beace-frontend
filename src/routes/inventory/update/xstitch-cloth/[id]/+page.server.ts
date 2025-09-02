@@ -20,12 +20,14 @@ export const actions: Actions = {
     }
     const id = Number(params.id);
     const parsed = xStitchClothSchema.safeParse({
+      brand: ((data.get('brand') as string) || '') || undefined,
       count: data.get('count') as string,
       color: data.get('color') as string,
       size: data.get('size') as string,
       quantity: Number(data.get('quantity')),
       status: (data.get('status') as string) || undefined,
-      wishlist: (data.get('wishlist') as string) === 'on'
+      wishlist: (data.get('wishlist') as string) === 'on',
+      notes: ((data.get('notes') as string) || '') || undefined
     });
 
     try {

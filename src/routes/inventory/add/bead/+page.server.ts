@@ -19,6 +19,7 @@ export const actions: Actions = {
     const quantity = Number(data.get('quantity'));
     const status = data.get('status') as string;
     const wishlist = data.get('wishlist') === 'on';
+    const notes = (data.get('notes') as string) || '';
 
     const parsed = beadSchema.safeParse({
       brand,
@@ -27,7 +28,8 @@ export const actions: Actions = {
       colorName: colorName || undefined,
       quantity,
       status: status || undefined,
-      wishlist
+      wishlist,
+      notes: notes || undefined
     });
 
     if (!parsed.success) {

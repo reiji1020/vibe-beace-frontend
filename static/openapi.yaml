@@ -41,6 +41,9 @@ components:
         quantity: { type: integer, minimum: 0 }
         status: { type: string, enum: [unused, used, low], nullable: true }
         wishlist: { type: boolean }
+        notes: { type: string, nullable: true }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
       required: [brand, colorNumber, quantity, wishlist]
     Bead:
       type: object
@@ -53,28 +56,39 @@ components:
         quantity: { type: integer, minimum: 0 }
         status: { type: string, enum: [unused, used, low], nullable: true }
         wishlist: { type: boolean }
+        notes: { type: string, nullable: true }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
       required: [brand, itemCode, size, quantity, wishlist]
     CutCloth:
       type: object
       properties:
         id: { type: integer }
+        brand: { type: string, nullable: true }
         fabricType: { type: string }
         pattern: { type: string }
         size: { type: string }
         quantity: { type: integer, minimum: 0 }
         status: { type: string, enum: [unused, used], nullable: true }
         wishlist: { type: boolean }
+        notes: { type: string, nullable: true }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
       required: [fabricType, pattern, size, quantity, wishlist]
     XStitchCloth:
       type: object
       properties:
         id: { type: integer }
+        brand: { type: string, nullable: true }
         count: { type: string }
         color: { type: string }
         size: { type: string }
         quantity: { type: integer, minimum: 0 }
         status: { type: string, enum: [unused, used], nullable: true }
         wishlist: { type: boolean }
+        notes: { type: string, nullable: true }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
       required: [count, color, size, quantity, wishlist]
 paths:
   /api/threads:
