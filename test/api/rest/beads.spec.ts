@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { addBead, updateBead, deleteBead, setWishlistBead } from '$lib/controllers/beadController';
 import type { Cookies } from '@sveltejs/kit';
 
 vi.mock('$lib/controllers/beadController', () => ({
@@ -89,6 +90,29 @@ describe('REST /api/beads', () => {
     expect(out.status).toBe(200);
   });
 
+  it('PUT /api/beads/[id] 400 invalid id', async () => {
+    const req = new Request('http://localhost/api/beads/abc', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': token },
+      body: JSON.stringify(valid)
+    });
+    const res = await PUT_BEAD({ params: { id: 'abc' }, request: req, cookies } as any);
+    const out = await read(res);
+    expect(out.status).toBe(400);
+  });
+
+  it('PUT /api/beads/[id] 500 controller error', async () => {
+    vi.mocked(updateBead).mockRejectedValueOnce(new Error('db error'));
+    const req = new Request('http://localhost/api/beads/9', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': token },
+      body: JSON.stringify(valid)
+    });
+    const res = await PUT_BEAD({ params: { id: '9' }, request: req, cookies } as any);
+    const out = await read(res);
+    expect(out.status).toBe(500);
+  });
+
   it('PUT /api/beads/[id] 403 invalid CSRF', async () => {
     const req = new Request('http://localhost/api/beads/9', {
       method: 'PUT',
@@ -111,6 +135,17 @@ describe('REST /api/beads', () => {
     expect(out.status).toBe(200);
   });
 
+  it('PATCH /api/beads/[id]/wishlist 400 invalid id', async () => {
+    const req = new Request('http://localhost/api/beads/abc/wishlist', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': token },
+      body: JSON.stringify({ wishlist: true })
+    });
+    const res = await PATCH_WISHLIST({ params: { id: 'abc' }, request: req, cookies } as any);
+    const out = await read(res);
+    expect(out.status).toBe(400);
+  });
+
   it('PATCH /api/beads/[id]/wishlist 400 invalid body', async () => {
     const req = new Request('http://localhost/api/beads/9/wishlist', {
       method: 'PATCH',
@@ -122,6 +157,18 @@ describe('REST /api/beads', () => {
     expect(out.status).toBe(400);
   });
 
+  it('PATCH /api/beads/[id]/wishlist 500 controller error', async () => {
+    vi.mocked(setWishlistBead).mockRejectedValueOnce(new Error('db error'));
+    const req = new Request('http://localhost/api/beads/9/wishlist', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': token },
+      body: JSON.stringify({ wishlist: true })
+    });
+    const res = await PATCH_WISHLIST({ params: { id: '9' }, request: req, cookies } as any);
+    const out = await read(res);
+    expect(out.status).toBe(500);
+  });
+
   it('DELETE /api/beads/[id] 200', async () => {
     const req = new Request('http://localhost/api/beads/9', {
       method: 'DELETE',
@@ -130,6 +177,39 @@ describe('REST /api/beads', () => {
     const res = await DELETE_BEAD({ params: { id: '9' }, request: req, cookies } as any);
     const out = await read(res);
     expect(out.status).toBe(200);
+  });
+
+  it('DELETE /api/beads/[id] 400 invalid id', async () => {
+    const req = new Request('http://localhost/api/beads/abc', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': token }
+    });
+    const res = await DELETE_BEAD({ params: { id: 'abc' }, request: req, cookies } as any);
+    const out = await read(res);
+    expect(out.status).toBe(400);
+  });
+
+  it('DELETE /api/beads/[id] 500 controller error', async () => {
+    vi.mocked(deleteBead).mockRejectedValueOnce(new Error('db error'));
+    const req = new Request('http://localhost/api/beads/9', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': token }
+    });
+    const res = await DELETE_BEAD({ params: { id: '9' }, request: req, cookies } as any);
+    const out = await read(res);
+    expect(out.status).toBe(500);
+  });
+
+  it('POST /api/beads 500 controller error', async () => {
+    vi.mocked(addBead).mockRejectedValueOnce(new Error('db error'));
+    const req = new Request('http://localhost/api/beads', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': token },
+      body: JSON.stringify(valid)
+    });
+    const res = await POST_BEADS({ request: req, cookies } as any);
+    const out = await read(res);
+    expect(out.status).toBe(500);
   });
 
   it('DELETE /api/beads/[id] 403 invalid CSRF', async () => {

@@ -23,14 +23,14 @@ export const actions: Actions = {
     const id = Number(params.id);
 
     const parsed = cutClothSchema.safeParse({
-      brand: ((data.get('brand') as string) || '') || undefined,
+      brand: (data.get('brand') as string) || '' || undefined,
       fabricType: data.get('fabricType') as string,
       pattern: data.get('pattern') as string,
       size: data.get('size') as string,
       quantity: Number(data.get('quantity')),
       status: (data.get('status') as string) || undefined,
       wishlist: (data.get('wishlist') as string) === 'on',
-      notes: ((data.get('notes') as string) || '') || undefined
+      notes: (data.get('notes') as string) || '' || undefined
     });
 
     try {

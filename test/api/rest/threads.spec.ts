@@ -1,4 +1,10 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
+import {
+  addThread,
+  updateThread,
+  deleteThread,
+  setWishlistThread
+} from '$lib/controllers/threadController';
 import type { Cookies } from '@sveltejs/kit';
 
 vi.mock('$lib/controllers/threadController', () => ({
@@ -56,6 +62,29 @@ describe('REST /api/threads', () => {
     expect(out.status).toBe(201);
   });
 
+  it('POST /api/threads returns 403 on CSRF', async () => {
+    const req = new Request('http://localhost/api/threads', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': 'BAD' },
+      body: JSON.stringify(valid)
+    });
+    const res = await POST_THREADS({ request: req, cookies } as any);
+    const out = await read(res);
+    expect(out.status).toBe(403);
+  });
+
+  it('POST /api/threads returns 500 on controller error', async () => {
+    vi.mocked(addThread).mockRejectedValueOnce(new Error('db error'));
+    const req = new Request('http://localhost/api/threads', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': token },
+      body: JSON.stringify(valid)
+    });
+    const res = await POST_THREADS({ request: req, cookies } as any);
+    const out = await read(res);
+    expect(out.status).toBe(500);
+  });
+
   it('PUT /api/threads/[id] updates 200', async () => {
     const req = new Request('http://localhost/api/threads/5', {
       method: 'PUT',
@@ -65,6 +94,40 @@ describe('REST /api/threads', () => {
     const res = await PUT_THREAD({ params: { id: '5' }, request: req, cookies } as any);
     const out = await read(res);
     expect(out.status).toBe(200);
+  });
+
+  it('PUT /api/threads/[id] returns 400 on invalid id', async () => {
+    const req = new Request('http://localhost/api/threads/abc', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': token },
+      body: JSON.stringify(valid)
+    });
+    const res = await PUT_THREAD({ params: { id: 'abc' }, request: req, cookies } as any);
+    const out = await read(res);
+    expect(out.status).toBe(400);
+  });
+
+  it('PUT /api/threads/[id] returns 500 on controller error', async () => {
+    vi.mocked(updateThread).mockRejectedValueOnce(new Error('db error'));
+    const req = new Request('http://localhost/api/threads/5', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': token },
+      body: JSON.stringify(valid)
+    });
+    const res = await PUT_THREAD({ params: { id: '5' }, request: req, cookies } as any);
+    const out = await read(res);
+    expect(out.status).toBe(500);
+  });
+
+  it('PUT /api/threads/[id] returns 400 on zod', async () => {
+    const req = new Request('http://localhost/api/threads/5', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': token },
+      body: JSON.stringify({ ...valid, quantity: -1 })
+    });
+    const res = await PUT_THREAD({ params: { id: '5' }, request: req, cookies } as any);
+    const out = await read(res);
+    expect(out.status).toBe(400);
   });
 
   it('PATCH /api/threads/[id]/wishlist updates 200', async () => {
@@ -78,6 +141,29 @@ describe('REST /api/threads', () => {
     expect(out.status).toBe(200);
   });
 
+  it('PATCH /api/threads/[id]/wishlist returns 400 on invalid id', async () => {
+    const req = new Request('http://localhost/api/threads/abc/wishlist', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': token },
+      body: JSON.stringify({ wishlist: true })
+    });
+    const res = await PATCH_WISHLIST({ params: { id: 'abc' }, request: req, cookies } as any);
+    const out = await read(res);
+    expect(out.status).toBe(400);
+  });
+
+  it('PATCH /api/threads/[id]/wishlist returns 500 on controller error', async () => {
+    vi.mocked(setWishlistThread).mockRejectedValueOnce(new Error('db error'));
+    const req = new Request('http://localhost/api/threads/5/wishlist', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': token },
+      body: JSON.stringify({ wishlist: true })
+    });
+    const res = await PATCH_WISHLIST({ params: { id: '5' }, request: req, cookies } as any);
+    const out = await read(res);
+    expect(out.status).toBe(500);
+  });
+
   it('DELETE /api/threads/[id] deletes 200', async () => {
     const req = new Request('http://localhost/api/threads/5', {
       method: 'DELETE',
@@ -87,6 +173,37 @@ describe('REST /api/threads', () => {
     const res = await DELETE_THREAD({ params: { id: '5' }, request: req, cookies } as any);
     const out = await read(res);
     expect(out.status).toBe(200);
+  });
+
+  it('DELETE /api/threads/[id] returns 400 on invalid id', async () => {
+    const req = new Request('http://localhost/api/threads/abc', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': token }
+    });
+    const res = await DELETE_THREAD({ params: { id: 'abc' }, request: req, cookies } as any);
+    const out = await read(res);
+    expect(out.status).toBe(400);
+  });
+
+  it('DELETE /api/threads/[id] returns 500 on controller error', async () => {
+    vi.mocked(deleteThread).mockRejectedValueOnce(new Error('db error'));
+    const req = new Request('http://localhost/api/threads/5', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': token }
+    });
+    const res = await DELETE_THREAD({ params: { id: '5' }, request: req, cookies } as any);
+    const out = await read(res);
+    expect(out.status).toBe(500);
+  });
+
+  it('DELETE /api/threads/[id] returns 403 on CSRF', async () => {
+    const req = new Request('http://localhost/api/threads/5', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': 'BAD' }
+    });
+    const res = await DELETE_THREAD({ params: { id: '5' }, request: req, cookies } as any);
+    const out = await read(res);
+    expect(out.status).toBe(403);
   });
 
   it('POST /api/threads returns 400 on zod', async () => {

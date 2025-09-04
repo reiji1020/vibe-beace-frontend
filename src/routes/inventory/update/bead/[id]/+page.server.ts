@@ -30,7 +30,7 @@ export const actions: Actions = {
       quantity: Number(data.get('quantity')),
       status: (data.get('status') as string) || undefined,
       wishlist: (data.get('wishlist') as string) === 'on',
-      notes: ((data.get('notes') as string) || '') || undefined
+      notes: (data.get('notes') as string) || '' || undefined
     });
 
     try {

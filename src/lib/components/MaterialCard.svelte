@@ -130,19 +130,10 @@
     else if (type === 'warning') toast.warning(message);
     else toast.info(message);
   }
-
 </script>
 
 <div class="material-card">
-  <div class="card-actions">
-    <button
-      class="wishlist-button"
-      on:click|preventDefault={toggleWishlist}
-      aria-label={material.wishlist ? 'Remove from wishlist' : 'Add to wishlist'}
-      title={material.wishlist ? 'Wishlist解除' : 'Wishlist登録'}
-    >
-      <span class:wished={material.wishlist} aria-hidden="true">★</span>
-    </button>
+  <div class="card-actions-left">
     <a
       href={`/inventory/update/${material.type === 'thread' ? 'thread' : material.type === 'bead' ? 'bead' : material.type === 'cutCloth' ? 'cut-cloth' : 'xstitch-cloth'}/${material.id}`}
       class="edit-button"
@@ -164,15 +155,26 @@
         />
       </svg>
     </a>
+    <button
+      class="wishlist-button"
+      on:click|preventDefault={toggleWishlist}
+      aria-label={material.wishlist ? 'Remove from wishlist' : 'Add to wishlist'}
+      title={material.wishlist ? 'Wishlist解除' : 'Wishlist登録'}
+    >
+      <span class:wished={material.wishlist} aria-hidden="true">★</span>
+    </button>
+  </div>
+  <div class="card-actions-right">
     <button class="delete-button" on:click={handleDelete} title="削除">&times;</button>
   </div>
   <div class="card-header">
-    <img src="/beace.svg" alt="material icon" class="card-icon" />
     <div class="header-text">
       <h2>{title}</h2>
       <div class="header-badges">
         <span class="type-badge" aria-label={typeLabel}>{typeLabel}</span>
-        <span class={getStatusClass(material.status)} aria-label={`状態: ${getStatusLabel(material.status)}`}
+        <span
+          class={getStatusClass(material.status)}
+          aria-label={`状態: ${getStatusLabel(material.status)}`}
           >{getStatusLabel(material.status)}</span
         >
         {#if material.wishlist}
@@ -201,16 +203,18 @@
     --badge-fg: #374151;
     border: 1px solid var(--card-border);
     border-radius: 12px;
-    padding: 1rem;
+    padding: 1.25rem 1rem 1rem; /* 上に少し余白を追加 */
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
     background:
-      radial-gradient(100% 100% at 0% 0%, rgba(250, 250, 250, 0.9), transparent 60%),
-      var(--card-bg);
+      radial-gradient(100% 100% at 0% 0%, rgba(250, 250, 250, 0.9), transparent 60%), var(--card-bg);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     position: relative;
-    transition: transform 120ms ease, box-shadow 160ms ease, border-color 120ms ease;
+    transition:
+      transform 120ms ease,
+      box-shadow 160ms ease,
+      border-color 120ms ease;
   }
 
   .material-card:hover {
@@ -219,12 +223,18 @@
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
   }
 
-  .card-actions {
+  .card-actions-left,
+  .card-actions-right {
     position: absolute;
     top: 5px;
-    right: 5px;
     display: flex;
     gap: 4px;
+  }
+  .card-actions-left {
+    left: 5px;
+  }
+  .card-actions-right {
+    right: 5px;
   }
 
   .edit-button,
@@ -272,23 +282,31 @@
     display: flex;
     align-items: center;
     margin-bottom: 0.75rem;
-    gap: 0.5rem;
+    gap: 0.75rem; /* アイコンとの間隔を少し広く */
   }
 
-  .card-icon {
-    width: 40px;
-    height: 40px;
-    margin-right: 1rem;
-  }
+  /* アイコンは廃止。タイトル/バッジが全幅を使用 */
 
-  .header-text { display: flex; flex-direction: column; gap: 6px; }
+  .header-text {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: center;
+    text-align: center;
+    flex: 1;
+    width: 100%;
+  }
   .card-header h2 {
     margin: 0;
     font-size: 1.05rem;
     color: #1f2937;
     line-height: 1.2;
   }
-  .header-badges { display: flex; gap: 6px; flex-wrap: wrap; }
+  .header-badges {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
   .type-badge {
     background: var(--badge-bg);
     color: var(--badge-fg);
@@ -297,12 +315,40 @@
     font-size: 0.72rem;
     padding: 2px 8px;
   }
-  .status-badge { border-radius: 6px; padding: 2px 8px; font-size: 0.72rem; border: 1px solid transparent; }
-  .status-badge.unused { background: #ecfdf5; color: #065f46; border-color: #a7f3d0; }
-  .status-badge.used { background: #f3f4f6; color: #374151; border-color: #e5e7eb; }
-  .status-badge.low { background: #fef3c7; color: #92400e; border-color: #fde68a; }
-  .status-badge.neutral { background: var(--badge-bg); color: var(--badge-fg); border-color: #e5e7eb; }
-  .wishlist-badge { background: #fff7ed; color: #9a3412; border: 1px solid #fed7aa; border-radius: 6px; padding: 2px 8px; font-size: 0.72rem; }
+  .status-badge {
+    border-radius: 6px;
+    padding: 2px 8px;
+    font-size: 0.72rem;
+    border: 1px solid transparent;
+  }
+  .status-badge.unused {
+    background: #ecfdf5;
+    color: #065f46;
+    border-color: #a7f3d0;
+  }
+  .status-badge.used {
+    background: #f3f4f6;
+    color: #374151;
+    border-color: #e5e7eb;
+  }
+  .status-badge.low {
+    background: #fef3c7;
+    color: #92400e;
+    border-color: #fde68a;
+  }
+  .status-badge.neutral {
+    background: var(--badge-bg);
+    color: var(--badge-fg);
+    border-color: #e5e7eb;
+  }
+  .wishlist-badge {
+    background: #fff7ed;
+    color: #9a3412;
+    border: 1px solid #fed7aa;
+    border-radius: 6px;
+    padding: 2px 8px;
+    font-size: 0.72rem;
+  }
 
   .card-body p {
     white-space: pre-wrap; /* Preserve newlines */
@@ -311,13 +357,26 @@
   }
 
   /* toast display is handled by parent via event */
-  .meta-row { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
-  .chip { background: #f3f4f6; color: #374151; border: 1px solid #e5e7eb; border-radius: 999px; padding: 2px 10px; font-size: 0.75rem; }
+  .meta-row {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+  .chip {
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #e5e7eb;
+    border-radius: 999px;
+    padding: 2px 10px;
+    font-size: 0.75rem;
+  }
   .notes {
     margin-top: 8px;
     color: #6b7280;
     font-size: 0.85rem;
     display: -webkit-box;
+    line-clamp: 2;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;

@@ -81,7 +81,18 @@ curl -sS -X POST \
 成功例（201）:
 
 ```json
-{ "success": true, "data": { "id": 10, "brand": "DMC", "colorNumber": "321", "colorName": "Red", "quantity": 1, "status": "unused", "wishlist": false } }
+{
+  "success": true,
+  "data": {
+    "id": 10,
+    "brand": "DMC",
+    "colorNumber": "321",
+    "colorName": "Red",
+    "quantity": 1,
+    "status": "unused",
+    "wishlist": false
+  }
+}
 ```
 
 ### 更新 PUT `/api/{resource}/{id}`
@@ -149,7 +160,10 @@ curl -sS -X PATCH \
 - 400 Bad Request: バリデーションエラー
 
 ```json
-{ "success": false, "error": { "fieldErrors": { "brand": ["String must contain at least 1 character(s)"] } } }
+{
+  "success": false,
+  "error": { "fieldErrors": { "brand": ["String must contain at least 1 character(s)"] } }
+}
 ```
 
 - 401 Unauthorized: 認証なし

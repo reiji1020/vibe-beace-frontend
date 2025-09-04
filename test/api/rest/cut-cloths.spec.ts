@@ -1,4 +1,10 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
+import {
+  addCutCloth,
+  updateCutCloth,
+  deleteCutCloth,
+  setWishlistCutCloth
+} from '$lib/controllers/cutClothController';
 import type { Cookies } from '@sveltejs/kit';
 
 vi.mock('$lib/controllers/cutClothController', () => ({
@@ -102,6 +108,29 @@ describe('REST /api/cut-cloths', () => {
     expect(out.status).toBe(200);
   });
 
+  it('PUT /api/cut-cloths/[id] 400 invalid id', async () => {
+    const req = new Request('http://localhost/api/cut-cloths/abc', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': token },
+      body: JSON.stringify(valid)
+    });
+    const res = await PUT_CC_ID({ params: { id: 'abc' }, request: req, cookies } as any);
+    const out = await read(res);
+    expect(out.status).toBe(400);
+  });
+
+  it('PUT /api/cut-cloths/[id] 500 controller error', async () => {
+    vi.mocked(updateCutCloth).mockRejectedValueOnce(new Error('db error'));
+    const req = new Request('http://localhost/api/cut-cloths/7', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': token },
+      body: JSON.stringify(valid)
+    });
+    const res = await PUT_CC_ID({ params: { id: '7' }, request: req, cookies } as any);
+    const out = await read(res);
+    expect(out.status).toBe(500);
+  });
+
   it('PUT /api/cut-cloths/[id] 403 invalid CSRF', async () => {
     const req = new Request('http://localhost/api/cut-cloths/7', {
       method: 'PUT',
@@ -124,6 +153,17 @@ describe('REST /api/cut-cloths', () => {
     expect(out.status).toBe(200);
   });
 
+  it('PATCH /api/cut-cloths/[id]/wishlist 400 invalid id', async () => {
+    const req = new Request('http://localhost/api/cut-cloths/abc/wishlist', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': token },
+      body: JSON.stringify({ wishlist: true })
+    });
+    const res = await PATCH_CC_W({ params: { id: 'abc' }, request: req, cookies } as any);
+    const out = await read(res);
+    expect(out.status).toBe(400);
+  });
+
   it('PATCH /api/cut-cloths/[id]/wishlist 400 invalid body', async () => {
     const req = new Request('http://localhost/api/cut-cloths/7/wishlist', {
       method: 'PATCH',
@@ -135,6 +175,18 @@ describe('REST /api/cut-cloths', () => {
     expect(out.status).toBe(400);
   });
 
+  it('PATCH /api/cut-cloths/[id]/wishlist 500 controller error', async () => {
+    vi.mocked(setWishlistCutCloth).mockRejectedValueOnce(new Error('db error'));
+    const req = new Request('http://localhost/api/cut-cloths/7/wishlist', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': token },
+      body: JSON.stringify({ wishlist: true })
+    });
+    const res = await PATCH_CC_W({ params: { id: '7' }, request: req, cookies } as any);
+    const out = await read(res);
+    expect(out.status).toBe(500);
+  });
+
   it('DELETE /api/cut-cloths/[id] 200', async () => {
     const req = new Request('http://localhost/api/cut-cloths/7', {
       method: 'DELETE',
@@ -143,6 +195,39 @@ describe('REST /api/cut-cloths', () => {
     const res = await DELETE_CC_ID({ params: { id: '7' }, request: req, cookies } as any);
     const out = await read(res);
     expect(out.status).toBe(200);
+  });
+
+  it('DELETE /api/cut-cloths/[id] 400 invalid id', async () => {
+    const req = new Request('http://localhost/api/cut-cloths/abc', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': token }
+    });
+    const res = await DELETE_CC_ID({ params: { id: 'abc' }, request: req, cookies } as any);
+    const out = await read(res);
+    expect(out.status).toBe(400);
+  });
+
+  it('DELETE /api/cut-cloths/[id] 500 controller error', async () => {
+    vi.mocked(deleteCutCloth).mockRejectedValueOnce(new Error('db error'));
+    const req = new Request('http://localhost/api/cut-cloths/7', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': token }
+    });
+    const res = await DELETE_CC_ID({ params: { id: '7' }, request: req, cookies } as any);
+    const out = await read(res);
+    expect(out.status).toBe(500);
+  });
+
+  it('POST /api/cut-cloths 500 controller error', async () => {
+    vi.mocked(addCutCloth).mockRejectedValueOnce(new Error('db error'));
+    const req = new Request('http://localhost/api/cut-cloths', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': token },
+      body: JSON.stringify(valid)
+    });
+    const res = await POST_CC({ request: req, cookies } as any);
+    const out = await read(res);
+    expect(out.status).toBe(500);
   });
 
   it('DELETE /api/cut-cloths/[id] 403 invalid CSRF', async () => {
