@@ -1,16 +1,22 @@
 <script lang="ts">
-  import { Button, Input, Checkbox, Select } from 'cclkit4svelte';
-  import { CCLVividColor, CCLPastelColor } from 'cclkit4svelte';
+  import { Button, Input, Checkbox, Select, CCLVividColor, CCLPastelColor } from 'cclkit4svelte';
 
   type MaterialKey = 'threads' | 'beads' | 'cutCloths' | 'xStitchCloths';
 
+  /** 対象の資材区分。 */
   export let mt: MaterialKey;
+  /** 検索キーワード。 */
   export let searchQuery = '';
+  /** 状態フィルタ。 */
   export let filterStatus: 'all' | 'unused' | 'used' | 'low' = 'all';
+  /** ブランド（threads/beadsのみ有効）。 */
   export let filterBrand = '';
+  /** Wishlistのみ表示。 */
   export let filterWishlist = false;
+  /** 並び順キー。 */
   export let sort = 'default';
 
+  /** 資材ごとの状態選択肢。 */
   const statusOptionsFor = (m: MaterialKey) =>
     m === 'cutCloths' || m === 'xStitchCloths'
       ? (['all', 'unused', 'used'] as const)
@@ -116,5 +122,25 @@
     justify-content: center;
     align-items: center;
     min-width: 220px;
+  }
+
+  /* Mobile adjustments */
+  @media (max-width: 640px) {
+    .search-form {
+      gap: 0.5rem;
+      align-items: center;
+      justify-content: center;
+      margin: 0 0.75rem 0.75rem;
+    }
+    .search-form :global(.input-wrapper),
+    .search-form :global(.select-wrapper),
+    .search-form :global(.checkboxWrapper) {
+      min-width: 100%;
+      width: 100%;
+    }
+    .search-form .wishlist-filter {
+      min-width: 100%;
+      justify-content: flex-start;
+    }
   }
 </style>

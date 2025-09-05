@@ -36,7 +36,7 @@
     <input type="hidden" name="csrfToken" value={data.csrfToken} />
     {#if topError()}<div class="mt-2 mb-2 text-red-600">{topError()}</div>{/if}
     <FormGroup>
-      <Input label="メーカー（任意）" bind:value={brand} />
+      <Input label="メーカー（任意）" bind:value={brand} borderColor={CCLVividColor.MELON_GREEN} />
       <input type="hidden" name="brand" value={brand} />
       {#if fe('brand')}<div class="mt-1 text-sm text-red-600">{fe('brand')}</div>{/if}
     </FormGroup>
@@ -70,7 +70,12 @@
       {#if fe('quantity')}<div class="mt-1 text-sm text-red-600">{fe('quantity')}</div>{/if}
     </FormGroup>
     <FormGroup>
-      <Select label="状態" options={statusOptions} bind:value={status} />
+      <Select
+        label="状態"
+        options={statusOptions}
+        bind:value={status}
+        borderColor={CCLVividColor.MELON_GREEN}
+      />
       <input type="hidden" name="status" value={status} />
       {#if fe('status')}<div class="mt-1 text-sm text-red-600">{fe('status')}</div>{/if}
     </FormGroup>

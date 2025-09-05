@@ -14,10 +14,17 @@ const store = writable<ToastState>(initial);
 
 let timer: ReturnType<typeof setTimeout> | null = null;
 
+/** トーストを非表示にします。 */
 function hide() {
   store.set({ ...initial });
 }
 
+/**
+ * トーストを表示します。
+ * @param message 表示テキスト
+ * @param type 表示種別
+ * @param timeout ミリ秒後に自動で隠す（デフォルト2000ms）
+ */
 function show(message: string, type: ToastType = 'info', timeout = 2000) {
   store.set({ visible: true, message, type });
   if (timer) clearTimeout(timer);

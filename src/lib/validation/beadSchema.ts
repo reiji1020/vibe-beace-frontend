@@ -1,6 +1,6 @@
-// src/lib/validation/beadSchema.ts
 import { z } from 'zod';
 
+/** ビーズの入力スキーマ。 */
 export const beadSchema = z.object({
   brand: z.string().min(1),
   itemCode: z.string().min(1),

@@ -4,17 +4,19 @@ import { beadSchema } from './validation/beadSchema';
 import { cutClothSchema } from './validation/cutClothSchema';
 import { xStitchClothSchema } from './validation/xStitchClothSchema';
 
+/** PrismaのThreadモデルに対応する入力型。 */
 export type Thread = z.infer<typeof threadSchema>;
+/** PrismaのBeadモデルに対応する入力型。 */
 export type Bead = z.infer<typeof beadSchema>;
+/** PrismaのCutClothモデルに対応する入力型。 */
 export type CutCloth = z.infer<typeof cutClothSchema>;
+/** PrismaのXStitchClothモデルに対応する入力型。 */
 export type XStitchCloth = z.infer<typeof xStitchClothSchema>;
 
-/**
- * Union type for all inventory items.
- */
+/** すべての在庫エンティティのUnion。 */
 export type InventoryItem = Thread | Bead | CutCloth | XStitchCloth;
 
-// For UI cards: add discriminant and id field expected from DB
+/** UIカード表示向け：DB由来の`id`と識別子`type`を付与した型群。 */
 export type ThreadItem = Thread & { id: number; type: 'thread' };
 export type BeadItem = Bead & {
   id: number;

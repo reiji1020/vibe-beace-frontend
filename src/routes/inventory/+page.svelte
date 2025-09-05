@@ -1,6 +1,5 @@
 <script lang="ts">
-  import { Tabs, TabPanel, Alert } from 'cclkit4svelte';
-  import { CCLVividColor } from 'cclkit4svelte';
+  import { Tabs, TabPanel, Alert, CCLVividColor } from 'cclkit4svelte';
   import InventoryTabContent from '$lib/components/InventoryTabContent.svelte';
   import { toast } from '$lib/ui/toast';
   import type { InventoryCardItem } from '$lib/types';
@@ -35,8 +34,6 @@
   let showAlert = false;
   let alertMessage = '';
   let alertType: 'success' | 'error' | 'warning' | 'info' = 'info';
-
-  // toastはグローバル（+layout.svelte）に移行済み
 
   async function handleDelete(id: number, type: InventoryCardItem['type']) {
     let apiEndpoint = '';
@@ -74,7 +71,6 @@
         setTimeout(() => (showAlert = false), 3000);
         toast.success('削除しました');
 
-        // 削除成功後、ページをリロードして最新のデータを取得
         location.reload();
       } else {
         const errorData = await response.json();
@@ -94,15 +90,11 @@
 
 {#if showAlert}
   <div class="alert-container">
-    <!-- Note: Based on previous inspection of node_modules/cclkit4svelte/dist/index.js, 'Alert' does not appear to be exported.
-				 If a SyntaxError occurs, it might be due to this component not being available in the library. -->
     <Alert message={alertMessage} type={alertType} dismissible={true} />
   </div>
 {/if}
 
 <section class="filter-panel">
-  <!-- reset link moved next to Apply button inside each form -->
-
   <Tabs>
     {#each tabOrder as mt}
       <TabPanel label={labelMap[mt]} color={CCLVividColor.GRAPE_PURPLE}>
@@ -125,16 +117,10 @@
   </Tabs>
 </section>
 
-<!-- タブ内に「追加」ボタンを配置したため、ここは削除 -->
-
-<!-- 下部の検索結果向けAlertは削除（Wishlist用はカード上部に表示） -->
-
 <div class="api-docs-link">
   <a href="/api-docs/swagger" aria-label="Swagger API Docs">API Docs (Swagger)</a>
   <span class="hint">（開発者向け）</span>
 </div>
-
-<!-- 一覧と件数は各タブ内に移設 -->
 
 <style>
   .alert-container {
@@ -162,5 +148,20 @@
   }
   .api-docs-link .hint {
     margin-left: 6px;
+  }
+
+  /* Mobile adjustments */
+  @media (max-width: 640px) {
+    .alert-container {
+      margin: 0.75rem;
+    }
+    .filter-panel {
+      margin: 0.75rem;
+      padding: 0.5rem;
+    }
+    .api-docs-link {
+      margin: 0 0.75rem 0.5rem;
+      font-size: 0.75rem;
+    }
   }
 </style>

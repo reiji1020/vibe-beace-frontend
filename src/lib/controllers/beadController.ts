@@ -1,8 +1,14 @@
-// src/lib/controllers/beadController.ts
 import type { Bead } from '$lib/types';
 import { prisma } from '$lib/db';
 
-/** 全ビーズを取得（ソート付き） */
+/**
+ * ビーズ一覧取得のオプション。
+ * - `query`: 部分一致（brand/itemCode/colorName/size）
+ * - `status`: 状態で絞り込み
+ * - `brand`: ブランド部分一致
+ * - `wishlist`: ウィッシュリストのみ
+ * - `sort`: ソートキーと順序
+ */
 export type BeadListOptions = {
   query?: string | null;
   status?: string | null;
@@ -14,6 +20,10 @@ export type BeadListOptions = {
   } | null;
 };
 
+/**
+ * ビーズを条件付きで一覧取得します。
+ * @param queryOrOptions キーワードまたは詳細オプション
+ */
 export async function getAllBeads(
   queryOrOptions: string | null | BeadListOptions = null
 ): Promise<Bead[]> {
@@ -39,22 +49,22 @@ export async function getAllBeads(
   return prisma.bead.findMany({ where, orderBy });
 }
 
-/** 特定 ID のビーズを取得 */
+/** 特定 ID のビーズを取得します。 */
 export async function getBeadById(id: number): Promise<Bead | null> {
   return prisma.bead.findUnique({ where: { id } });
 }
 
-/** wishlist = true のビーズを取得 */
+/** wishlist = true のビーズを取得します。 */
 export async function getWishlistBeads(): Promise<Bead[]> {
   return prisma.bead.findMany({ where: { wishlist: true } });
 }
 
-/** 新しいビーズを追加 */
+/** 新しいビーズを追加します。 */
 export async function addBead(data: Bead): Promise<Bead> {
   return prisma.bead.create({ data });
 }
 
-/** ビーズを更新（全上書き） */
+/** ビーズを更新します（全上書き）。 */
 export async function updateBead(data: Partial<Bead> & { id: number }): Promise<Bead> {
   const { id, ...updateData } = data;
   if (typeof id !== 'number') {
@@ -63,12 +73,12 @@ export async function updateBead(data: Partial<Bead> & { id: number }): Promise<
   return prisma.bead.update({ where: { id }, data: updateData });
 }
 
-/** wishlist フラグのみ更新 */
+/** wishlist フラグのみ更新します。 */
 export async function setWishlistBead(id: number, wishlist: boolean): Promise<Bead> {
   return prisma.bead.update({ where: { id }, data: { wishlist } });
 }
 
-/** ビーズを削除 */
+/** ビーズを削除します。 */
 export async function deleteBead(id: number): Promise<Bead> {
   return prisma.bead.delete({ where: { id } });
 }

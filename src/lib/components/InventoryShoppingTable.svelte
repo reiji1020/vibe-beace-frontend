@@ -5,7 +5,9 @@
   import { onMount } from 'svelte';
 
   type MaterialKey = 'threads' | 'beads' | 'cutCloths' | 'xStitchCloths';
+  /** 表示対象の資材区分。 */
   export let mt: MaterialKey;
+  /** 表示する行データ（各資材の配列）。 */
   export let items: any[] = [];
 
   const HEADERS_DEFAULT: string[] = ['メーカー', '種類', '柄', 'サイズ'];
@@ -18,9 +20,19 @@
       case 'beads':
         return [item.brand ?? '', item.itemCode ?? 'ビーズ', item.colorName ?? '', item.size ?? ''];
       case 'cutCloths':
-        return [item.brand ?? '', item.fabricType ?? 'カットクロス', item.pattern ?? '', item.size ?? ''];
+        return [
+          item.brand ?? '',
+          item.fabricType ?? 'カットクロス',
+          item.pattern ?? '',
+          item.size ?? ''
+        ];
       case 'xStitchCloths':
-        return [item.brand ?? '', (item.count ? `${item.count}ct` : 'クロスステッチ布'), item.color ?? '', item.size ?? ''];
+        return [
+          item.brand ?? '',
+          item.count ? `${item.count}ct` : 'クロスステッチ布',
+          item.color ?? '',
+          item.size ?? ''
+        ];
       default:
         return ['', '', '', ''];
     }
@@ -77,7 +89,6 @@
     ctx.fillRect(0, 0, W, pad + headerBandH);
 
     // Header (logo only)
-    const date = new Date();
     if (logoImg) {
       // Scale logo to fit header band comfortably and center it
       const bandH = pad + headerBandH;
@@ -91,7 +102,8 @@
       // Fallback brand text when logo is not available (centered)
       const bandH = pad + headerBandH;
       ctx.fillStyle = '#111827';
-      ctx.font = '700 20px system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Noto Sans JP, sans-serif';
+      ctx.font =
+        '700 20px system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Noto Sans JP, sans-serif';
       const prevAlign = ctx.textAlign;
       const prevBaseline = ctx.textBaseline as CanvasTextBaseline;
       ctx.textAlign = 'center';
@@ -146,7 +158,8 @@
 
     // Footer text centered
     ctx.fillStyle = '#ffffff';
-    ctx.font = '700 12px system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Noto Sans JP, sans-serif';
+    ctx.font =
+      '700 12px system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Noto Sans JP, sans-serif';
     const prevAlign2 = ctx.textAlign;
     const prevBaseline2 = ctx.textBaseline as CanvasTextBaseline;
     ctx.textAlign = 'center';
@@ -154,15 +167,6 @@
     ctx.fillText('Copyright CANDY CHUPS Lab.', W / 2, footerY + footerBandTotal / 2);
     ctx.textAlign = prevAlign2 as CanvasTextAlign;
     ctx.textBaseline = prevBaseline2;
-  }
-
-  function escapeXml(s: string) {
-    return String(s)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;');
   }
 
   async function downloadTablePng() {
@@ -182,8 +186,6 @@
       toast.error('表の画像保存に失敗しました');
     }
   }
-
-  // 旧SVG経由の出力処理は廃止（Canvas直描画へ一本化）
 </script>
 
 <div class="shopping-table">
@@ -211,6 +213,8 @@
   .table-wrap {
     display: flex;
     justify-content: center;
+    overflow-x: auto;
+    width: 100%;
   }
   .actions {
     margin-top: 8px;
@@ -230,5 +234,15 @@
     background: #f3f4f6;
     border: 1px solid #e5e7eb;
     border-radius: 8px;
+  }
+
+  /* Mobile adjustments */
+  @media (max-width: 640px) {
+    .shopping-table {
+      margin: 0.5rem 0.75rem 0.75rem;
+    }
+    .table-wrap {
+      justify-content: flex-start;
+    }
   }
 </style>

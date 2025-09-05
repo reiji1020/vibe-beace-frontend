@@ -90,4 +90,11 @@
     width: min(320px, 80vw);
     z-index: 3000;
   }
+
+  /* Mobile: hide logout button to reduce clutter */
+  @media (max-width: 640px) {
+    .logout-button-wrapper {
+      display: none;
+    }
+  }
 </style>

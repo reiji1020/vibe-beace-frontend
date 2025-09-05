@@ -1,6 +1,5 @@
 <script lang="ts">
-  import { Button } from 'cclkit4svelte';
-  import { CCLVividColor } from 'cclkit4svelte';
+  import { Button, CCLVividColor } from 'cclkit4svelte';
   import MaterialCard from '$lib/components/MaterialCard.svelte';
   import InventoryFilterForm from '$lib/components/InventoryFilterForm.svelte';
   import InventoryShoppingTable from '$lib/components/InventoryShoppingTable.svelte';
@@ -8,28 +7,30 @@
 
   type MaterialKey = 'threads' | 'beads' | 'cutCloths' | 'xStitchCloths';
 
+  /** アクティブな資材タブ。 */
   export let mt: MaterialKey;
+  /** 全タブの件数サマリ。 */
   export let counts: { threads: number; beads: number; cutCloths: number; xStitchCloths: number };
+  /** 各資材データ配列。 */
   export let threads: any[] = [];
   export let beads: any[] = [];
   export let cutCloths: any[] = [];
   export let xStitchCloths: any[] = [];
+  /** 削除ボタン押下時のハンドラ。 */
   export let onDelete: (id: number, type: InventoryCardItem['type']) => void;
 
+  /** 検索・絞り込み・並び替えのUI状態。 */
   export let searchQuery = '';
   export let filterStatus: 'all' | 'unused' | 'used' | 'low' = 'all';
   export let filterBrand = '';
   export let filterWishlist = false;
   export let sort = 'default';
 
-  const currentCount =
-    mt === 'threads'
-      ? counts.threads
-      : mt === 'beads'
-        ? counts.beads
-        : mt === 'cutCloths'
-          ? counts.cutCloths
-          : counts.xStitchCloths;
+  // フィルタの折りたたみ（モバイル初期: 閉）
+  let showFilters = true;
+  if (typeof window !== 'undefined') {
+    showFilters = window.innerWidth >= 640;
+  }
 
   $: displayItems =
     mt === 'threads'
@@ -47,47 +48,41 @@
 <div class="add-button-container">
   {#if mt === 'threads'}
     <a href="/inventory/add/thread">
-      <Button
-        label="刺繍糸を追加する"
-        onClick={() => {}}
-        bgColor={CCLVividColor.PINEAPPLE_YELLOW}
-      />
+      <Button label="刺繍糸を追加する" bgColor={CCLVividColor.PINEAPPLE_YELLOW} />
     </a>
   {:else if mt === 'beads'}
     <a href="/inventory/add/bead">
-      <Button
-        label="ビーズを追加する"
-        onClick={() => {}}
-        bgColor={CCLVividColor.PINEAPPLE_YELLOW}
-      />
+      <Button label="ビーズを追加する" bgColor={CCLVividColor.PINEAPPLE_YELLOW} />
     </a>
   {:else if mt === 'cutCloths'}
     <a href="/inventory/add/cut-cloth">
-      <Button
-        label="カットクロスを追加する"
-        onClick={() => {}}
-        bgColor={CCLVividColor.PINEAPPLE_YELLOW}
-      />
+      <Button label="カットクロスを追加する" bgColor={CCLVividColor.PINEAPPLE_YELLOW} />
     </a>
   {:else}
     <a href="/inventory/add/xstitch-cloth">
-      <Button
-        label="クロスステッチ布を追加する"
-        onClick={() => {}}
-        bgColor={CCLVividColor.PINEAPPLE_YELLOW}
-      />
+      <Button label="クロスステッチ布を追加する" bgColor={CCLVividColor.PINEAPPLE_YELLOW} />
     </a>
   {/if}
 </div>
 
-<InventoryFilterForm
-  {mt}
-  bind:searchQuery
-  bind:filterStatus
-  bind:filterBrand
-  bind:filterWishlist
-  bind:sort
-/>
+<div class="filter-toggle">
+  <Button
+    label={showFilters ? '絞り込みを閉じる' : '絞り込みを開く'}
+    bgColor={CCLVividColor.MELON_GREEN}
+    onClick={() => (showFilters = !showFilters)}
+    aria-expanded={showFilters}
+  />
+</div>
+{#if showFilters}
+  <InventoryFilterForm
+    {mt}
+    bind:searchQuery
+    bind:filterStatus
+    bind:filterBrand
+    bind:filterWishlist
+    bind:sort
+  />
+{/if}
 
 <div class="summary">
   <span>現在の表示: {currentFilteredCount} 件</span>
@@ -99,7 +94,9 @@
 {#if filterWishlist}
   <div class="shopping-actions">
     <Button
-      label={showShoppingTable ? '買い物リスト（表）を隠す' : '欲しいものリストを買い物リストとして表示'}
+      label={showShoppingTable
+        ? '買い物リスト（表）を隠す'
+        : '欲しいものリストを買い物リストとして表示'}
       bgColor={CCLVividColor.GRAPE_PURPLE}
       onClick={() => (showShoppingTable = !showShoppingTable)}
     />
@@ -109,10 +106,6 @@
 {#if filterWishlist && showShoppingTable}
   <InventoryShoppingTable {mt} items={wishlistItems} />
 {/if}
-
-<!-- 画像生成機能は削除 -->
-
-
 
 <div class="card-container">
   {#if currentFilteredCount === 0}
@@ -159,8 +152,19 @@
     color: #6b7280;
   }
 
-  .shopping-actions { display: flex; gap: 0.5rem; align-items: center; justify-content: center; margin: 0.5rem 2rem; }
+  .shopping-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: center;
+    margin: 0.5rem 2rem;
+  }
 
+  .filter-toggle {
+    display: flex;
+    justify-content: center;
+    margin: 0 2rem 0.5rem;
+  }
 
   .card-container {
     display: grid;
@@ -175,5 +179,27 @@
     border: 1px solid #e5e7eb; /* gray-200 */
     color: #6b7280; /* gray-500 */
     text-align: center;
+  }
+
+  /* Mobile adjustments */
+  @media (max-width: 640px) {
+    .add-button-container {
+      margin: 0 0.75rem 0.75rem;
+    }
+    .filter-toggle {
+      margin: 0 0.75rem 0.5rem;
+    }
+    .summary {
+      margin: 0.5rem 0.75rem;
+      font-size: 0.85rem;
+    }
+    .card-container {
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+      margin: 0.75rem;
+    }
+    .filter-toggle :global(button) {
+      width: auto;
+    }
   }
 </style>

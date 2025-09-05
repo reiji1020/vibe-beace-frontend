@@ -1,9 +1,13 @@
-// src/lib/controllers/threadController.ts
 import type { Thread } from '$lib/types';
 import { prisma } from '$lib/db';
 
 /**
- * すべての刺繍糸を取得
+ * 刺繍糸一覧取得のオプション。
+ * - `query`: 部分一致（brand/colorNumber/colorName）
+ * - `status`: 状態で絞り込み
+ * - `brand`: ブランド部分一致
+ * - `wishlist`: ウィッシュリストのみ
+ * - `sort`: ソートキーと順序
  */
 export type ThreadListOptions = {
   query?: string | null;
@@ -16,6 +20,11 @@ export type ThreadListOptions = {
   } | null;
 };
 
+/**
+ * 刺繍糸を条件付きで一覧取得します。
+ * @param queryOrOptions キーワードまたは詳細オプション
+ * @returns `Thread[]`
+ */
 export async function getAllThreads(
   queryOrOptions: string | null | ThreadListOptions = null
 ): Promise<Thread[]> {
@@ -41,18 +50,14 @@ export async function getAllThreads(
   return prisma.thread.findMany({ where, orderBy });
 }
 
-/**
- * 新しい刺繍糸を追加
- */
+/** 新しい刺繍糸を追加します。 */
 export async function addThread(data: Thread): Promise<Thread> {
   return prisma.thread.create({
     data: data
   });
 }
 
-/**
- * 刺繍糸を更新（全体上書き）
- */
+/** 刺繍糸を更新します（全体上書き）。 */
 export async function updateThread(data: Partial<Thread> & { id: number }): Promise<Thread> {
   const { id, ...updateData } = data;
   if (typeof id !== 'number') {
@@ -64,9 +69,7 @@ export async function updateThread(data: Partial<Thread> & { id: number }): Prom
   });
 }
 
-/**
- * wishlist フラグのみ更新
- */
+/** wishlist フラグのみ更新します。 */
 export async function setWishlistThread(id: number, wishlist: boolean): Promise<Thread> {
   return prisma.thread.update({
     where: { id },
@@ -74,18 +77,14 @@ export async function setWishlistThread(id: number, wishlist: boolean): Promise<
   });
 }
 
-/**
- * IDで刺繍糸を取得
- */
+/** IDで刺繍糸を取得します。 */
 export async function getThreadById(id: number): Promise<Thread | null> {
   return prisma.thread.findUnique({
     where: { id }
   });
 }
 
-/**
- * 刺繍糸を削除
- */
+/** 刺繍糸を削除します。 */
 export async function deleteThread(id: number): Promise<Thread> {
   return prisma.thread.delete({
     where: { id }

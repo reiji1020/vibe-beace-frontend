@@ -1,13 +1,15 @@
 <script lang="ts">
   import { toast } from '$lib/ui/toast';
   import type { InventoryCardItem } from '$lib/types';
+  /** 表示する在庫カードのデータ。 */
   export let material: InventoryCardItem;
+  /** 削除ボタン押下時のハンドラ。 */
   export let onDelete: (id: number, type: InventoryCardItem['type']) => void;
 
   let title: string;
   let details: string;
 
-  // Helper function to translate status
+  /** ステータスの表示ラベル。 */
   function getStatusLabel(status: string | null | undefined): string {
     switch (status) {
       case 'unused':
@@ -21,6 +23,7 @@
     }
   }
 
+  /** ステータスに応じたバッジ用クラス。 */
   function getStatusClass(status: string | null | undefined): string {
     switch (status) {
       case 'unused':
@@ -33,15 +36,6 @@
         return 'status-badge neutral';
     }
   }
-
-  $: typeLabel =
-    material.type === 'thread'
-      ? '刺繍糸'
-      : material.type === 'bead'
-        ? 'ビーズ'
-        : material.type === 'cutCloth'
-          ? 'カットクロス'
-          : 'クロスステッチ布';
 
   // Determine content based on material type
   $: {
@@ -171,7 +165,6 @@
     <div class="header-text">
       <h2>{title}</h2>
       <div class="header-badges">
-        <span class="type-badge" aria-label={typeLabel}>{typeLabel}</span>
         <span
           class={getStatusClass(material.status)}
           aria-label={`状態: ${getStatusLabel(material.status)}`}
@@ -242,7 +235,7 @@
     background: none;
     border: none;
     cursor: pointer;
-    padding: 0 5px;
+    padding: 6px;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
@@ -252,19 +245,19 @@
     background: none;
     border: none;
     cursor: pointer;
-    padding: 0 5px;
-    font-size: 16px;
+    padding: 6px;
+    font-size: 18px;
     line-height: 1;
     color: #999;
   }
 
   .wishlist-button .wished {
-    color: #ffb400; /* gold-ish */
+    color: var(--pineapple-yellow, #ed9126);
   }
 
   .icon {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
   }
 
   .edit-button {
@@ -284,8 +277,6 @@
     margin-bottom: 0.75rem;
     gap: 0.75rem; /* アイコンとの間隔を少し広く */
   }
-
-  /* アイコンは廃止。タイトル/バッジが全幅を使用 */
 
   .header-text {
     display: flex;
@@ -307,14 +298,6 @@
     gap: 6px;
     flex-wrap: wrap;
   }
-  .type-badge {
-    background: var(--badge-bg);
-    color: var(--badge-fg);
-    border: 1px solid #e5e7eb;
-    border-radius: 999px;
-    font-size: 0.72rem;
-    padding: 2px 8px;
-  }
   .status-badge {
     border-radius: 6px;
     padding: 2px 8px;
@@ -322,9 +305,9 @@
     border: 1px solid transparent;
   }
   .status-badge.unused {
-    background: #ecfdf5;
-    color: #065f46;
-    border-color: #a7f3d0;
+    background: var(--matcha-green, #86efac);
+    color: var(--melon-green, #10b981);
+    border-color: var(--melon-green, #10b981);
   }
   .status-badge.used {
     background: #f3f4f6;
@@ -332,9 +315,9 @@
     border-color: #e5e7eb;
   }
   .status-badge.low {
-    background: #fef3c7;
-    color: #92400e;
-    border-color: #fde68a;
+    background: var(--akebi-purple, #a855f7);
+    color: var(--grape-purple, #7e22ce);
+    border-color: var(--grape-purple, #7e22ce);
   }
   .status-badge.neutral {
     background: var(--badge-bg);
@@ -342,9 +325,9 @@
     border-color: #e5e7eb;
   }
   .wishlist-badge {
-    background: #fff7ed;
-    color: #9a3412;
-    border: 1px solid #fed7aa;
+    background: var(--pineapple-yellow-light, #fde68a);
+    color: var(--pineapple-yellow, #ed9126);
+    border: 1px solid var(--pineapple-yellow, #ed9126);
     border-radius: 6px;
     padding: 2px 8px;
     font-size: 0.72rem;
@@ -356,7 +339,6 @@
     color: #4b5563;
   }
 
-  /* toast display is handled by parent via event */
   .meta-row {
     display: flex;
     gap: 6px;
@@ -381,5 +363,38 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
     white-space: pre-wrap;
+  }
+
+  /* Mobile adjustments */
+  @media (max-width: 640px) {
+    .material-card {
+      padding: 1rem 0.75rem 0.75rem;
+    }
+    .card-actions-left,
+    .card-actions-right {
+      top: 2px;
+      gap: 2px;
+    }
+    .wishlist-button {
+      font-size: 20px;
+      padding: 8px;
+    }
+    .icon {
+      width: 20px;
+      height: 20px;
+    }
+    .card-header h2 {
+      font-size: 1rem;
+    }
+    .status-badge,
+    .wishlist-badge,
+    .type-badge {
+      font-size: 0.7rem;
+      padding: 2px 6px;
+    }
+    .chip {
+      font-size: 0.7rem;
+      padding: 2px 8px;
+    }
   }
 </style>

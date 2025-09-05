@@ -1,6 +1,5 @@
 <script>
-  import { Carousel, Button } from 'cclkit4svelte';
-  import { CCLVividColor } from 'cclkit4svelte';
+  import { Carousel, Button, CCLVividColor } from 'cclkit4svelte';
 
   const carouselItem = [
     { src: 'frame1.png', alt: 'frame1' },

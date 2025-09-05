@@ -1,6 +1,6 @@
-// src/lib/validation/cutClothSchema.ts
 import { z } from 'zod';
 
+/** カットクロスの入力スキーマ。 */
 export const cutClothSchema = z.object({
   brand: z.string().min(1).nullable().optional(),
   fabricType: z.string().min(1),

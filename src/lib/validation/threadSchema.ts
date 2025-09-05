@@ -1,6 +1,9 @@
-// src/lib/validation/threadSchema.ts
 import { z } from 'zod';
 
+/**
+ * 刺繍糸の入力スキーマ。
+ * API/フォームのバリデーションに使用します。
+ */
 export const threadSchema = z.object({
   brand: z.string().min(1),
   colorNumber: z.string().min(1),
