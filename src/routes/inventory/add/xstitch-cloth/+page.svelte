@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Button, FormGroup, Input, Select, Checkbox, Textarea } from 'cclkit4svelte';
+  import { Button, FormGroup, Input, Select, Checkbox, Textarea, Breadcrumb } from 'cclkit4svelte';
   import { CCLVividColor } from 'cclkit4svelte';
   export let data: any;
   export let form: any;
@@ -30,6 +30,14 @@
 </script>
 
 <main>
+  <Breadcrumb
+    items={[
+      { label: 'ホーム', href: '/' },
+      { label: '在庫', href: '/inventory' },
+      { label: 'クロスステッチ布を追加' }
+    ]}
+    ariaLabel="breadcrumb"
+  />
   <h1>クロスステッチ布を追加</h1>
   <form method="POST" use:enhance>
     <input type="hidden" name="csrfToken" value={data.csrfToken} />

@@ -1,9 +1,8 @@
 <script lang="ts">
   import '../app.css';
-  import { CCLVividColor, CommonHeader, Footer, Button, Spinner, Alert } from 'cclkit4svelte';
+  import { CCLVividColor, CommonHeader, Footer, Button, Spinner, Toaster, toast } from 'cclkit4svelte';
   import type { LayoutData } from './$types';
   import { navigating } from '$app/stores';
-  import { toast } from '$lib/ui/toast';
   import { onMount } from 'svelte';
 
   let { children, data } = $props();
@@ -45,11 +44,7 @@
     </div>
   {/if}
 
-  {#if $toast.visible}
-    <div class="global-toast">
-      <Alert message={$toast.message} type={$toast.type} dismissible={true} />
-    </div>
-  {/if}
+  <Toaster position="bottom-right" dismissible={true} message="" />
 </div>
 
 <style>
@@ -81,14 +76,6 @@
     justify-content: center;
     background: rgba(255, 255, 255, 0.7);
     z-index: 2000;
-  }
-
-  .global-toast {
-    position: fixed;
-    right: 16px;
-    bottom: 16px;
-    width: min(320px, 80vw);
-    z-index: 3000;
   }
 
   /* Mobile: hide logout button to reduce clutter */

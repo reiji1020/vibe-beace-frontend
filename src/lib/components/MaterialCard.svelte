@@ -1,6 +1,7 @@
 <script lang="ts">
-  import { toast } from '$lib/ui/toast';
+  import { toast, Tooltip, Badge, CCLVividColor } from 'cclkit4svelte';
   import type { InventoryCardItem } from '$lib/types';
+  import { baseEndpointForType } from '$lib/utils/endpoints';
   /** 表示する在庫カードのデータ。 */
   export let material: InventoryCardItem;
   /** 削除ボタン押下時のハンドラ。 */
@@ -9,7 +10,6 @@
   let title: string;
   let details: string;
 
-  /** ステータスの表示ラベル。 */
   function getStatusLabel(status: string | null | undefined): string {
     switch (status) {
       case 'unused':
@@ -23,21 +23,19 @@
     }
   }
 
-  /** ステータスに応じたバッジ用クラス。 */
-  function getStatusClass(status: string | null | undefined): string {
+  function statusColor(status: string | null | undefined) {
     switch (status) {
       case 'unused':
-        return 'status-badge unused';
+        return CCLVividColor.MELON_GREEN;
       case 'used':
-        return 'status-badge used';
+        return CCLVividColor.GRAPE_PURPLE;
       case 'low':
-        return 'status-badge low';
+        return CCLVividColor.GRAPE_PURPLE;
       default:
-        return 'status-badge neutral';
+        return CCLVividColor.WRAP_GREY;
     }
   }
 
-  // Determine content based on material type
   $: {
     switch (material.type) {
       case 'thread':
@@ -64,18 +62,9 @@
   }
 
   async function toggleWishlist() {
-    const endpointBase =
-      material.type === 'thread'
-        ? '/api/threads'
-        : material.type === 'bead'
-          ? '/api/beads'
-          : material.type === 'cutCloth'
-            ? '/api/cut-cloths'
-            : '/api/xstitch-cloths';
-    const endpoint = `${endpointBase}/${material.id}/wishlist`;
+    const endpoint = `${baseEndpointForType(material.type)}/${material.id}/wishlist`;
 
     const next = !material.wishlist;
-    // optimistic update
     const prev = material.wishlist;
     material.wishlist = next;
     try {
@@ -93,7 +82,7 @@
         body: JSON.stringify({ wishlist: next })
       });
       if (!res.ok) {
-        material.wishlist = prev; // rollback
+        material.wishlist = prev;
         const j = await res.json().catch(() => ({}));
         console.error('Failed to toggle wishlist', j.error || res.statusText);
         const msg =
@@ -106,19 +95,18 @@
       } else {
         const j = await res.json().catch(() => null);
         if (j && j.success && j.data) {
-          material = j.data; // sync with server
+          material = j.data;
         }
         showToast(next ? 'Wishlistに追加しました' : 'Wishlistを解除しました', 'success');
       }
     } catch (e) {
-      material.wishlist = prev; // rollback
+      material.wishlist = prev;
       console.error('Error toggling wishlist', e);
       showToast('通信エラーが発生しました', 'error');
     }
   }
 
   function showToast(message: string, type: 'success' | 'error' | 'warning' | 'info' = 'info') {
-    // use global toast store
     if (type === 'success') toast.success(message);
     else if (type === 'error') toast.error(message);
     else if (type === 'warning') toast.warning(message);
@@ -128,58 +116,68 @@
 
 <div class="material-card">
   <div class="card-actions-left">
-    <a
-      href={`/inventory/update/${material.type === 'thread' ? 'thread' : material.type === 'bead' ? 'bead' : material.type === 'cutCloth' ? 'cut-cloth' : 'xstitch-cloth'}/${material.id}`}
-      class="edit-button"
-      title="編集"
-      aria-label="編集"
-    >
-      <svg
-        class="icon"
-        width="16"
-        height="16"
-        viewBox="0 0 32 32"
-        fill="currentColor"
-        xmlns="http://www.w3.org/2000/svg"
-        aria-hidden="true"
-        focusable="false"
+    <Tooltip text="編集">
+      <a
+        href={`/inventory/update/${material.type === 'thread' ? 'thread' : material.type === 'bead' ? 'bead' : material.type === 'cutCloth' ? 'cut-cloth' : 'xstitch-cloth'}/${material.id}`}
+        class="edit-button"
+        aria-label="編集"
       >
-        <path
-          d="M0 25.3343V32H6.66574L26.3252 12.3405L19.6595 5.67477L0 25.3343ZM31.4801 7.18567C32.1733 6.49243 32.1733 5.37259 31.4801 4.67935L27.3207 0.519928C26.6274 -0.173309 25.5076 -0.173309 24.8143 0.519928L21.5615 3.77281L28.2272 10.4385L31.4801 7.18567Z"
-        />
-      </svg>
-    </a>
-    <button
-      class="wishlist-button"
-      on:click|preventDefault={toggleWishlist}
-      aria-label={material.wishlist ? 'Remove from wishlist' : 'Add to wishlist'}
-      title={material.wishlist ? 'Wishlist解除' : 'Wishlist登録'}
-    >
-      <span class:wished={material.wishlist} aria-hidden="true">★</span>
-    </button>
+        <svg
+          class="icon"
+          width="16"
+          height="16"
+          viewBox="0 0 32 32"
+          fill="currentColor"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path
+            d="M0 25.3343V32H6.66574L26.3252 12.3405L19.6595 5.67477L0 25.3343ZM31.4801 7.18567C32.1733 6.49243 32.1733 5.37259 31.4801 4.67935L27.3207 0.519928C26.6274 -0.173309 25.5076 -0.173309 24.8143 0.519928L21.5615 3.77281L28.2272 10.4385L31.4801 7.18567Z"
+          />
+        </svg>
+      </a>
+    </Tooltip>
+    <Tooltip text={material.wishlist ? 'Wishlist解除' : 'Wishlist登録'}>
+      <button
+        class="wishlist-button"
+        on:click|preventDefault={toggleWishlist}
+        aria-label={material.wishlist ? 'Remove from wishlist' : 'Add to wishlist'}
+        aria-pressed={material.wishlist}
+      >
+        <span class:wished={material.wishlist} aria-hidden="true">★</span>
+      </button>
+    </Tooltip>
   </div>
   <div class="card-actions-right">
-    <button class="delete-button" on:click={handleDelete} title="削除">&times;</button>
+    <Tooltip text="削除">
+      <button class="delete-button" on:click={handleDelete} aria-label="削除">&times;</button>
+    </Tooltip>
   </div>
   <div class="card-header">
     <div class="header-text">
       <h2>{title}</h2>
       <div class="header-badges">
-        <span
-          class={getStatusClass(material.status)}
-          aria-label={`状態: ${getStatusLabel(material.status)}`}
-          >{getStatusLabel(material.status)}</span
-        >
-        {#if material.wishlist}
-          <span class="wishlist-badge" aria-label="Wishlist 登録中">Wishlist</span>
-        {/if}
+        <Badge
+          color={statusColor(material.status)}
+          variant="outline"
+          size="sm"
+          ariaLabel={`状態: ${getStatusLabel(material.status)}`}
+          label={getStatusLabel(material.status)}
+        />
       </div>
     </div>
   </div>
   <div class="card-body">
     <p>{details}</p>
     <div class="meta-row" aria-label="メタ情報">
-      <span class="chip" title="数量">数量: {material.quantity}</span>
+      <Badge
+        color={CCLVividColor.WRAP_GREY}
+        variant="outline"
+        size="sm"
+        ariaLabel="数量"
+        label={`数量: ${material.quantity}`}
+      />
     </div>
     {#if material.notes}
       <p class="notes" title={material.notes}>{material.notes}</p>
@@ -192,11 +190,9 @@
     --card-border: #e5e7eb;
     --card-hover: #d1d5db;
     --card-bg: #ffffff;
-    --badge-bg: #f3f4f6;
-    --badge-fg: #374151;
     border: 1px solid var(--card-border);
     border-radius: 12px;
-    padding: 1.25rem 1rem 1rem; /* 上に少し余白を追加 */
+    padding: 2.75rem 1rem 1rem;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
     background:
       radial-gradient(100% 100% at 0% 0%, rgba(250, 250, 250, 0.9), transparent 60%), var(--card-bg);
@@ -274,7 +270,7 @@
   .card-header {
     display: flex;
     align-items: center;
-    margin-bottom: 0.75rem;
+    margin-bottom: 1.25rem;
     gap: 0.75rem; /* アイコンとの間隔を少し広く */
   }
 
@@ -298,40 +294,6 @@
     gap: 6px;
     flex-wrap: wrap;
   }
-  .status-badge {
-    border-radius: 6px;
-    padding: 2px 8px;
-    font-size: 0.72rem;
-    border: 1px solid transparent;
-  }
-  .status-badge.unused {
-    background: var(--matcha-green, #86efac);
-    color: var(--melon-green, #10b981);
-    border-color: var(--melon-green, #10b981);
-  }
-  .status-badge.used {
-    background: #f3f4f6;
-    color: #374151;
-    border-color: #e5e7eb;
-  }
-  .status-badge.low {
-    background: var(--akebi-purple, #a855f7);
-    color: var(--grape-purple, #7e22ce);
-    border-color: var(--grape-purple, #7e22ce);
-  }
-  .status-badge.neutral {
-    background: var(--badge-bg);
-    color: var(--badge-fg);
-    border-color: #e5e7eb;
-  }
-  .wishlist-badge {
-    background: var(--pineapple-yellow-light, #fde68a);
-    color: var(--pineapple-yellow, #ed9126);
-    border: 1px solid var(--pineapple-yellow, #ed9126);
-    border-radius: 6px;
-    padding: 2px 8px;
-    font-size: 0.72rem;
-  }
 
   .card-body p {
     white-space: pre-wrap; /* Preserve newlines */
@@ -344,14 +306,6 @@
     gap: 6px;
     margin-top: 8px;
     flex-wrap: wrap;
-  }
-  .chip {
-    background: #f3f4f6;
-    color: #374151;
-    border: 1px solid #e5e7eb;
-    border-radius: 999px;
-    padding: 2px 10px;
-    font-size: 0.75rem;
   }
   .notes {
     margin-top: 8px;
@@ -368,7 +322,7 @@
   /* Mobile adjustments */
   @media (max-width: 640px) {
     .material-card {
-      padding: 1rem 0.75rem 0.75rem;
+      padding: 2.25rem 0.75rem 0.75rem;
     }
     .card-actions-left,
     .card-actions-right {
@@ -386,15 +340,9 @@
     .card-header h2 {
       font-size: 1rem;
     }
-    .status-badge,
-    .wishlist-badge,
     .type-badge {
       font-size: 0.7rem;
       padding: 2px 6px;
-    }
-    .chip {
-      font-size: 0.7rem;
-      padding: 2px 8px;
     }
   }
 </style>

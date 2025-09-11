@@ -1,7 +1,8 @@
 <script lang="ts">
-  import { Tabs, TabPanel, Alert, CCLVividColor } from 'cclkit4svelte';
+  import { Tabs, TabPanel, Alert, CCLVividColor, Dialog, Button, toast } from 'cclkit4svelte';
+  import { baseEndpointForType } from '$lib/utils/endpoints';
   import InventoryTabContent from '$lib/components/InventoryTabContent.svelte';
-  import { toast } from '$lib/ui/toast';
+  
   import type { InventoryCardItem } from '$lib/types';
 
   export let data;
@@ -14,12 +15,7 @@
     xStitchCloths: 'クロスステッチ布'
   };
 
-  $: counts = {
-    threads: data.threads?.length ?? 0,
-    beads: data.beads?.length ?? 0,
-    cutCloths: data.cutCloths?.length ?? 0,
-    xStitchCloths: data.xStitchCloths?.length ?? 0
-  } as const;
+  
 
   const initial: MaterialKey = (data.type as MaterialKey) || 'threads';
   $: tabOrder = (['threads', 'beads', 'cutCloths', 'xStitchCloths'] as MaterialKey[]).sort(
@@ -34,57 +30,76 @@
   let showAlert = false;
   let alertMessage = '';
   let alertType: 'success' | 'error' | 'warning' | 'info' = 'info';
+  let showDeleteDialog = false;
+  let pendingDelete: { id: number; type: InventoryCardItem['type'] } | null = null;
+  let deleting = false;
 
-  async function handleDelete(id: number, type: InventoryCardItem['type']) {
-    let apiEndpoint = '';
+  function handleDelete(id: number, type: InventoryCardItem['type']) {
+    pendingDelete = { id, type };
+    showDeleteDialog = true;
+  }
 
-    const base =
-      type === 'thread'
-        ? '/api/threads'
-        : type === 'bead'
-          ? '/api/beads'
-          : type === 'cutCloth'
-            ? '/api/cut-cloths'
-            : '/api/xstitch-cloths';
-    apiEndpoint = `${base}/${id}`;
+  async function confirmDelete() {
+    if (!pendingDelete || deleting) return;
+    deleting = true;
+    const { id, type } = pendingDelete;
 
-    if (confirm('本当に削除しますか？')) {
-      // Read CSRF token from cookie
-      const csrf =
-        document.cookie
-          .split('; ')
-          .find((c) => c.startsWith('csrf='))
-          ?.split('=')[1] ?? '';
-      const response = await fetch(apiEndpoint, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRF-Token': csrf
-        },
-        body: JSON.stringify({ id })
-      });
+    const apiEndpoint = `${baseEndpointForType(type)}/${id}`;
 
-      if (response.ok) {
-        alertMessage = '資材を削除しました。';
-        alertType = 'success';
-        showAlert = true;
-        setTimeout(() => (showAlert = false), 3000);
-        toast.success('削除しました');
+    const csrf =
+      document.cookie
+        .split('; ')
+        .find((c) => c.startsWith('csrf='))
+        ?.split('=')[1] ?? '';
 
-        location.reload();
-      } else {
+    const response = await fetch(apiEndpoint, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': csrf
+      },
+      body: JSON.stringify({ id })
+    });
+
+    if (response.ok) {
+      alertMessage = '資材を削除しました。';
+      alertType = 'success';
+      showAlert = true;
+      setTimeout(() => (showAlert = false), 3000);
+      toast.success('削除しました');
+
+      showDeleteDialog = false;
+      pendingDelete = null;
+      deleting = false;
+      location.reload();
+    } else {
+      let msg = '削除に失敗しました';
+      try {
         const errorData = await response.json();
-        const msg =
+        msg =
           response.status === 403
             ? '不正な操作です'
             : `削除に失敗しました: ${errorData.error || response.statusText}`;
-        alertMessage = msg;
-        alertType = 'error';
-        showAlert = true;
-        setTimeout(() => (showAlert = false), 5000);
-        toast.error(msg);
+      } catch {
+        msg = `削除に失敗しました: ${response.statusText}`;
       }
+      alertMessage = msg;
+      alertType = 'error';
+      showAlert = true;
+      setTimeout(() => (showAlert = false), 5000);
+      toast.error(msg);
+      deleting = false;
     }
+  }
+
+  function cancelDelete() {
+    showDeleteDialog = false;
+    pendingDelete = null;
+  }
+
+  function handleDialogClose() {
+    if (deleting) return;
+    cancelDelete();
   }
 </script>
 
@@ -100,7 +115,6 @@
       <TabPanel label={labelMap[mt]} color={CCLVividColor.GRAPE_PURPLE}>
         <InventoryTabContent
           {mt}
-          {counts}
           threads={data.threads}
           beads={data.beads}
           cutCloths={data.cutCloths}
@@ -132,8 +146,7 @@
     border: none;
     background: transparent;
   }
-  /* filter UI styles are defined in InventoryTabContent */
-  /* grid styles are defined in InventoryTabContent */
+  
   .api-docs-link {
     margin: 0 2rem 0.5rem;
     font-size: 0.8rem;
@@ -150,7 +163,6 @@
     margin-left: 6px;
   }
 
-  /* Mobile adjustments */
   @media (max-width: 640px) {
     .alert-container {
       margin: 0.75rem;
@@ -165,3 +177,25 @@
     }
   }
 </style>
+
+<Dialog
+  open={showDeleteDialog}
+  title="削除の確認"
+  borderColor={CCLVividColor.GRAPE_PURPLE}
+  closeOnEsc={true}
+  closeOnOutside={true}
+  on:close={handleDialogClose}
+>
+  <p>
+    この資材を削除しますか？この操作は取り消せません。
+  </p>
+  <svelte:fragment slot="footer">
+    <Button label="キャンセル" bgColor={CCLVividColor.WRAP_GREY} onClick={cancelDelete} />
+    <Button
+      label={deleting ? '削除中…' : '削除する'}
+      bgColor={CCLVividColor.GRAPE_PURPLE}
+      onClick={confirmDelete}
+      disabled={deleting}
+    />
+  </svelte:fragment>
+</Dialog>

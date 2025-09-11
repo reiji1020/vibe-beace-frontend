@@ -1,6 +1,5 @@
 <script lang="ts">
-  import { Table, Button } from 'cclkit4svelte';
-  import { toast } from '$lib/ui/toast';
+  import { Table, Button, toast } from 'cclkit4svelte';
   import { CCLVividColor } from 'cclkit4svelte';
   import { onMount } from 'svelte';
 

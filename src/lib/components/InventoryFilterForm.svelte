@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Button, Input, Checkbox, Select, CCLVividColor, CCLPastelColor } from 'cclkit4svelte';
+  import { Button, Input, Checkbox, Select, FormGroup, CCLVividColor, CCLPastelColor } from 'cclkit4svelte';
 
   type MaterialKey = 'threads' | 'beads' | 'cutCloths' | 'xStitchCloths';
 
@@ -35,69 +35,83 @@
     <input type="hidden" name="wishlist" value="on" />
   {/if}
 
-  <Input
-    type="text"
-    placeholder="キーワード検索（ブランド/色番号/色名など）"
-    bind:value={searchQuery}
-    borderColor={CCLVividColor.MELON_GREEN}
-    label="キーワード"
-  />
-  <Select
-    label="状態"
-    options={statusOptionsFor(mt).map((opt) => ({
-      value: opt,
-      label:
-        opt === 'all'
-          ? 'すべての状態'
-          : opt === 'unused'
-            ? '未使用'
-            : opt === 'used'
-              ? '使用中'
-              : '残りわずか'
-    }))}
-    bind:value={filterStatus}
-    id={`status-${mt}`}
-    borderColor={CCLVividColor.MELON_GREEN}
-  />
-  {#if brandApplicable}
+  <FormGroup>
     <Input
       type="text"
-      placeholder="ブランド（糸/ビーズのみ）"
-      bind:value={filterBrand}
+      placeholder="キーワード検索（ブランド/色番号/色名など）"
+      bind:value={searchQuery}
       borderColor={CCLVividColor.MELON_GREEN}
-      label="ブランド"
+      label="キーワード"
     />
+  </FormGroup>
+  <FormGroup>
+    <Select
+      label="状態"
+      options={statusOptionsFor(mt).map((opt) => ({
+        value: opt,
+        label:
+          opt === 'all'
+            ? 'すべての状態'
+            : opt === 'unused'
+              ? '未使用'
+              : opt === 'used'
+                ? '使用中'
+                : '残りわずか'
+      }))}
+      bind:value={filterStatus}
+      id={`status-${mt}`}
+      borderColor={CCLVividColor.MELON_GREEN}
+    />
+  </FormGroup>
+  {#if brandApplicable}
+    <FormGroup>
+      <Input
+        type="text"
+        placeholder="ブランド（糸/ビーズのみ）"
+        bind:value={filterBrand}
+        borderColor={CCLVividColor.MELON_GREEN}
+        label="ブランド"
+      />
+    </FormGroup>
   {/if}
   <div class="wishlist-filter">
-    <Checkbox
-      bind:checked={filterWishlist}
-      color={CCLVividColor.MELON_GREEN}
-      label="ウィッシュリストのみ"
-    />
+    <FormGroup>
+      <Checkbox
+        bind:checked={filterWishlist}
+        color={CCLVividColor.MELON_GREEN}
+        label="ウィッシュリストのみ"
+      />
+    </FormGroup>
   </div>
-  <Select
-    label="並び順"
-    options={[
-      { value: 'default', label: '並び順（デフォルト）' },
-      { value: 'quantity_asc', label: '数量 少ない順' },
-      { value: 'quantity_desc', label: '数量 多い順' },
-      { value: 'brand_asc', label: 'ブランド 昇順（該当資材）' },
-      { value: 'brand_desc', label: 'ブランド 降順（該当資材）' }
-    ]}
-    bind:value={sort}
-    id={`sort-${mt}`}
-    borderColor={CCLVividColor.MELON_GREEN}
-  />
-  <Button
-    label="適用"
-    bgColor={CCLVividColor.MELON_GREEN}
-    onClick={() => formEl?.requestSubmit()}
-  />
-  <Button
-    label="リセット"
-    bgColor={CCLPastelColor.CLOUD_GREY}
-    onClick={() => (location.href = '/inventory')}
-  />
+  <FormGroup>
+    <Select
+      label="並び順"
+      options={[
+        { value: 'default', label: '並び順（デフォルト）' },
+        { value: 'quantity_asc', label: '数量 少ない順' },
+        { value: 'quantity_desc', label: '数量 多い順' },
+        { value: 'brand_asc', label: 'ブランド 昇順（該当資材）' },
+        { value: 'brand_desc', label: 'ブランド 降順（該当資材）' }
+      ]}
+      bind:value={sort}
+      id={`sort-${mt}`}
+      borderColor={CCLVividColor.MELON_GREEN}
+    />
+  </FormGroup>
+  <FormGroup>
+    <div class="actions">
+      <Button
+        label="適用"
+        bgColor={CCLVividColor.MELON_GREEN}
+        onClick={() => formEl?.requestSubmit()}
+      />
+      <Button
+        label="リセット"
+        bgColor={CCLPastelColor.LEMON_YELLOW}
+        onClick={() => (location.href = '/inventory')}
+      />
+    </div>
+  </FormGroup>
 </form>
 
 <style>
@@ -113,7 +127,8 @@
 
   .search-form :global(.input-wrapper),
   .search-form :global(.select-wrapper),
-  .search-form :global(.checkboxWrapper) {
+  .search-form :global(.checkboxWrapper),
+  .search-form :global(.formGroupWrapper) {
     min-width: 220px;
   }
 
@@ -122,6 +137,12 @@
     justify-content: center;
     align-items: center;
     min-width: 220px;
+  }
+
+  .search-form .actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
   }
 
   /* Mobile adjustments */
@@ -134,13 +155,18 @@
     }
     .search-form :global(.input-wrapper),
     .search-form :global(.select-wrapper),
-    .search-form :global(.checkboxWrapper) {
+    .search-form :global(.checkboxWrapper),
+    .search-form :global(.formGroupWrapper) {
       min-width: 100%;
       width: 100%;
     }
     .search-form .wishlist-filter {
       min-width: 100%;
       justify-content: flex-start;
+    }
+    .search-form .actions {
+      justify-content: center;
+      width: 100%;
     }
   }
 </style>
