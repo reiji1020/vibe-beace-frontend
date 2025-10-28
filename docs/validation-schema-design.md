@@ -21,10 +21,11 @@ import { z } from 'zod';
 export const threadSchema = z.object({
   brand: z.string().min(1),
   colorNumber: z.string().min(1),
-  colorName: z.string().optional(),
+  colorName: z.string().nullable().optional(),
   quantity: z.number().int().min(0),
-  status: z.enum(['unused', 'used', 'low']).optional(),
-  wishlist: z.boolean()
+  status: z.enum(['unused', 'used', 'low']).nullable().optional(),
+  wishlist: z.boolean(),
+  notes: z.string().max(1000).nullable().optional()
 });
 ```
 
@@ -37,10 +38,11 @@ export const beadSchema = z.object({
   brand: z.string().min(1),
   itemCode: z.string().min(1),
   size: z.string().min(1),
-  colorName: z.string().optional(),
+  colorName: z.string().nullable().optional(),
   quantity: z.number().int().min(0),
-  status: z.enum(['unused', 'used', 'low']).optional(),
-  wishlist: z.boolean()
+  status: z.enum(['unused', 'used', 'low']).nullable().optional(),
+  wishlist: z.boolean(),
+  notes: z.string().max(1000).nullable().optional()
 });
 ```
 
@@ -50,12 +52,14 @@ export const beadSchema = z.object({
 
 ```ts
 export const cutClothSchema = z.object({
+  brand: z.string().min(1).nullable().optional(),
   fabricType: z.string().min(1),
   pattern: z.string().min(1),
   size: z.string().min(1),
   quantity: z.number().int().min(0),
-  status: z.enum(['unused', 'used']).optional(),
-  wishlist: z.boolean()
+  status: z.enum(['unused', 'used']).nullable().optional(),
+  wishlist: z.boolean(),
+  notes: z.string().max(1000).nullable().optional()
 });
 ```
 
@@ -65,12 +69,14 @@ export const cutClothSchema = z.object({
 
 ```ts
 export const xStitchClothSchema = z.object({
+  brand: z.string().min(1).nullable().optional(),
   count: z.string().min(1),
   color: z.string().min(1),
   size: z.string().min(1),
   quantity: z.number().int().min(0),
-  status: z.enum(['unused', 'used']).optional(),
-  wishlist: z.boolean()
+  status: z.enum(['unused', 'used']).nullable().optional(),
+  wishlist: z.boolean(),
+  notes: z.string().max(1000).nullable().optional()
 });
 ```
 
@@ -111,6 +117,7 @@ src/
 
 ## 🔖 備考
 
-- `.min(1)` を使用して空文字を防止
-- `optional()` を適切に使用して柔軟性を担保
-- enum によって status の誤入力を防止
+- `.min(1)` で空文字を防止
+- `nullable().optional()` により DB NULL と未指定を区別可能
+- `notes` は最大1000文字に制限
+- enum により `status` の誤入力を防止（Thread/Bead: `'unused'|'used'|'low'`、CutCloth/XStitchCloth: `'unused'|'used'`）

@@ -1,6 +1,6 @@
 # 🧩 Prisma スキーマ設計書（在庫管理ツール）
 
-本ドキュメントは、Prisma ORMを使用して手芸材料の在庫管理アプリにおけるデータ構造を定義するものです。接続先は NeonDB（PostgreSQL）を想定しています。
+本ドキュメントは、Prisma ORM を用いた在庫管理アプリの現在のデータスキーマを示します。接続先は PostgreSQL（例: Neon）を想定します。
 
 ---
 
@@ -19,6 +19,25 @@ datasource db {
 
 ---
 
+## 📚 Enum
+
+```prisma
+// Thread/Bead で使用
+enum StatusWithLow {
+  unused
+  used
+  low
+}
+
+// CutCloth/XStitchCloth で使用
+enum StatusBasic {
+  unused
+  used
+}
+```
+
+---
+
 ## 🧵 Thread（刺繍糸）
 
 ```prisma
@@ -28,8 +47,11 @@ model Thread {
   colorNumber  String
   colorName    String?
   quantity     Int
-  status       String?  // unused, used, low
+  status       StatusWithLow?
   wishlist     Boolean
+  notes        String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 ```
 
@@ -45,8 +67,11 @@ model Bead {
   size       String
   colorName  String?
   quantity   Int
-  status     String?  // unused, used, low
+  status     StatusWithLow?
   wishlist   Boolean
+  notes      String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 ```
 
@@ -57,28 +82,36 @@ model Bead {
 ```prisma
 model CutCloth {
   id          Int     @id @default(autoincrement())
+  brand       String?
   fabricType  String
   pattern     String
   size        String
   quantity    Int
-  status      String?  // unused, used
+  status      StatusBasic?
   wishlist    Boolean
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 ```
 
 ---
 
-## 🧵 XStitchCloth（クロスステッチ用クロス）
+## 🧵 XStitchCloth（クロスステッチ布）
 
 ```prisma
 model XStitchCloth {
   id        Int     @id @default(autoincrement())
+  brand     String?
   count     String
   color     String
   size      String
   quantity  Int
-  status    String?  // unused, used
+  status    StatusBasic?
   wishlist  Boolean
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 ```
 
@@ -86,9 +119,11 @@ model XStitchCloth {
 
 ## 🧪 補足
 
-- 各テーブルには `wishlist` フラグが含まれ、買い物リスト機能と連動可能です。
-- `status` は文字列型で分類しますが、将来的にEnumに置き換えも可能です。
-- `id` は全テーブルで自動インクリメント型の主キーとしています。
+- `status` は Enum を採用し、誤入力を防止（Thread/Bead は `StatusWithLow`、CutCloth/XStitchCloth は `StatusBasic`）。
+- `notes` は任意メモ欄（最大長はアプリ側バリデーションで制御）。
+- 監査列として `createdAt`/`updatedAt` を全モデルに追加。
+- `brand` は CutCloth/XStitchCloth では任意入力。
+- すべての `id` は自動採番の主キー。
 
 ---
 
