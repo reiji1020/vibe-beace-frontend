@@ -26,60 +26,77 @@
 
 ## 🧩 管理対象とデータ構造
 
-### 🧵 刺繍糸
+共通事項
+
+- `quantity`: 整数、0以上
+- `wishlist`: 買い物リストフラグ（必須）
+- `notes`: 任意メモ（最大1000文字、null可）
+- システム管理項目: `createdAt`/`updatedAt`（ISO文字列、サーバで自動付与）
+
+### 🧵 刺繍糸（Thread）
 
 ```ts
 {
-  type: "thread",
-  brand: "DMC" | "COSMO" | string,
-  color_number: string,
-  color_name?: string,
+  brand: string,
+  colorNumber: string,
+  colorName?: string | null,
   quantity: number,
-  status?: "unused" | "used" | "low",
-  wishlist: boolean
+  status?: 'unused' | 'used' | 'low' | null,
+  wishlist: boolean,
+  notes?: string | null,
+  createdAt?: string,
+  updatedAt?: string
 }
 ```
 
-### 🟣 ビーズ
+### 🟣 ビーズ（Bead）
 
 ```ts
 {
-  type: "bead",
-  brand: "TOHO" | "MIYUKI" | string,
-  item_code: string,
+  brand: string,
+  itemCode: string,
   size: string,
-  color_name?: string,
+  colorName?: string | null,
   quantity: number,
-  status?: "unused" | "used" | "low",
-  wishlist: boolean
+  status?: 'unused' | 'used' | 'low' | null,
+  wishlist: boolean,
+  notes?: string | null,
+  createdAt?: string,
+  updatedAt?: string
 }
 ```
 
-### 🧵 カットクロス
+### 🧵 カットクロス（CutCloth）
 
 ```ts
 {
-  type: "cut_cloth",
-  fabric_type: string,
+  brand?: string | null,
+  fabricType: string,
   pattern: string,
   size: string,
   quantity: number,
-  status?: "unused" | "used",
-  wishlist: boolean
+  status?: 'unused' | 'used' | null,
+  wishlist: boolean,
+  notes?: string | null,
+  createdAt?: string,
+  updatedAt?: string
 }
 ```
 
-### 🧵 クロスステッチ用クロス
+### 🧵 クロスステッチ用クロス（XStitchCloth）
 
 ```ts
 {
-  type: "xstitch_cloth",
+  brand?: string | null,
   count: string,
   color: string,
   size: string,
   quantity: number,
-  status?: "unused" | "used",
-  wishlist: boolean
+  status?: 'unused' | 'used' | null,
+  wishlist: boolean,
+  notes?: string | null,
+  createdAt?: string,
+  updatedAt?: string
 }
 ```
 
@@ -98,7 +115,7 @@
 
 - [x] 素材の新規登録・編集・削除
 - [x] 買い物リストへの追加・解除
-- [x] 所持中／未所持フラグ
+- [x] 在庫状態（unused/used/low）の管理
 - [x] 数量の管理
 - [x] クラウド保存と同期
 - [x] スマホでの確認性の高いUI
@@ -114,12 +131,13 @@
 
 ---
 
-## 🚧 技術スタック（予定）
+## 🚧 技術スタック（現行）
 
-- フロントエンド：SvelteKit / Vite（予定）
-- バックエンド：Node.js + SQLite or Supabase
-- 認証：Googleログイン or ローカルストレージ＋PIN
-- デプロイ：Vercel / Railway / Cloudflare Pages
+- フロントエンド：SvelteKit v2 + TypeScript + Vite + Tailwind CSS v4
+- バックエンド：SvelteKit Endpoints（+server.ts） + Prisma v6（PostgreSQL）
+- バリデーション：Zod（`src/lib/validation/*.ts`）
+- 認証・セキュリティ：セッションCookie + CSRF（Double-Submit Token）
+- デプロイ：Netlify（`@sveltejs/adapter-netlify`）
 
 ---
 
