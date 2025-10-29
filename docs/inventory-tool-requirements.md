@@ -135,8 +135,8 @@
 
 - フロントエンド：SvelteKit v2 + TypeScript + Vite + Tailwind CSS v4
 - バックエンド：SvelteKit Endpoints（+server.ts） + Prisma v6（PostgreSQL）
-- バリデーション：Zod（`src/lib/validation/*.ts`）
-- 認証・セキュリティ：セッションCookie + CSRF（Double-Submit Token）
+- バリデーション：Zod（`src/lib/validation/*.ts`）＋ `safeParse`
+- 認証・セキュリティ：セッションCookie + CSRF（Double-Submit Token: Cookie `csrf` とヘッダ `X-CSRF-Token`）
 - デプロイ：Netlify（`@sveltejs/adapter-netlify`）
 
 ---

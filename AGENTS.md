@@ -37,6 +37,17 @@
 - `update_plan`: 非自明な複数ステップで使用。常に1つだけ`in_progress`。
 - 禁止: 依存追加/グローバル設定変更、機密露出（`.env`等）、無断の破壊的操作。
 
+### Codex 設定ファイル（承認ポリシー統合）
+
+- 共有設定: `.codex/config.json`
+  - `askForApproval`（boolean）で承認ポリシーを一本化。
+    - `true` → `approvalPolicy: on-request`
+    - `false` → `approvalPolicy: never`
+  - 実際の挙動はCLI/ハーネス側設定が優先。リポジトリ内は「希望値」を明示。
+- 個人上書き: `.codex/local.json`（Git管理外）
+  - 例: `{ "askForApproval": false }`
+  - `.gitignore` に登録済み。
+
 ## セキュリティ
 
 - 機密: `.env` 等は表示/送信しない。外部送信・ネットワークアクセスは行わない。
@@ -59,7 +70,7 @@
   - ビーズ: `/api/beads`（GET/POST）、`/api/beads/[id]`（PUT/DELETE）、`/api/beads/[id]/wishlist`（PATCH）
   - カットクロス: `/api/cut-cloths`（GET/POST）、`/api/cut-cloths/[id]`（PUT/DELETE）、`/api/cut-cloths/[id]/wishlist`（PATCH）
   - クロスステッチ布: `/api/xstitch-cloths`（GET/POST）、`/api/xstitch-cloths/[id]`（PUT/DELETE）、`/api/xstitch-cloths/[id]/wishlist`（PATCH）
-- 旧式（互換・非推奨）: `/api/{add|get|update|delete}/<ActionName>` は当面維持しつつ、順次RESTへ移行。
+- 旧式（get*/add*/update*/delete*）: 廃止済み（互換レイヤーなし）。
 
 ## 開発計画（要点）
 
@@ -74,6 +85,30 @@
 
 - 将来計画・詳細ドキュメント: `docs/*`
 - 方針の変更要望は本ファイルを編集して明示。
+
+You are able to use the Svelte MCP server, where you have access to comprehensive Svelte 5 and SvelteKit documentation. Here's how to use the available tools effectively:
+
+## Available MCP Tools:
+
+### 1. list-sections
+
+Use this FIRST to discover all available documentation sections. Returns a structured list with titles, use_cases, and paths.
+When asked about Svelte or SvelteKit topics, ALWAYS use this tool at the start of the chat to find relevant sections.
+
+### 2. get-documentation
+
+Retrieves full documentation content for specific sections. Accepts single or multiple sections.
+After calling the list-sections tool, you MUST analyze the returned documentation sections (especially the use_cases field) and then use the get-documentation tool to fetch ALL documentation sections that are relevant for the user's task.
+
+### 3. svelte-autofixer
+
+Analyzes Svelte code and returns issues and suggestions.
+You MUST use this tool whenever writing Svelte code before sending it to the user. Keep calling it until no issues or suggestions are returned.
+
+### 4. playground-link
+
+Generates a Svelte Playground link with the provided code.
+After completing the code, ask the user if they want a playground link. Only call this tool after user confirmation and NEVER if code was written to files in their project.
 
 ---
 

@@ -1,6 +1,6 @@
 # 🌐 API設計書（REST統合）
 
-このドキュメントは在庫管理ツールの内部API設計をRESTに統合した最新仕様として示します。旧式の名前付きエンドポイント（get*/add*/update*/delete*/set*）は廃止します。
+このドキュメントは在庫管理ツールの内部API設計をRESTに統合した最新版です。旧式の名前付きエンドポイント（get*/add*/update*/delete*/set*）は廃止済み（互換レイヤーなし）です。
 
 ---
 
@@ -27,14 +27,15 @@
 - CutCloths: `/api/cut-cloths`, `/api/cut-cloths/{id}`, `/api/cut-cloths/{id}/wishlist`
 - XStitchCloths: `/api/xstitch-cloths`, `/api/xstitch-cloths/{id}`, `/api/xstitch-cloths/{id}/wishlist`
 
-### メソッド規約
+### メソッド規約（現状）
 
-- 一覧 GET `/api/{resource}`: クエリ検索・フィルタ（`query`,`brand`,`status`,`wishlist`,`limit`,`offset` など）
-- 取得 GET `/api/{resource}/{id}`: 1件取得
+- 一覧 GET `/api/{resource}`: 簡易検索（`query` のみ対応）。詳細フィルタ（`brand`,`status`,`wishlist`）やページングは今後の拡張候補。
 - 追加 POST `/api/{resource}`: 201 + 作成結果
 - 更新 PUT `/api/{resource}/{id}`: 全体上書き
-- 削除 DELETE `/api/{resource}/{id}`: 204 or 200（削除結果）
+- 削除 DELETE `/api/{resource}/{id}`: 200（削除ID返却）
 - Wishlist PATCH `/api/{resource}/{id}/wishlist`: `{ wishlist: boolean }`
+
+注意: `GET /api/{resource}/{id}`（1件取得）は未提供です。
 
 ---
 
@@ -45,7 +46,7 @@
 - CutCloth: `{ brand?, fabricType, pattern, size, quantity>=0, status?: 'unused'|'used', wishlist, notes?, createdAt, updatedAt }`
 - XStitchCloth: `{ brand?, count, color, size, quantity>=0, status?: 'unused'|'used', wishlist, notes?, createdAt, updatedAt }`
 
-備考: `notes` は任意（最大1000文字想定）、`status` はリソースによりEnumが異なります。
+備考: `notes` は任意（最大1000文字想定）、`status` はリソースによりEnumが異なります（Prisma定義参照）。
 
 ---
 
@@ -82,6 +83,7 @@ Content-Type: application/json
 
 ## 📝 補足
 
-- 旧式APIは廃止しました（互換レイヤーは提供しません）。
-- 入力バリデーションは Zod スキーマ（`src/lib/validation/*.ts`）で実施します。
+- 旧式APIは廃止済み（互換レイヤーなし）。
+- 入力バリデーションは Zod スキーマ（`src/lib/validation/*.ts`）＋ `safeParse` を使用。
+- レスポンスは `src/lib/api/response.ts` のヘルパーで統一（`ok/created/badRequest/forbidden/serverError`）。
 - DB は Prisma（PostgreSQL）、`createdAt`/`updatedAt` はサーバで自動管理します。

@@ -63,7 +63,7 @@
     const pad = 24;
     const W = 1000;
     const headerBandH = 60;
-    const footerBandH = 7; // about one-third of previous 40
+    const footerBandH = 7;
     const col = header.length;
     const rowH = 30;
     const titleH = 28; // reserved block for title
@@ -83,13 +83,13 @@
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, W, H);
 
-    // Header band (like CommonHeader)
+    // Header band
     ctx.fillStyle = resolveCssColor(CCLVividColor.PINEAPPLE_YELLOW as unknown as string, '#ed9126');
     ctx.fillRect(0, 0, W, pad + headerBandH);
 
     // Header (logo only)
     if (logoImg) {
-      // Scale logo to fit header band comfortably and center it
+      // Scale logo to fit band
       const bandH = pad + headerBandH;
       const targetH = Math.min(40, bandH - 20);
       const scale = targetH / (logoImg.naturalHeight || 1);
@@ -98,7 +98,7 @@
       const y = (bandH - targetH) / 2;
       ctx.drawImage(logoImg, x, y, lw, targetH);
     } else {
-      // Fallback brand text when logo is not available (centered)
+      // Fallback brand text
       const bandH = pad + headerBandH;
       ctx.fillStyle = '#111827';
       ctx.font =
@@ -111,7 +111,7 @@
       ctx.textAlign = prevAlign as CanvasTextAlign;
       ctx.textBaseline = prevBaseline;
     }
-    // Title below header band
+    // Title
     const titleText = 'Shopping List';
     ctx.fillStyle = resolveCssColor(CCLVividColor.WRAP_GREY as unknown as string, '#5f5f60');
     ctx.font =
@@ -149,13 +149,13 @@
       }
     }
 
-    // Footer band (like CommonHeader)
+    // Footer band
     const footerBandTotal = pad + footerBandH;
     const footerY = H - footerBandTotal;
     ctx.fillStyle = resolveCssColor(CCLVividColor.PINEAPPLE_YELLOW as unknown as string, '#ed9126');
     ctx.fillRect(0, footerY, W, footerBandTotal);
 
-    // Footer text centered
+    // Footer text
     ctx.fillStyle = '#ffffff';
     ctx.font =
       '700 12px system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Noto Sans JP, sans-serif';

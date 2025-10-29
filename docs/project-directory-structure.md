@@ -1,6 +1,6 @@
 # 📁 ディレクトリ構成（手芸在庫管理ツール）
 
-本プロジェクトは、SvelteKit + TypeScript + NeonDB をベースとした在庫管理Webアプリです。
+本プロジェクトは、SvelteKit + TypeScript + Prisma（PostgreSQL）をベースとした在庫管理Webアプリです。
 
 ---
 
@@ -10,18 +10,25 @@
 project-root/
 ├── src/
 │   ├── lib/
-│   │   └── db.ts            # NeonDBへの接続設定（postgres.jsやPrisma）
+│   │   ├── db.ts                   # PrismaClient 単一インスタンス
+│   │   ├── controllers/            # 各リソースの業務ロジック
+│   │   ├── validation/             # Zod スキーマ
+│   │   ├── api/response.ts         # APIレスポンスヘルパー
+│   │   └── csrf.ts                 # CSRFユーティリティ
 │   ├── routes/
 │   │   └── api/
-│   │       └── inventory/
-│   │           ├── +server.ts      # 刺繍糸、ビーズなどのAPI（GET/POST等）
-│   │           └── thread/         # 刺繍糸専用API（必要に応じて）
-│   └── app.html             # 共通HTMLテンプレート
-├── static/                  # 公開用の静的ファイル（画像など）
-├── .env                     # 環境変数（NeonDB接続情報など）
-├── svelte.config.js         # SvelteKit設定
-├── tsconfig.json            # TypeScript設定
-└── README.md                # プロジェクト概要
+│   │       ├── threads/            # 刺繍糸 REST（GET list/POST/PUT/DELETE/PATCH wishlist）
+│   │       ├── beads/
+│   │       ├── cut-cloths/
+│   │       └── xstitch-cloths/
+│   └── app.html                    # 共通HTMLテンプレート
+├── static/                         # 公開用の静的ファイル（画像など）
+├── prisma/
+│   └── schema.prisma               # Prisma スキーマ
+├── .env                            # 環境変数（`DATABASE_URL` 等）
+├── svelte.config.js                # SvelteKit設定
+├── tsconfig.json                   # TypeScript設定
+└── README.md                       # プロジェクト概要
 ```
 
 ---
@@ -29,7 +36,7 @@ project-root/
 ## 🔧 ファイル・ディレクトリ詳細
 
 - `src/lib/db.ts`  
-  NeonDBに接続するためのモジュールを定義します。
+  PrismaClient を初期化し、サーバ専用で再利用します。
 
 - `src/routes/api/`  
   REST APIのエンドポイントをルーティングごとに配置します。
@@ -38,7 +45,7 @@ project-root/
   公開画像やダウンロードファイルなどをここに配置します。
 
 - `.env`  
-  `VITE_NEON_DATABASE_URL` などの接続用情報を記述します。
+  `DATABASE_URL`（PostgreSQL接続情報）を定義します。
 
 - `svelte.config.js`  
   Vite / SvelteKit のビルド設定などを行います。
@@ -51,7 +58,7 @@ project-root/
   カードUIやモーダルなどの再利用可能なSvelteコンポーネント群
 
 - `src/routes/login/`  
-  認証ページ（ClerkやLuciaなどを組み込む場合）
+  認証ページ（必要に応じて）
 
 - `src/lib/types.ts`  
   型定義ファイル。APIやDBで共通化します。

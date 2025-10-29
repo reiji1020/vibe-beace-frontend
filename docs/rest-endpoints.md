@@ -10,7 +10,7 @@ Vibe Beace フロントエンドの内部API。認証とCSRFを前提に、安�
   - Cookie: `csrf`
   - ヘッダ: `X-CSRF-Token: <csrf cookieの値>`（POST/PUT/PATCH/DELETE で必須）
   - フォーム: hidden `name="csrfToken" value="<csrf cookieの値>"`（フォーム送信時）
-  - Swagger: `/api-docs/swagger` 右上「Authorize」で `X-CSRF-Token` に Cookie `csrf` の値を入力
+  - 備考: Swagger等の自動ドキュメントは未提供。
 - レスポンス形式（統一）
   - 成功: `{ success: true, data: ... }`
   - 失敗: `{ success: false, error: string | object }`
@@ -22,12 +22,12 @@ Vibe Beace フロントエンドの内部API。認証とCSRFを前提に、安�
 - CutCloths: `/api/cut-cloths`、`/api/cut-cloths/{id}`、`/api/cut-cloths/{id}/wishlist`
 - XStitchCloths: `/api/xstitch-cloths`、`/api/xstitch-cloths/{id}`、`/api/xstitch-cloths/{id}/wishlist`
 
-いずれも以下のメソッドに準拠します。
+いずれも以下のメソッドに準拠します（現状）。
 
 ### 一覧取得 GET `/api/{resource}?query=...`
 
 - 認証必須。CSRF不要。
-- クエリ `query` で簡易検索（ブランド・品番など）。
+- クエリ `query` で簡易検索（ブランド・品番など）。現状は `query` のみ対応。
 
 例（Threads）:
 
@@ -154,6 +154,11 @@ curl -sS -X PATCH \
 - CutCloth: `{ brand?, fabricType, pattern, size, quantity>=0, status?: 'unused'|'used', wishlist, notes?, createdAt, updatedAt }`
 - XStitchCloth: `{ brand?, count, color, size, quantity>=0, status?: 'unused'|'used', wishlist, notes?, createdAt, updatedAt }`
   - `notes`: 文字列（最大1000文字）、省略可、`null`可
+
+## まだ未提供の操作
+
+- `GET /api/{resource}/{id}`（1件取得）: 今後の拡張候補。
+
 
 ## エラー例とステータス
 

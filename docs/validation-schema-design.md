@@ -86,15 +86,17 @@ export const xStitchClothSchema = z.object({
 
 ```ts
 import { threadSchema } from '$lib/validation/threadSchema';
+import { created, badRequest, serverError } from '$lib/api/response';
 
 export const POST: RequestHandler = async ({ request }) => {
   try {
     const body = await request.json();
-    const validated = threadSchema.parse(body);
-    const created = await addThread(validated);
-    return new Response(JSON.stringify({ success: true, data: created }), { status: 201 });
+    const parsed = threadSchema.safeParse(body);
+    if (!parsed.success) return badRequest(parsed.error.flatten());
+    const createdItem = await addThread(parsed.data);
+    return created(createdItem);
   } catch (err) {
-    return new Response(JSON.stringify({ success: false, error: err.message }), { status: 400 });
+    return serverError((err as Error).message);
   }
 };
 ```

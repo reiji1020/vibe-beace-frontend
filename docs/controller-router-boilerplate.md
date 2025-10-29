@@ -21,6 +21,9 @@ src/
 │       └── threadController.ts            ← Prismaベースの業務ロジック
 │   └── validation/
 │       └── threadSchema.ts                ← Zodスキーマ
+│   └── api/
+│       └── response.ts                    ← APIレスポンスヘルパー
+│   └── csrf.ts                            ← CSRFユーティリティ
 ```
 
 ---
@@ -34,8 +37,15 @@ Prismaを利用した最小例（既存の `threadController.ts` と整合）。
 import { prisma } from '$lib/db';
 import type { Thread } from '$lib/types';
 
-export async function getAllThreads(): Promise<Thread[]> {
-  return prisma.thread.findMany({ orderBy: { colorNumber: 'asc' } });
+export async function getAllThreads(query?: string | null): Promise<Thread[]> {
+  const where = query
+    ? { OR: [
+        { brand: { contains: query } },
+        { colorNumber: { contains: query } },
+        { colorName: { contains: query } }
+      ] }
+    : undefined;
+  return prisma.thread.findMany({ where, orderBy: { colorNumber: 'asc' } });
 }
 
 export async function addThread(data: Thread): Promise<Thread> {
@@ -64,58 +74,67 @@ export async function setWishlistThread(id: number, wishlist: boolean): Promise<
 
 ```ts
 // src/routes/api/threads/+server.ts
+import type { RequestHandler } from '@sveltejs/kit';
 import { getAllThreads, addThread } from '$lib/controllers/threadController';
 import { threadSchema } from '$lib/validation/threadSchema';
-import type { RequestHandler } from '@sveltejs/kit';
+import { verifyCsrfFromHeader } from '$lib/csrf';
+import { ok, created, badRequest, forbidden, serverError } from '$lib/api/response';
 
-export const GET: RequestHandler = async () => {
-  const rows = await getAllThreads();
-  return new Response(JSON.stringify({ success: true, data: rows }), { status: 200 });
+export const GET: RequestHandler = async ({ url }) => {
+  const query = url.searchParams.get('query');
+  const rows = await getAllThreads(query);
+  return ok(rows);
 };
 
-export const POST: RequestHandler = async ({ request }) => {
+export const POST: RequestHandler = async ({ request, cookies }) => {
+  if (!verifyCsrfFromHeader(cookies, request)) return forbidden('Invalid CSRF token');
   try {
     const body = await request.json();
-    const validated = threadSchema.parse(body);
-    const created = await addThread(validated as any);
-    return new Response(JSON.stringify({ success: true, data: created }), { status: 201 });
-  } catch (err: any) {
-    return new Response(JSON.stringify({ success: false, error: err.message }), { status: 400 });
+    const parsed = threadSchema.safeParse(body);
+    if (!parsed.success) return badRequest(parsed.error.flatten());
+    const createdItem = await addThread(parsed.data as any);
+    return created(createdItem);
+  } catch (err) {
+    return serverError((err as Error).message);
   }
 };
 ```
 
-1件取得/更新/削除（`/api/threads/[id]`）
+更新/削除（`/api/threads/[id]`）
 
 ```ts
 // src/routes/api/threads/[id]/+server.ts
-import { getThreadById, updateThread, deleteThread } from '$lib/controllers/threadController';
-import { threadSchema } from '$lib/validation/threadSchema';
 import type { RequestHandler } from '@sveltejs/kit';
+import { updateThread, deleteThread } from '$lib/controllers/threadController';
+import { threadSchema } from '$lib/validation/threadSchema';
+import { verifyCsrfFromHeader } from '$lib/csrf';
+import { ok, badRequest, forbidden, serverError } from '$lib/api/response';
 
-export const GET: RequestHandler = async ({ params }) => {
+export const PUT: RequestHandler = async ({ params, request, cookies }) => {
+  if (!verifyCsrfFromHeader(cookies, request)) return forbidden('Invalid CSRF token');
   const id = Number(params.id);
-  const row = await getThreadById(id);
-  if (!row) return new Response(JSON.stringify({ success: false, error: 'Not Found' }), { status: 404 });
-  return new Response(JSON.stringify({ success: true, data: row }), { status: 200 });
-};
-
-export const PUT: RequestHandler = async ({ params, request }) => {
+  if (!Number.isFinite(id)) return badRequest('Invalid or missing id');
   try {
-    const id = Number(params.id);
     const body = await request.json();
-    const validated = threadSchema.parse(body);
-    const updated = await updateThread({ id, ...validated } as any);
-    return new Response(JSON.stringify({ success: true, data: updated }), { status: 200 });
-  } catch (err: any) {
-    return new Response(JSON.stringify({ success: false, error: err.message }), { status: 400 });
+    const parsed = threadSchema.safeParse(body);
+    if (!parsed.success) return badRequest(parsed.error.flatten());
+    const updated = await updateThread({ id, ...parsed.data } as any);
+    return ok(updated);
+  } catch (err) {
+    return serverError((err as Error).message);
   }
 };
 
-export const DELETE: RequestHandler = async ({ params }) => {
+export const DELETE: RequestHandler = async ({ params, request, cookies }) => {
+  if (!verifyCsrfFromHeader(cookies, request)) return forbidden('Invalid CSRF token');
   const id = Number(params.id);
-  const deleted = await deleteThread(id);
-  return new Response(JSON.stringify({ success: true, data: { id: deleted.id } }), { status: 200 });
+  if (!Number.isFinite(id)) return badRequest('Invalid or missing id');
+  try {
+    await deleteThread(id);
+    return ok({ id });
+  } catch (err) {
+    return serverError((err as Error).message);
+  }
 };
 ```
 
@@ -123,14 +142,24 @@ Wishlist更新（`/api/threads/[id]/wishlist`）
 
 ```ts
 // src/routes/api/threads/[id]/wishlist/+server.ts
-import { setWishlistThread } from '$lib/controllers/threadController';
 import type { RequestHandler } from '@sveltejs/kit';
+import { setWishlistThread } from '$lib/controllers/threadController';
+import { verifyCsrfFromHeader } from '$lib/csrf';
+import { ok, badRequest, forbidden, serverError } from '$lib/api/response';
 
-export const PATCH: RequestHandler = async ({ params, request }) => {
+export const PATCH: RequestHandler = async ({ params, request, cookies }) => {
+  if (!verifyCsrfFromHeader(cookies, request)) return forbidden('Invalid CSRF token');
   const id = Number(params.id);
-  const { wishlist } = await request.json();
-  const updated = await setWishlistThread(id, Boolean(wishlist));
-  return new Response(JSON.stringify({ success: true, data: updated }), { status: 200 });
+  if (!Number.isFinite(id)) return badRequest('Invalid or missing id');
+  try {
+    const body = await request.json().catch(() => ({}));
+    const wishlist = typeof body?.wishlist === 'boolean' ? body.wishlist : null;
+    if (wishlist === null) return badRequest('Invalid wishlist flag');
+    const updated = await setWishlistThread(id, wishlist);
+    return ok(updated);
+  } catch (err) {
+    return serverError((err as Error).message);
+  }
 };
 ```
 
@@ -139,5 +168,6 @@ export const PATCH: RequestHandler = async ({ params, request }) => {
 ## 🧱 メモ
 
 - 各カテゴリ（Bead/CutCloth/XStitchCloth）も同様の構成で実装。
-- 入力検証は `src/lib/validation/*.ts` のZodスキーマで統一。
-- 認証/CSRFは `docs/rest-endpoints.md` の方針に従う。
+- 入力検証は `src/lib/validation/*.ts` のZodスキーマ＋`safeParse` で統一。
+- レスポンスは `src/lib/api/response.ts` を使用して統一。
+- CSRFは `src/lib/csrf.ts` のヘッダ検証（Double-Submit）を利用。

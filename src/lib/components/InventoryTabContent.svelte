@@ -231,9 +231,9 @@
   .empty-box {
     padding: 16px;
     border-radius: 8px;
-    background: #f3f4f6; /* gray-100 */
-    border: 1px solid #e5e7eb; /* gray-200 */
-    color: #6b7280; /* gray-500 */
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    color: #6b7280;
     text-align: center;
   }
 

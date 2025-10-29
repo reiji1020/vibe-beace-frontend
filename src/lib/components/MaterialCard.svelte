@@ -66,7 +66,8 @@
 
     const next = !material.wishlist;
     const prev = material.wishlist;
-    material.wishlist = next;
+    // 再代入で反応性を担保（propsの直接ミューテーションを避ける）
+    material = { ...material, wishlist: next };
     try {
       const csrf =
         document.cookie
@@ -82,7 +83,8 @@
         body: JSON.stringify({ wishlist: next })
       });
       if (!res.ok) {
-        material.wishlist = prev;
+        // 失敗時は元に戻す（再代入で反応性を担保）
+        material = { ...material, wishlist: prev };
         const j = await res.json().catch(() => ({}));
         console.error('Failed to toggle wishlist', j.error || res.statusText);
         const msg =
@@ -100,7 +102,8 @@
         showToast(next ? 'Wishlistに追加しました' : 'Wishlistを解除しました', 'success');
       }
     } catch (e) {
-      material.wishlist = prev;
+      // エラー時も元に戻す（再代入）
+      material = { ...material, wishlist: prev };
       console.error('Error toggling wishlist', e);
       showToast('通信エラーが発生しました', 'error');
     }
@@ -141,7 +144,7 @@
     <Tooltip text={material.wishlist ? 'Wishlist解除' : 'Wishlist登録'}>
       <button
         class="wishlist-button"
-        on:click|preventDefault={toggleWishlist}
+        on:click={toggleWishlist}
         aria-label={material.wishlist ? 'Remove from wishlist' : 'Add to wishlist'}
         aria-pressed={material.wishlist}
       >
