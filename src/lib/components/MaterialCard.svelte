@@ -61,6 +61,45 @@
     onDelete(material.id, material.type);
   }
 
+  function duplicateHref(): string {
+    const base =
+      material.type === 'thread'
+        ? '/inventory/add/thread'
+        : material.type === 'bead'
+          ? '/inventory/add/bead'
+          : material.type === 'cutCloth'
+            ? '/inventory/add/cut-cloth'
+            : '/inventory/add/xstitch-cloth';
+    const p = new URLSearchParams();
+    if (material.type === 'thread') {
+      p.set('brand', material.brand);
+      p.set('colorNumber', material.colorNumber);
+      if (material.colorName) p.set('colorName', material.colorName);
+    } else if (material.type === 'bead') {
+      p.set('brand', material.brand);
+      p.set('itemCode', material.itemCode);
+      p.set('size', material.size);
+      if (material.colorName) p.set('colorName', material.colorName);
+    } else if (material.type === 'cutCloth') {
+      if (material.brand) p.set('brand', material.brand);
+      p.set('fabricType', material.fabricType);
+      p.set('pattern', material.pattern);
+      p.set('size', material.size);
+    } else {
+      // xStitchCloth
+      if (material.brand) p.set('brand', material.brand);
+      p.set('count', material.count);
+      p.set('color', material.color);
+      p.set('size', material.size);
+    }
+    p.set('quantity', String(material.quantity ?? 0));
+    if (material.status) p.set('status', String(material.status));
+    p.set('wishlist', material.wishlist ? 'on' : 'off');
+    if (material.notes) p.set('notes', material.notes);
+    const qs = p.toString();
+    return qs ? `${base}?${qs}` : base;
+  }
+
   async function toggleWishlist() {
     const endpoint = `${baseEndpointForType(material.type)}/${material.id}/wishlist`;
 
@@ -138,6 +177,22 @@
           <path
             d="M0 25.3343V32H6.66574L26.3252 12.3405L19.6595 5.67477L0 25.3343ZM31.4801 7.18567C32.1733 6.49243 32.1733 5.37259 31.4801 4.67935L27.3207 0.519928C26.6274 -0.173309 25.5076 -0.173309 24.8143 0.519928L21.5615 3.77281L28.2272 10.4385L31.4801 7.18567Z"
           />
+        </svg>
+      </a>
+    </Tooltip>
+    <Tooltip text="複製">
+      <a href={duplicateHref()} class="copy-button" aria-label="複製">
+        <svg
+          class="icon"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path d="M16 1H4a2 2 0 0 0-2 2v12h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 16H8V7h11v14z"/>
         </svg>
       </a>
     </Tooltip>
@@ -263,6 +318,20 @@
     color: var(--melon-green);
   }
   .edit-button:hover {
+    color: var(--melon-green);
+  }
+
+  .copy-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    color: #6b7280;
+  }
+  .copy-button:hover {
     color: var(--melon-green);
   }
 

@@ -4,6 +4,7 @@
   export let data: any;
   export let form: any;
   import { enhance } from '$app/forms';
+  import { onMount } from 'svelte';
 
   const topError = () => {
     const e = form?.error;
@@ -22,6 +23,21 @@
   let wishlist: boolean = false;
   let notes: string = '';
   let continueAdd = false;
+
+  onMount(() => {
+    try {
+      const sp = new URLSearchParams(window.location.search);
+      const g = (k: string) => sp.get(k);
+      brand = g('brand') ?? brand;
+      colorNumber = g('colorNumber') ?? colorNumber;
+      colorName = g('colorName') ?? colorName;
+      if (g('quantity') !== null) quantity = String(g('quantity'));
+      status = g('status') ?? status;
+      const wl = g('wishlist');
+      if (wl !== null) wishlist = wl === 'on' || wl === 'true' || wl === '1';
+      notes = g('notes') ?? notes;
+    } catch {}
+  });
 
   const statusOptions = [
     { value: 'unused', label: '未使用' },

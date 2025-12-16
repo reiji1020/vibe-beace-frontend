@@ -5,6 +5,7 @@
   export let form: any;
   import { enhance } from '$app/forms';
   import { xstitchCountOptions } from '$lib/utils/xstitch';
+  import { onMount } from 'svelte';
 
   const topError = () => {
     const e = form?.error;
@@ -30,6 +31,22 @@
   let notes: string = '';
   const countOptions = xstitchCountOptions;
   let continueAdd = false;
+
+  onMount(() => {
+    try {
+      const sp = new URLSearchParams(window.location.search);
+      const g = (k: string) => sp.get(k);
+      brand = g('brand') ?? brand;
+      count = g('count') ?? count;
+      color = g('color') ?? color;
+      size = g('size') ?? size;
+      if (g('quantity') !== null) quantity = String(g('quantity'));
+      status = g('status') ?? status;
+      const wl = g('wishlist');
+      if (wl !== null) wishlist = wl === 'on' || wl === 'true' || wl === '1';
+      notes = g('notes') ?? notes;
+    } catch {}
+  });
 </script>
 
 <main>
