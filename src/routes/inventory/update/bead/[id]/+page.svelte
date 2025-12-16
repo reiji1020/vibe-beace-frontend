@@ -38,6 +38,7 @@
       { label: 'ビーズを編集' }
     ]}
     ariaLabel="breadcrumb"
+    activeColor={CCLVividColor.MELON_GREEN}
   />
   <h1>ビーズを編集</h1>
 

@@ -38,6 +38,10 @@ export const actions: Actions = {
     }
 
     await addBead(parsed.data as any);
+    const cont = (data.get('continue') as string) === 'on' || (data.get('continue') as string) === 'true';
+    if (cont) {
+      return { ok: true };
+    }
     setFlash(cookies, 'ビーズを追加しました', 'success');
     throw redirect(303, '/inventory');
   }

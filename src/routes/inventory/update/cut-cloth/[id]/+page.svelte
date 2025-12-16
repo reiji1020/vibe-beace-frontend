@@ -37,6 +37,7 @@
       { label: 'カットクロスを編集' }
     ]}
     ariaLabel="breadcrumb"
+    activeColor={CCLVividColor.MELON_GREEN}
   />
   <h1>カットクロスを編集</h1>
 

@@ -58,6 +58,7 @@
 
   // Loading state (during in-app navigation under /inventory)
   $: loading = Boolean($navigating && $navigating.to?.url?.pathname?.startsWith('/inventory'));
+
 </script>
 
 <div class="add-button-container">
@@ -267,4 +268,6 @@
       margin: 0 0.75rem 1rem;
     }
   }
+
 </style>
+

@@ -1,6 +1,6 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { VITE_AUTH_USER, VITE_AUTH_PASSWORD } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 
 export const load: PageServerLoad = async ({ locals }) => {
   if (locals.user) {
@@ -14,7 +14,10 @@ export const actions: Actions = {
     const username = data.get('username');
     const password = data.get('password');
 
-    if (username === VITE_AUTH_USER && password === VITE_AUTH_PASSWORD) {
+    const expectedUser = env.AUTH_USER ?? env.VITE_AUTH_USER; // fallback for migration
+    const expectedPass = env.AUTH_PASSWORD ?? env.VITE_AUTH_PASSWORD;
+
+    if (username === expectedUser && password === expectedPass) {
       cookies.set('session', 'loggedin', {
         path: '/',
         httpOnly: true,

@@ -36,6 +36,11 @@ export const actions: Actions = {
     }
 
     await addThread(parsed.data);
+    // 続けて追加: フラグがあれば同ページで成功返却
+    const cont = (data.get('continue') as string) === 'on' || (data.get('continue') as string) === 'true';
+    if (cont) {
+      return { ok: true };
+    }
     setFlash(cookies, '刺繍糸を追加しました', 'success');
     throw redirect(303, '/inventory');
   }

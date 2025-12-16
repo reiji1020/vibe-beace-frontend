@@ -38,6 +38,7 @@
       { label: '刺繍糸を編集' }
     ]}
     ariaLabel="breadcrumb"
+    activeColor={CCLVividColor.MELON_GREEN}
   />
   <h1>刺繍糸を編集</h1>
 

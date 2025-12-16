@@ -2,6 +2,7 @@
   import { Button, Checkbox, FormGroup, Input, Select, Textarea, Breadcrumb } from 'cclkit4svelte';
   import { CCLVividColor } from 'cclkit4svelte';
   import type { PageData } from './$types';
+  import { xstitchCountOptions } from '$lib/utils/xstitch';
 
   export let data: PageData;
   let { item } = data;
@@ -27,6 +28,8 @@
   let quantity = String(item.quantity ?? 0);
   let notes = item.notes ?? '';
   let brand = item.brand ?? '';
+  let count = item.count ?? '';
+  const countOptions = xstitchCountOptions;
 </script>
 
 <main>
@@ -37,6 +40,7 @@
       { label: 'クロスステッチ布を編集' }
     ]}
     ariaLabel="breadcrumb"
+    activeColor={CCLVividColor.MELON_GREEN}
   />
   <h1>クロスステッチ布を編集</h1>
 
@@ -49,8 +53,14 @@
       {#if fe('brand')}<div class="mt-1 text-sm text-red-600">{fe('brand')}</div>{/if}
     </FormGroup>
     <FormGroup>
-      <Input label="カウント" bind:value={item.count} borderColor={CCLVividColor.MELON_GREEN} />
-      <input type="hidden" name="count" value={item.count} />
+      <Select
+        label="カウント"
+        options={countOptions}
+        bind:value={count}
+        placeholder="選択してください"
+        borderColor={CCLVividColor.MELON_GREEN}
+      />
+      <input type="hidden" name="count" value={count} />
       {#if fe('count')}<div class="mt-1 text-sm text-red-600">{fe('count')}</div>{/if}
     </FormGroup>
     <FormGroup>

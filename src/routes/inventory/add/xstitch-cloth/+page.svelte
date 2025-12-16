@@ -1,9 +1,10 @@
 <script lang="ts">
-  import { Button, FormGroup, Input, Select, Checkbox, Textarea, Breadcrumb } from 'cclkit4svelte';
+  import { Button, FormGroup, Input, Select, Checkbox, Textarea, Breadcrumb, toast } from 'cclkit4svelte';
   import { CCLVividColor } from 'cclkit4svelte';
   export let data: any;
   export let form: any;
   import { enhance } from '$app/forms';
+  import { xstitchCountOptions } from '$lib/utils/xstitch';
 
   const topError = () => {
     const e = form?.error;
@@ -20,13 +21,15 @@
   ];
 
   let brand: string = '';
-  let count = '';
+  let count = '14';
   let color = '';
   let size = '';
   let quantity = '';
   let status: string = 'unused';
   let wishlist: boolean = false;
   let notes: string = '';
+  const countOptions = xstitchCountOptions;
+  let continueAdd = false;
 </script>
 
 <main>
@@ -37,9 +40,30 @@
       { label: 'クロスステッチ布を追加' }
     ]}
     ariaLabel="breadcrumb"
+    activeColor={CCLVividColor.MELON_GREEN}
   />
   <h1>クロスステッチ布を追加</h1>
-  <form method="POST" use:enhance>
+  <form
+    method="POST"
+    use:enhance={({ form }) => {
+      return async ({ result, update }) => {
+        if (result.type === 'success') {
+          brand = '';
+          count = '14';
+          color = '';
+          size = '';
+          quantity = '';
+          status = 'unused';
+          wishlist = false;
+          notes = '';
+          continueAdd = false;
+          toast.success('追加しました。続けて登録できます');
+          return;
+        }
+        await update();
+      };
+    }}
+  >
     <input type="hidden" name="csrfToken" value={data.csrfToken} />
     {#if topError()}<div class="mt-2 mb-2 text-red-600">{topError()}</div>{/if}
     <FormGroup>
@@ -48,9 +72,10 @@
       {#if fe('brand')}<div class="mt-1 text-sm text-red-600">{fe('brand')}</div>{/if}
     </FormGroup>
     <FormGroup>
-      <Input
+      <Select
         label="カウント"
-        placeholder="例: 14"
+        options={countOptions}
+        placeholder="選択してください"
         bind:value={count}
         borderColor={CCLVividColor.MELON_GREEN}
       />
@@ -112,7 +137,11 @@
       <input type="hidden" name="notes" value={notes} />
       {#if fe('notes')}<div class="mt-1 text-sm text-red-600">{fe('notes')}</div>{/if}
     </FormGroup>
-    <Button label="追加する" bgColor={CCLVividColor.PINEAPPLE_YELLOW} />
+    <input type="hidden" name="continue" value={continueAdd ? 'on' : 'off'} />
+    <div class="actions">
+      <Button label="追加する" bgColor={CCLVividColor.PINEAPPLE_YELLOW} onClick={() => (continueAdd = false)} />
+      <Button label="追加して続ける" bgColor={CCLVividColor.MELON_GREEN} onClick={() => (continueAdd = true)} />
+    </div>
   </form>
 </main>
 
@@ -128,6 +157,7 @@
     max-width: 600px;
     margin: 0 auto;
   }
+  .actions { display: flex; gap: .5rem; }
   :global(input[type='number']) {
     appearance: textfield;
   }
