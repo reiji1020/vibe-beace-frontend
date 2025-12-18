@@ -2,6 +2,10 @@
   import { toast, Tooltip, Badge, CCLVividColor } from 'cclkit4svelte';
   import type { InventoryCardItem } from '$lib/types';
   import { baseEndpointForType } from '$lib/utils/endpoints';
+  import { getThreadHex } from '$lib/utils/threadColors';
+  import { getBeadHex } from '$lib/utils/beadColors';
+  import { onMount } from 'svelte';
+  import { base } from '$app/paths';
   /** 表示する在庫カードのデータ。 */
   export let material: InventoryCardItem;
   /** 削除ボタン押下時のハンドラ。 */
@@ -9,6 +13,7 @@
 
   let title: string;
   let details: string;
+  let threadBorderColor: string | null = null;
 
   function getStatusLabel(status: string | null | undefined): string {
     switch (status) {
@@ -60,6 +65,19 @@
   function handleDelete() {
     onDelete(material.id, material.type);
   }
+
+  // Thread/Beadカードの場合、色番号/品番→HEXをロードして枠色に反映
+  onMount(() => {
+    if (material.type === 'thread') {
+      getThreadHex((material as any).brand, (material as any).colorNumber, { base })
+        .then((hex) => (threadBorderColor = hex))
+        .catch(() => (threadBorderColor = null));
+    } else if (material.type === 'bead') {
+      getBeadHex((material as any).brand, (material as any).itemCode, { base, productLine: 'ROUND_BEADS' })
+        .then((hex) => (threadBorderColor = hex))
+        .catch(() => (threadBorderColor = null));
+    }
+  });
 
   function duplicateHref(): string {
     const base =
@@ -156,7 +174,12 @@
   }
 </script>
 
-<div class="material-card">
+<div
+  class="material-card"
+  style={threadBorderColor
+    ? `--card-border: ${threadBorderColor}; --card-hover: ${threadBorderColor}; --card-shadow-color: ${threadBorderColor}`
+    : undefined}
+>
   <div class="card-actions-left">
     <Tooltip text="編集">
       <a
@@ -247,6 +270,7 @@
   .material-card {
     --card-border: #e5e7eb;
     --card-hover: #d1d5db;
+    --card-shadow-color: #000000;
     --card-bg: #ffffff;
     border: 1px solid var(--card-border);
     border-radius: 12px;
@@ -267,7 +291,7 @@
   .material-card:hover {
     transform: translateY(-2px);
     border-color: var(--card-hover);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 6px 18px color-mix(in srgb, var(--card-shadow-color) 40%, transparent);
   }
 
   .card-actions-left,
