@@ -1,5 +1,3 @@
-// Prisma schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -9,7 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Status enums: models differ in allowed values
 enum StatusWithLow {
   unused
   used
@@ -74,4 +71,14 @@ model XStitchCloth {
   notes     String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model LoginGuard {
+  id            Int       @id @default(autoincrement())
+  key           String    @unique
+  failCount     Int       @default(0)
+  firstFailedAt DateTime?
+  lockedUntil   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
