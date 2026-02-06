@@ -177,7 +177,7 @@
 <div
   class="material-card"
   style={threadBorderColor
-    ? `--card-border: ${threadBorderColor}; --card-hover: ${threadBorderColor}; --card-shadow-color: ${threadBorderColor}`
+    ? `--card-border: ${threadBorderColor}; --card-hover: ${threadBorderColor}; --card-shadow-color: ${threadBorderColor}; --card-tint: ${threadBorderColor}`
     : undefined}
 >
   <div class="card-actions-left">
@@ -250,7 +250,7 @@
     </div>
   </div>
   <div class="card-body">
-    <p>{details}</p>
+    <p class="details">{details}</p>
     <div class="meta-row" aria-label="メタ情報">
       <Badge
         color={CCLVividColor.WRAP_GREY}
@@ -268,74 +268,94 @@
 
 <style>
   .material-card {
-    --card-border: #e5e7eb;
-    --card-hover: #d1d5db;
-    --card-shadow-color: #000000;
-    --card-bg: #ffffff;
+    --card-border: var(--surface-border);
+    --card-hover: color-mix(in srgb, var(--melon-green) 32%, var(--surface-border));
+    --card-shadow-color: var(--wrap-grey);
+    --card-bg: var(--surface-1);
+    --card-tint: var(--lemon-yellow);
     border: 1px solid var(--card-border);
-    border-radius: 12px;
-    padding: 2.75rem 1rem 1rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border-radius: var(--radius-md);
+    padding: 2.85rem 1rem 1rem;
+    box-shadow: var(--shadow-sm);
     background:
-      radial-gradient(100% 100% at 0% 0%, rgba(250, 250, 250, 0.9), transparent 60%), var(--card-bg);
+      radial-gradient(
+        130% 130% at 0% 0%,
+        color-mix(in srgb, var(--card-tint) 24%, transparent),
+        transparent 72%
+      ),
+      var(--card-bg);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     position: relative;
     transition:
-      transform 120ms ease,
+      transform 140ms ease,
       box-shadow 160ms ease,
-      border-color 120ms ease;
+      border-color 140ms ease;
   }
 
   .material-card:hover {
-    transform: translateY(-2px);
+    transform: translateY(-1px);
     border-color: var(--card-hover);
-    box-shadow: 0 6px 18px color-mix(in srgb, var(--card-shadow-color) 40%, transparent);
+    box-shadow: 0 8px 20px color-mix(in srgb, var(--card-shadow-color) 18%, transparent);
   }
 
   .card-actions-left,
   .card-actions-right {
     position: absolute;
-    top: 5px;
+    top: 8px;
     display: flex;
-    gap: 4px;
+    gap: 6px;
   }
   .card-actions-left {
-    left: 5px;
+    left: 8px;
   }
   .card-actions-right {
-    right: 5px;
+    right: 8px;
   }
 
   .edit-button,
+  .copy-button,
+  .wishlist-button,
   .delete-button {
-    background: none;
-    border: none;
+    background: color-mix(in srgb, var(--cloud-grey) 12%, white);
+    border: 1px solid color-mix(in srgb, var(--cloud-grey) 48%, white);
+    border-radius: 9999px;
     cursor: pointer;
-    padding: 6px;
+    padding: 5px;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
+    line-height: 1;
+    transition:
+      background-color 120ms ease,
+      border-color 120ms ease,
+      transform 120ms ease;
+  }
+
+  .edit-button:hover,
+  .copy-button:hover,
+  .wishlist-button:hover,
+  .delete-button:hover {
+    transform: translateY(-1px);
+    background: color-mix(in srgb, var(--matcha-green) 22%, white);
+    border-color: color-mix(in srgb, var(--melon-green) 36%, var(--cloud-grey));
   }
 
   .wishlist-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 6px;
-    font-size: 18px;
+    font-size: 17px;
     line-height: 1;
-    color: #999;
+    color: color-mix(in srgb, var(--wrap-grey) 72%, white);
   }
 
   .wishlist-button .wished {
-    color: var(--pineapple-yellow, #ed9126);
+    color: var(--pineapple-yellow);
   }
 
   .icon {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
   }
 
   .edit-button {
@@ -345,28 +365,19 @@
     color: var(--melon-green);
   }
 
-  .copy-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 6px;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    color: #6b7280;
-  }
+  .copy-button { color: color-mix(in srgb, var(--wrap-grey) 86%, white); }
   .copy-button:hover {
     color: var(--melon-green);
   }
 
   .delete-button:hover {
-    color: #f00;
+    color: color-mix(in srgb, var(--strawberry-pink) 88%, #7a1f34);
   }
 
   .card-header {
     display: flex;
     align-items: center;
-    margin-bottom: 1.25rem;
+    margin-bottom: 0.75rem;
     gap: 0.75rem; /* アイコンとの間隔を少し広く */
   }
 
@@ -415,26 +426,72 @@
     white-space: pre-wrap;
   }
 
+  /* Modern hierarchy refinement */
+  .card-header {
+    margin-bottom: 0.75rem;
+    gap: 0.5rem;
+  }
+
+  .header-text {
+    gap: 0.4rem;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .card-header h2 {
+    font-size: 1.08rem;
+    font-weight: 700;
+    color: var(--text-1);
+    line-height: 1.35;
+    letter-spacing: 0.01em;
+  }
+
+  .header-badges {
+    gap: 0.35rem;
+  }
+
+  .card-body .details {
+    white-space: pre-wrap;
+    font-size: 0.9rem;
+    line-height: 1.55;
+    color: var(--text-2);
+    margin: 0;
+  }
+
+  .meta-row {
+    gap: 0.35rem;
+    margin-top: 0.65rem;
+  }
+
+  .notes {
+    margin-top: 0.6rem;
+    color: color-mix(in srgb, var(--wrap-grey) 85%, white);
+    font-size: 0.82rem;
+    line-height: 1.45;
+    border-left: 3px solid color-mix(in srgb, var(--cloud-grey) 55%, white);
+    padding-left: 0.45rem;
+  }
+
   /* Mobile adjustments */
   @media (max-width: 640px) {
     .material-card {
-      padding: 2.25rem 0.75rem 0.75rem;
+      padding: 2.5rem 0.82rem 0.82rem;
     }
     .card-actions-left,
     .card-actions-right {
-      top: 2px;
-      gap: 2px;
+      top: 6px;
+      gap: 4px;
     }
     .wishlist-button {
-      font-size: 20px;
-      padding: 8px;
+      font-size: 18px;
+      padding: 6px;
     }
     .icon {
-      width: 20px;
-      height: 20px;
+      width: 16px;
+      height: 16px;
     }
     .card-header h2 {
-      font-size: 1rem;
+      font-size: 1.02rem;
     }
     .type-badge {
       font-size: 0.7rem;

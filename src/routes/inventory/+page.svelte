@@ -103,6 +103,7 @@
   }
 </script>
 
+<div class="inventory-page">
 {#if showAlert}
   <div class="alert-container">
     <Alert message={alertMessage} type={alertType} dismissible={true} />
@@ -136,43 +137,58 @@
   <span class="hint">（開発者向け）</span>
 </div>
 
+</div>
+
 <style>
+  .inventory-page {
+    width: 100%;
+    max-width: var(--page-max-width);
+    margin: var(--space-8) auto var(--space-4);
+    padding: 0 var(--space-4);
+  }
+
   .alert-container {
-    margin: 1rem 2rem;
+    margin: 0 0 var(--space-4);
   }
   .filter-panel {
-    margin: 2rem;
-    padding: 1rem;
-    border: none;
-    background: transparent;
+    margin: 0;
+    padding: var(--space-4);
+    border: 1px solid var(--surface-border);
+    border-radius: var(--radius-lg);
+    background: var(--surface-1);
+    box-shadow: var(--shadow-sm);
   }
   
   .api-docs-link {
-    margin: 0 2rem 0.5rem;
+    margin: var(--space-3) var(--space-2) 0;
     font-size: 0.8rem;
-    color: #888;
+    color: var(--text-2);
   }
   .api-docs-link a {
     color: inherit;
     text-decoration: underline dotted;
   }
   .api-docs-link a:hover {
-    color: #555;
+    color: var(--text-1);
   }
   .api-docs-link .hint {
     margin-left: 6px;
   }
 
   @media (max-width: 640px) {
+    .inventory-page {
+      margin: var(--space-4) auto var(--space-3);
+      padding: 0 var(--space-3);
+    }
+
     .alert-container {
-      margin: 0.75rem;
+      margin: 0 0 var(--space-3);
     }
     .filter-panel {
-      margin: 0.75rem;
-      padding: 0.5rem;
+      padding: var(--space-3);
     }
     .api-docs-link {
-      margin: 0 0.75rem 0.5rem;
+      margin: var(--space-2) var(--space-2) 0;
       font-size: 0.75rem;
     }
   }

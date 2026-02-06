@@ -116,57 +116,59 @@
 
 <style>
   .search-form {
-    display: flex;
-    gap: 0.75rem;
-    flex-wrap: wrap;
+    display: grid;
+    gap: var(--space-3);
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     width: 100%;
-    justify-content: center;
+    padding: var(--space-4);
+    border: 1px solid var(--surface-border);
+    border-radius: var(--radius-lg);
+    background: var(--surface-2);
+    box-shadow: var(--shadow-sm);
+    justify-content: stretch;
     align-items: flex-end;
-    margin: 0 auto 1rem;
+    margin: 0 auto var(--space-4);
   }
 
   .search-form :global(.input-wrapper),
   .search-form :global(.select-wrapper),
   .search-form :global(.checkboxWrapper),
   .search-form :global(.formGroupWrapper) {
-    min-width: 220px;
+    min-width: 0;
+    width: 100%;
+    margin-bottom: 0;
   }
 
   .search-form .wishlist-filter {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
-    min-width: 220px;
+    min-width: 0;
   }
 
   .search-form .actions {
     display: flex;
-    gap: 0.5rem;
+    gap: var(--space-2);
     align-items: center;
+    justify-content: flex-end;
+    width: 100%;
   }
 
   /* Mobile adjustments */
   @media (max-width: 640px) {
     .search-form {
-      gap: 0.5rem;
+      gap: var(--space-2);
       align-items: center;
-      justify-content: center;
-      margin: 0 0.75rem 0.75rem;
-    }
-    .search-form :global(.input-wrapper),
-    .search-form :global(.select-wrapper),
-    .search-form :global(.checkboxWrapper),
-    .search-form :global(.formGroupWrapper) {
-      min-width: 100%;
-      width: 100%;
+      margin: 0 0 var(--space-3);
+      padding: var(--space-3);
     }
     .search-form .wishlist-filter {
-      min-width: 100%;
       justify-content: flex-start;
     }
     .search-form .actions {
-      justify-content: center;
+      justify-content: stretch;
       width: 100%;
+      flex-direction: column;
     }
   }
 </style>

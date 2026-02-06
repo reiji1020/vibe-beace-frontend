@@ -164,17 +164,44 @@
 
 <style>
   main {
-    margin: 2rem;
+    width: 100%;
+    max-width: var(--page-max-width);
+    margin: var(--space-8) auto var(--space-4);
+    padding: 0 var(--space-4);
   }
   h1 {
     text-align: center;
-    margin-bottom: 2rem;
+    margin: 0 0 var(--space-6);
+    color: var(--text-1);
   }
   form {
-    max-width: 600px;
+    max-width: 700px;
     margin: 0 auto;
+    padding: var(--space-4);
+    border: 1px solid var(--surface-border);
+    border-radius: var(--radius-lg);
+    background: var(--surface-1);
+    box-shadow: var(--shadow-sm);
   }
-  .actions { display: flex; gap: .5rem; }
+  .actions {
+    display: flex;
+    gap: var(--space-2);
+    justify-content: flex-end;
+    flex-wrap: wrap;
+  }
+  @media (max-width: 640px) {
+    main {
+      margin: var(--space-4) auto var(--space-3);
+      padding: 0 var(--space-3);
+    }
+    form {
+      padding: var(--space-3);
+    }
+    .actions {
+      justify-content: stretch;
+      flex-direction: column;
+    }
+  }
   :global(input[type='number']) {
     appearance: textfield;
   }
